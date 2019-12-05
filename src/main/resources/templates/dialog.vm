@@ -1,0 +1,19 @@
+<h2 class="dialog-title">$i18n.getText('multiplesubtasks.dialog.open')</h2>
+
+<form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
+    <input type="hidden" name="issueKey" value="${issueKey}">
+    <div class="content-body">
+        <div class="field-group">
+            <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
+            <textarea name="tasks" class="textarea long-field" rows="10"></textarea>
+            <div class="description">$i18n.getText('tutorial.fields.users.desc')</div>
+        </div>
+    </div>
+    <div class="buttons-container content-footer">
+        <div class="buttons">
+            <a href="#" class="cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
+            <input type="hidden" name="action" value="create">
+            <input class="button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
+        </div>
+    </div>
+</form>

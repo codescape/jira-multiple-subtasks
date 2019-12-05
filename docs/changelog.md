@@ -20,6 +20,7 @@ Click on the version in the following list to see all changes since the previous
 * chore: initial commit
 * docs: add changelog
 * chore: remove unused auto-generated classes
+* feat: create first draft of the popup dialog
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0

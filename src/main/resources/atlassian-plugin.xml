@@ -2,23 +2,43 @@
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
     </plugin-info>
 
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="multiple-subtasks"/>
-    
+
     <!-- add our web resources -->
     <web-resource key="multiple-subtasks-resources" name="multiple-subtasks Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        
+
         <resource type="download" name="multiple-subtasks.css" location="/css/multiple-subtasks.css"/>
         <resource type="download" name="multiple-subtasks.js" location="/js/multiple-subtasks.js"/>
         <resource type="download" name="images/" location="/images"/>
 
         <context>multiple-subtasks</context>
     </web-resource>
-    
+
+    <web-item key="mutiple-subtasks-start-from-issue-details" section="jira.issue.tools" weight="10">
+        <label key="multiplesubtasks.dialog.open"/>
+        <link>/secure/MultipleSubTasks.jspa?issueKey=$issue.key</link>
+        <styleClass>trigger-dialog</styleClass>
+    </web-item>
+    <web-item key="multiple-subtasks-start-from-context-menu" section="greenhopper_issue_dropdown" weight="200">
+        <label key="multiplesubtasks.dialog.open"/>
+        <link>/secure/MultipleSubTasks.jspa?issueKey=$issue.key</link>
+        <styleClass>trigger-dialog</styleClass>
+    </web-item>
+
+    <webwork1 key="multiple-tasks-webwork">
+        <actions>
+            <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubTasksDialogAction" alias="MultipleSubTasks"
+                    roles-required="use">
+                <view name="success">/templates/dialog.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
 </atlassian-plugin>
