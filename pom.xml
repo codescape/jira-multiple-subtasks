@@ -39,7 +39,7 @@
         <jira.version.oldest>7.6.16</jira.version.oldest>
 
         <!-- Dependency versions -->
-        <amps.version>8.0.2</amps.version>
+        <amps.version>8.0.4</amps.version>
         <atlassian.spring.scanner.version>2.1.8</atlassian.spring.scanner.version>
         <hamcrest.version>2.2</hamcrest.version>
         <quick.reload.version>3.0.0</quick.reload.version>
@@ -61,12 +61,6 @@
             <artifactId>jira-api</artifactId>
             <version>${jira.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
