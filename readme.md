@@ -1,11 +1,24 @@
-You have successfully created an Atlassian Plugin!
+# Multiple Subtasks for Jira
 
-Here are the SDK commands you'll use immediately:
+Multiple Subtasks for Jira enables your teams to easily create multiple subtasks for their work items using a clean and interactive user interface that is seamlessly integrated into Jira Software.
 
-* atlas-run   -- installs this plugin into the product and starts it on localhost
-* atlas-debug -- same as atlas-run, but allows a debugger to attach at port 5005
-* atlas-help  -- prints description for all commands in the SDK
+[![Build Status](https://travis-ci.org/codescape/jira-multiple-subtasks.svg?branch=master)](https://travis-ci.org/codescape/jira-multiple-subtasks)
+[![GitHub issues](https://img.shields.io/github/issues/codescape/jira-multiple-subtasks.svg)](https://github.com/codescape/jira-multiple-subtasks/issues)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/codescape/jira-multiple-subtasks.svg)](https://github.com/codescape/jira-multiple-subtasks/releases)
+[![GitHub](https://img.shields.io/github/license/codescape/jira-multiple-subtasks.svg)](https://github.com/codescape/jira-multiple-subtasks/blob/master/LICENSE)
 
-Full documentation is always available at:
+## Highlights
 
-https://developer.atlassian.com/display/DOCS/Introduction+to+the+Atlassian+Plugin+SDK
+* TODO
+
+## Resources
+
+For users:
+
+* [Installation Guide](http://jira-multiple-subtasks.codescape.de/installation)
+* [Documentation](http://jira-multiple-subtasks.codescape.de)
+
+For developers:
+
+* [Contribution Guide](https://github.com/codescape/jira-multiple-subtasks/blob/master/contributing.md)
+* [Changelog](https://github.com/codescape/jira-multiple-subtasks/blob/master/docs/changelog.md)
