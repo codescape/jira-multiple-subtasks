@@ -41,6 +41,7 @@
         <!-- Dependency versions -->
         <amps.version>8.0.4</amps.version>
         <atlassian.spring.scanner.version>2.1.8</atlassian.spring.scanner.version>
+        <spring.version>5.1.5.RELEASE</spring.version>
         <hamcrest.version>2.2</hamcrest.version>
         <quick.reload.version>3.0.0</quick.reload.version>
 
@@ -66,6 +67,18 @@
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
             <version>${atlassian.spring.scanner.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

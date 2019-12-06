@@ -1,26 +1,30 @@
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+
+    <!-- app coordinates -->
     <plugin-info>
+        <!-- app details -->
         <description>${project.description}</description>
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+
+        <!-- logos -->
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
     </plugin-info>
 
-    <!-- add our i18n resource -->
-    <resource type="i18n" name="i18n" location="multiple-subtasks"/>
+    <!-- i18n message bundle -->
+    <resource type="i18n" name="i18n" location="i18n.multiple-subtasks"/>
 
-    <!-- add our web resources -->
+    <!-- static web resources -->
     <web-resource key="multiple-subtasks-resources" name="multiple-subtasks Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-
         <resource type="download" name="multiple-subtasks.css" location="/css/multiple-subtasks.css"/>
         <resource type="download" name="multiple-subtasks.js" location="/js/multiple-subtasks.js"/>
         <resource type="download" name="images/" location="/images"/>
-
         <context>multiple-subtasks</context>
     </web-resource>
 
+    <!-- buttons to open create dialog -->
     <web-item key="mutiple-subtasks-start-from-issue-details" section="jira.issue.tools" weight="10">
         <label key="multiplesubtasks.dialog.open"/>
         <link>/secure/MultipleSubTasks.jspa?issueKey=$issue.key</link>
@@ -32,10 +36,11 @@
         <styleClass>trigger-dialog</styleClass>
     </web-item>
 
-    <webwork1 key="multiple-tasks-webwork">
+    <!-- webworks -->
+    <webwork1 key="multiple-subtasks-webwork">
         <actions>
-            <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubTasksDialogAction" alias="MultipleSubTasks"
-                    roles-required="use">
+            <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubTasksDialogAction"
+                    alias="MultipleSubTasks" roles-required="use">
                 <view name="success">/templates/dialog.vm</view>
             </action>
         </actions>
