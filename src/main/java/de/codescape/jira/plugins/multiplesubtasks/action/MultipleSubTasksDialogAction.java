@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-/**
- * TODO add documentation
- */
+// TODO add documentation
+// TODO create tests
 public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;

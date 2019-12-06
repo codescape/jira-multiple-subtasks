@@ -1,49 +1,48 @@
 <h2 class="dialog-title">$i18n.getText('multiplesubtasks.dialog.open')</h2>
 
-
-    <form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
-        <input type="hidden" name="issueKey" value="${issueKey}">
-        <div class="content-body">
-            <div class="field-group">
-                <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
-                <textarea name="tasks" class="textarea long-field" rows="10"></textarea>
-                <div class="description">$i18n.getText('tutorial.fields.users.desc')</div>
-            </div>
+<form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
+    <input type="hidden" name="issueKey" value="${issueKey}">
+    <div class="content-body">
+        <div class="field-group">
+            <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
+            <textarea name="tasks" class="textarea long-field" rows="10"></textarea>
+            <div class="description">$i18n.getText('tutorial.fields.users.desc')</div>
         </div>
-        <div class="buttons-container content-footer">
-            <div class="buttons">
-                <input type="hidden" name="action" value="create">
-                <input class="button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
-                <a href="#" class="cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
-            </div>
+    </div>
+    <div class="buttons-container content-footer">
+        <div class="buttons">
+            <input type="hidden" name="action" value="create">
+            <input class="button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
+            <a href="#" class="cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
         </div>
-    </form>
+    </div>
+</form>
 
 #if (!$createdSubTasks.isEmpty())
 
     <div class="content-body">
-        Die folgenden Tasks wurden angelegt:
-            <table width="100%" class="aui" id="issuetable">
-                <tbody>
-                    #set($counter = 1)
-                    #foreach($subTask in $createdSubTasks)
-                    <tr>
-                        <td class="stsequence">$counter.</td>
-                        <td class="stsummary"><a href="$baseurl/browse/$subTask.key">$subTask.summary</a></td>
-                        <td class="issuetype"><img src="$subTask.issueType.completeIconUrl"></td>
-                        <td class="status"><span class="aui-lozenge aui-lozenge-subtle jira-issue-status-lozenge-$subTask.status.statusCategory.colorName">$subTask.status.nameTranslation</span></td>
-                        <td class="assignee">
-                            #if($subTask.assignee)
-                                <a href="$baseurl/secure/ViewProfile.jspa?name=$subTask.assignee.key">$subTask.assignee.displayName</a>
-                            #else
-                                <i>$i18n.getText("scrumpoker.issue.assignee.empty")</i>
-                            #end
-                        </td>
-                    </tr>
-                    #set($counter = $counter + 1)
-                    #end
-                </tbody>
-            </table>
+        <p>Die folgenden Tasks wurden angelegt:</p>
+        <table width="100%" class="aui" id="issuetable">
+            <tbody>
+                #set($counter = 1)
+                #foreach($subTask in $createdSubTasks)
+                <tr>
+                    <td class="stsequence">$counter.</td>
+                    <td class="stsummary"><a href="$baseurl/browse/$subTask.key">$subTask.summary</a></td>
+                    <td class="issuetype"><img src="$subTask.issueType.completeIconUrl"></td>
+                    <td class="status"><span class="aui-lozenge aui-lozenge-subtle jira-issue-status-lozenge-$subTask.status.statusCategory.colorName">$subTask.status.nameTranslation</span></td>
+                    <td class="assignee">
+                        #if($subTask.assignee)
+                            <a href="$baseurl/secure/ViewProfile.jspa?name=$subTask.assignee.key">$subTask.assignee.displayName</a>
+                        #else
+                            <i>$i18n.getText("scrumpoker.issue.assignee.empty")</i>
+                        #end
+                    </td>
+                </tr>
+                #set($counter = $counter + 1)
+                #end
+            </tbody>
+        </table>
     </div>
     <div class="buttons-container content-footer">
         <div class="buttons">

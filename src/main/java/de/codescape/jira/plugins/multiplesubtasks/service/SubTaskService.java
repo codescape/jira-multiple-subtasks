@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 // TODO extract interface
+// TODO create tests
 @Component
 public class SubTaskService {
 
