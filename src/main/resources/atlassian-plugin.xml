@@ -27,6 +27,7 @@
     <!-- button to open create dialog -->
     <web-item key="multiple-subtasks-start-from-context-menu" section="operations-subtasks" weight="200">
         <label key="multiplesubtasks.dialog.open"/>
+        <condition class="de.codescape.jira.plugins.multiplesubtasks.condition.DisplayDialogForIssueCondition"/>
         <link>/secure/MultipleSubTasks.jspa?issueKey=$issue.key</link>
         <styleClass>trigger-dialog</styleClass>
     </web-item>
