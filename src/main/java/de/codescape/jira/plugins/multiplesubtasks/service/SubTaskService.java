@@ -25,13 +25,9 @@ import java.util.List;
 public class SubTaskService {
 
     private IssueService issueService;
-
     private IssueFactory issueFactory;
-
     private IssueManager issueManager;
-
     private SubTaskManager subTaskManager;
-
     private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Autowired
@@ -69,17 +65,15 @@ public class SubTaskService {
             newSubTask.setParentObject(parent);
             newSubTask.setProjectObject(parent.getProjectObject());
             newSubTask.setIssueType(subTaskType);
-
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubTask);
-                // TODO do we need to do that?
                 subTaskManager.createSubTaskIssueLink(parent, newSubTask, jiraAuthenticationContext.getLoggedInUser());
             } catch (CreateException e) {
                 throw new RuntimeException(e);
             }
-
             subTasks.add(newSubTask);
         });
+
         return subTasks;
     }
 
