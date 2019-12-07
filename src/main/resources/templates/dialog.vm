@@ -12,12 +12,13 @@
     <div class="buttons-container content-footer">
         <div class="buttons">
             <input type="hidden" name="action" value="create">
-            <input class="button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
+            <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
             <a href="#" class="cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
         </div>
     </div>
 </form>
 
+#if ($createdSubTasks)
 #if (!$createdSubTasks.isEmpty())
 
     <div class="content-body">
@@ -50,4 +51,5 @@
         </div>
     </div>
 
+#end
 #end
