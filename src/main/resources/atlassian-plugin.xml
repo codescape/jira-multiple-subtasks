@@ -24,13 +24,8 @@
         <context>multiple-subtasks</context>
     </web-resource>
 
-    <!-- buttons to open create dialog -->
-    <web-item key="mutiple-subtasks-start-from-issue-details" section="jira.issue.tools" weight="10">
-        <label key="multiplesubtasks.dialog.open"/>
-        <link>/secure/MultipleSubTasks.jspa?issueKey=$issue.key</link>
-        <styleClass>trigger-dialog</styleClass>
-    </web-item>
-    <web-item key="multiple-subtasks-start-from-context-menu" section="greenhopper_issue_dropdown" weight="200">
+    <!-- button to open create dialog -->
+    <web-item key="multiple-subtasks-start-from-context-menu" section="operations-subtasks" weight="200">
         <label key="multiplesubtasks.dialog.open"/>
         <link>/secure/MultipleSubTasks.jspa?issueKey=$issue.key</link>
         <styleClass>trigger-dialog</styleClass>
