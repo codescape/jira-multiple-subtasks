@@ -18,16 +18,16 @@ Click on the version in the following list to see all changes since the previous
 **First runnable version of Multiple Subtasks for Jira**
 
 * chore: initial commit
-* docs: add changelog
+* docs: add changelog to future online documentation
 * chore: remove unused auto-generated classes
-* feat: create first draft of the popup dialog
+* feat: create first draft for the create sub-task popup dialog
 * chore: remove duplicate junit dependency and use latest amps version
-* feat: create subtasks for every line of the provided string
-* chore: add implementation todos
-* chore: remove debug logging from action
-* refactor: format service class
-* feat: render button to start dialog right under default create subtask dialog
-* feat: improve wording and layout in create dialog
+* feat: create sub-tasks with summary for every line of the provided string
+* chore: add markers in code where further implementation is required
+* chore: cleanup code and remove debug logging from action
+* refactor: format service class according to code style
+* feat: render button to start dialog under default create sub-task dialog
+* feat: improve internationalization and layout in create dialog
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
