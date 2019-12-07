@@ -4,7 +4,6 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.plugin.webfragment.conditions.AbstractIssueWebCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.workflow.condition.AbstractJiraCondition;
 import org.springframework.stereotype.Component;
 
 // TODO document class

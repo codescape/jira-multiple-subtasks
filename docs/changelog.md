@@ -29,6 +29,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: render button to start dialog under default create sub-task dialog
 * feat: improve internationalization and layout in create dialog
 * feat: do only render button for issues that are no sub-tasks
+* chore: organize imports and remove unused imports
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
