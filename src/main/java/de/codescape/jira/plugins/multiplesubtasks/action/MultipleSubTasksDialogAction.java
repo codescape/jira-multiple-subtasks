@@ -52,18 +52,11 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
     @Override
     protected String doExecute() {
-        System.out.println("doExecute in " + getClass().getSimpleName() + " called:");
-
         issueKey = getParameter("issueKey");
-        System.out.println(" ~ issueKey: " + issueKey);
-
         String action = getParameter(Parameters.ACTION);
-        System.out.println(" ~ action: " + action);
         if (action != null && action.equals("create")) {
             String tasks = getParameter("tasks");
-            System.out.println(" ~ tasks: " + tasks);
             createdSubTasks = subTaskService.subTasksFromString(issueKey, tasks);
-            createdSubTasks.forEach(System.out::println);
         }
         return SUCCESS;
     }

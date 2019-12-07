@@ -23,7 +23,8 @@ Click on the version in the following list to see all changes since the previous
 * feat: create first draft of the popup dialog
 * chore: remove duplicate junit dependency and use latest amps version
 * feat: create subtasks for every line of the provided string
-* chore: add implementation todos 
+* chore: add implementation todos
+* chore: remove debug logging from action
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
