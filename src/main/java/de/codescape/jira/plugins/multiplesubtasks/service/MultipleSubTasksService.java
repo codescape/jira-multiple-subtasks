@@ -8,6 +8,7 @@ import com.atlassian.jira.issue.IssueFactory;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,12 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 // TODO extract interface
 // TODO create tests
 @Component
-public class SubTaskService {
+public class MultipleSubTasksService {
 
     private IssueService issueService;
     private IssueFactory issueFactory;
@@ -31,11 +31,11 @@ public class SubTaskService {
     private JiraAuthenticationContext jiraAuthenticationContext;
 
     @Autowired
-    public SubTaskService(@ComponentImport IssueService issueService,
-                          @ComponentImport IssueFactory issueFactory,
-                          @ComponentImport IssueManager issueManager,
-                          @ComponentImport SubTaskManager subTaskManager,
-                          @ComponentImport JiraAuthenticationContext jiraAuthenticationContext) {
+    public MultipleSubTasksService(@ComponentImport IssueService issueService,
+                                   @ComponentImport IssueFactory issueFactory,
+                                   @ComponentImport IssueManager issueManager,
+                                   @ComponentImport SubTaskManager subTaskManager,
+                                   @ComponentImport JiraAuthenticationContext jiraAuthenticationContext) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
@@ -53,8 +53,12 @@ public class SubTaskService {
             throw new RuntimeException("Parent issue not found.");
         }
 
-        Collection<IssueType> issueTypes = parent.getProjectObject().getIssueTypes();
-        IssueType subTaskType = issueTypes.stream().filter(issueType -> issueType.isSubTask()).findFirst().orElse(null);
+        Project projectObject = parent.getProjectObject();
+        if (projectObject == null) {
+            throw new RuntimeException("Parent project not found.");
+        }
+
+        IssueType subTaskType = projectObject.getIssueTypes().stream().filter(IssueType::isSubTask).findFirst().orElse(null);
         if (subTaskType == null) {
             throw new RuntimeException("No sub task types found.");
         }

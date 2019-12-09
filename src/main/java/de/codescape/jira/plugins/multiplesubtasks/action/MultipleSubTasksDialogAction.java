@@ -2,7 +2,7 @@ package de.codescape.jira.plugins.multiplesubtasks.action;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
-import de.codescape.jira.plugins.multiplesubtasks.service.SubTaskService;
+import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubTasksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -16,11 +16,11 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
     private String issueKey;
     private List<Issue> createdSubTasks;
 
-    private final SubTaskService subTaskService;
+    private final MultipleSubTasksService multipleSubTasksService;
 
     @Autowired
-    public MultipleSubTasksDialogAction(SubTaskService subTaskService) {
-        this.subTaskService = subTaskService;
+    public MultipleSubTasksDialogAction(MultipleSubTasksService multipleSubTasksService) {
+        this.multipleSubTasksService = multipleSubTasksService;
     }
 
     /**
@@ -56,7 +56,7 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
         String action = getParameter(Parameters.ACTION);
         if (action != null && action.equals("create")) {
             String tasks = getParameter("tasks");
-            createdSubTasks = subTaskService.subTasksFromString(issueKey, tasks);
+            createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, tasks);
         }
         return SUCCESS;
     }
