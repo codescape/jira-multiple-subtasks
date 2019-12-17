@@ -14,8 +14,6 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,23 +22,26 @@ import java.util.List;
 @Component
 public class MultipleSubTasksService {
 
-    private IssueService issueService;
-    private IssueFactory issueFactory;
-    private IssueManager issueManager;
-    private SubTaskManager subTaskManager;
-    private JiraAuthenticationContext jiraAuthenticationContext;
+    private final IssueService issueService;
+    private final IssueFactory issueFactory;
+    private final IssueManager issueManager;
+    private final SubTaskManager subTaskManager;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final SyntaxService syntaxService;
 
     @Autowired
     public MultipleSubTasksService(@ComponentImport IssueService issueService,
                                    @ComponentImport IssueFactory issueFactory,
                                    @ComponentImport IssueManager issueManager,
                                    @ComponentImport SubTaskManager subTaskManager,
-                                   @ComponentImport JiraAuthenticationContext jiraAuthenticationContext) {
+                                   @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
+                                   SyntaxService syntaxService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
         this.subTaskManager = subTaskManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.syntaxService = syntaxService;
     }
 
     // docs https://community.atlassian.com/t5/Answers-Developer-Questions/Auto-create-subtask-and-assign-to-users/qaq-p/530837
@@ -63,9 +64,9 @@ public class MultipleSubTasksService {
             throw new RuntimeException("No sub task types found.");
         }
 
-        new BufferedReader(new StringReader(input)).lines().forEach(taskSummary -> {
+        syntaxService.parseString(input).forEach(subTaskRequest -> {
             MutableIssue newSubTask = issueFactory.getIssue();
-            newSubTask.setSummary(taskSummary);
+            newSubTask.setSummary(subTaskRequest.getSummary());
             newSubTask.setParentObject(parent);
             newSubTask.setProjectObject(parent.getProjectObject());
             newSubTask.setIssueType(subTaskType);

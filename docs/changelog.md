@@ -31,7 +31,8 @@ Click on the version in the following list to see all changes since the previous
 * feat: do only render button for issues that are no sub-tasks
 * chore: organize imports and remove unused imports
 * feat: only render button for issues in projects with sub-tasks configured
-* chore: rename service implementation for sub-tasks creation 
+* chore: rename service implementation for sub-tasks creation
+* feat: separate syntax parsing and sub-task creation (#21)
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
