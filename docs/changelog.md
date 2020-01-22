@@ -37,6 +37,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: add documentation to format exception
 * feat: catch errors during task creation and display error details
 * feat: inherit priority for new subtask from parent issue
+* docs: add documentation to subtask request
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
