@@ -69,6 +69,7 @@ public class MultipleSubTasksService {
             newSubTask.setSummary(subTaskRequest.getSummary());
             newSubTask.setParentObject(parent);
             newSubTask.setProjectObject(parent.getProjectObject());
+            newSubTask.setPriority(parent.getPriority());
             newSubTask.setIssueType(subTaskType);
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubTask);
