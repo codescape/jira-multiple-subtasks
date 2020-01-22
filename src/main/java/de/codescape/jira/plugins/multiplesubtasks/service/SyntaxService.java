@@ -53,6 +53,7 @@ public class SyntaxService {
             .on(NEWLINE)
             .withKeyValueSeparator(Splitter
                 .on(":")
+                .limit(2)
                 .trimResults()
                 .omitEmptyStrings())
             .split(prependSummaryKey);

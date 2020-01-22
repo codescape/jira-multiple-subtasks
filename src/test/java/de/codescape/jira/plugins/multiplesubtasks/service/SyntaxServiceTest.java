@@ -87,6 +87,24 @@ public class SyntaxServiceTest {
         assertThat(subTasks.get(0).getPriority(), is(equalTo("Critical")));
     }
 
+    @Test
+    public void shouldCreateSubTaskFromSummaryWithColon() {
+        String subTaskWithColon = "- developer: implement logic";
+
+        List<SubTask> subTasks = syntaxService.parseString(subTaskWithColon);
+        assertThat(subTasks.size(), is(equalTo(1)));
+        assertThat(subTasks.get(0).getSummary(), is(equalTo("developer: implement logic")));
+    }
+
+    @Test
+    public void shouldCreateSubTaskFromSummaryWithMultipleColons() {
+        String subTaskWithMultipleColons = "- developer: implement logic: some details";
+
+        List<SubTask> subTasks = syntaxService.parseString(subTaskWithMultipleColons);
+        assertThat(subTasks.size(), is(equalTo(1)));
+        assertThat(subTasks.get(0).getSummary(), is(equalTo("developer: implement logic: some details")));
+    }
+
     // negative tests
 
     @Test(expected = SubTaskFormatException.class)
