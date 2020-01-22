@@ -3,6 +3,7 @@ package de.codescape.jira.plugins.multiplesubtasks.action;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubTasksService;
+import de.codescape.jira.plugins.multiplesubtasks.service.SubTaskFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -56,7 +57,12 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
         String action = getParameter(Parameters.ACTION);
         if (action != null && action.equals("create")) {
             String tasks = getParameter("tasks");
-            createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, tasks);
+            try {
+                createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, tasks);
+            } catch (SubTaskFormatException e) {
+                addErrorMessage(e.getMessage());
+                return ERROR;
+            }
         }
         return SUCCESS;
     }

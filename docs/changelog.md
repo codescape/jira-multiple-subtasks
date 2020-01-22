@@ -34,6 +34,8 @@ Click on the version in the following list to see all changes since the previous
 * chore: rename service implementation for sub-tasks creation
 * feat: separate syntax parsing and sub-task creation (#21)
 * feat: use google splitter to interpret textual sub task representation (#22)
+* docs: add documentation to format exception
+* feat: catch errors during task creation and display error details
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
