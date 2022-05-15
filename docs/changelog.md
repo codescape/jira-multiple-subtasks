@@ -39,6 +39,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: inherit priority for new subtask from parent issue
 * docs: add documentation to subtask request
 * feat: improve parsing and accept colons in subtask summary
+* chore: update supported Jira versions and dependency versions
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0

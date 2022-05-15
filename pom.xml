@@ -33,17 +33,23 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Jira versions -->
-        <jira.version>8.5.1</jira.version>
+        <jira.version>8.22.2</jira.version>
         <jira.version.latest>${jira.version}</jira.version.latest>
-        <jira.version.enterprise>7.13.8</jira.version.enterprise>
-        <jira.version.oldest>7.6.16</jira.version.oldest>
+        <jira.version.enterprise>8.20.8</jira.version.enterprise>
+        <jira.version.oldest>8.5.19</jira.version.oldest>
 
         <!-- Dependency versions -->
-        <amps.version>8.0.4</amps.version>
-        <atlassian.spring.scanner.version>2.1.8</atlassian.spring.scanner.version>
-        <spring.version>5.1.5.RELEASE</spring.version>
+        <!-- see com.atlassian.jira:jira-project:${jira.version} for correct versions -->
+        <amps.version>8.1.0</amps.version>
+        <atlassian-spring-scanner.version>2.1.16</atlassian-spring-scanner.version>
+        <guava.version>26.0-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
+        <jsr311.version>1.1.1</jsr311.version>
+        <junit.version>4.13.1</junit.version>
+        <mockito.version>3.1.0</mockito.version>
         <quick.reload.version>3.0.0</quick.reload.version>
+        <servlet-api.version>3.1.0</servlet-api.version>
+        <spring.version>5.3.18</spring.version>
 
         <!-- Source encoding -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -66,7 +72,7 @@
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
             <artifactId>atlassian-spring-scanner-annotation</artifactId>
-            <version>${atlassian.spring.scanner.version}</version>
+            <version>${atlassian-spring-scanner.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -84,19 +90,19 @@
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
+            <version>${jsr311.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
+            <version>${servlet-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>26.0-jre</version>
+            <version>${guava.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -122,13 +128,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.1.0</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -229,7 +235,7 @@
             <plugin>
                 <groupId>com.atlassian.plugin</groupId>
                 <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
+                <version>${atlassian-spring-scanner.version}</version>
                 <executions>
                     <execution>
                         <goals>
