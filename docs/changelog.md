@@ -33,17 +33,18 @@ Click on the version in the following list to see all changes since the previous
 * feat: only render button for issues in projects with sub-tasks configured
 * chore: rename service implementation for sub-tasks creation
 * feat: separate syntax parsing and sub-task creation (#21)
-* feat: use google splitter to interpret textual sub task representation (#22)
+* feat: use google splitter to interpret textual sub-task representation (#22)
 * docs: add documentation to format exception
 * feat: catch errors during task creation and display error details
-* feat: inherit priority for new subtask from parent issue
-* docs: add documentation to subtask request
-* feat: improve parsing and accept colons in subtask summary
+* feat: inherit priority for new sub-task from parent issue
+* docs: add documentation to sub-task request
+* feat: improve parsing and accept colons in sub-task summary
 * chore: update supported Jira versions and dependency versions
 * chore: update Maven profiles using template from Scrum Poker for Jira
 * chore: replace deprecated JUnit assertions by Hamcrest assertions
 * feat: use provided priority or else fall back to priority of parent issue
-* i18n: change label for multiple subtasks dialog 
+* i18n: change label for multiple sub-tasks dialog
+* feat: display input string and potential input errors after submit
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0

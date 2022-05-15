@@ -15,6 +15,7 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
     private static final long serialVersionUID = 1L;
 
     private String issueKey;
+    private String tasksInput = "";
     private List<Issue> createdSubTasks;
 
     private final MultipleSubTasksService multipleSubTasksService;
@@ -25,7 +26,7 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
     }
 
     /**
-     * Names of all parameters used on the global configuration page.
+     * Names of all parameters used on the dialog page.
      */
     static final class Parameters {
 
@@ -51,14 +52,16 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
         return createdSubTasks;
     }
 
+    public String getTasksInput() { return tasksInput; }
+
     @Override
     protected String doExecute() {
         issueKey = getParameter("issueKey");
         String action = getParameter(Parameters.ACTION);
         if (action != null && action.equals("create")) {
-            String tasks = getParameter("tasks");
+            tasksInput = getParameter("tasks");
             try {
-                createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, tasks);
+                createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, tasksInput);
             } catch (SubTaskFormatException e) {
                 addErrorMessage(e.getMessage());
                 return ERROR;

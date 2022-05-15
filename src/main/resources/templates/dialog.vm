@@ -1,12 +1,24 @@
 <h2 class="dialog-title">$i18n.getText('multiplesubtasks.dialog.open')</h2>
 
+#if($action.hasAnyErrors())
+    <div class="aui-message aui-message-error">
+        <p class="title">$i18n.getText("multiplesubtasks.dialog.error")</p>
+        #foreach($error in $action.errorMessages)
+            <p>$error</p>
+        #end
+        #foreach($error in $action.errors)
+            <p>$error</p>
+        #end
+    </div>
+#end
+
 <form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
     <input type="hidden" name="issueKey" value="${issueKey}">
     <div class="content-body">
         <div class="field-group">
-            <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
-            <textarea name="tasks" class="textarea long-field" rows="10"></textarea>
-            <div class="description">$i18n.getText('tutorial.fields.users.desc')</div>
+            <label>$i18n.getText('multiplesubtasks.input.label') <span class="aui-icon icon-required"></span></label>
+            <textarea name="tasks" class="textarea long-field" rows="10">${tasksInput}</textarea>
+            <div class="description">$i18n.getText('multiplesubtasks.input.desc')</div>
         </div>
     </div>
     <div class="buttons-container content-footer">
@@ -22,7 +34,7 @@
 #if (!$createdSubTasks.isEmpty())
 
     <div class="content-body">
-        <p>Die folgenden Tasks wurden angelegt:</p>
+        <p>$i18n.getText('multiplesubtasks.confirmation.text')</p>
         <table width="100%" class="aui" id="issuetable">
             <tbody>
                 #set($counter = 1)
@@ -36,7 +48,7 @@
                         #if($subTask.assignee)
                             <a href="$baseurl/secure/ViewProfile.jspa?name=$subTask.assignee.key">$subTask.assignee.displayName</a>
                         #else
-                            <i>$i18n.getText("scrumpoker.issue.assignee.empty")</i>
+                            <i>$i18n.getText("multiplesubtasks.issue.assignee.empty")</i>
                         #end
                     </td>
                 </tr>

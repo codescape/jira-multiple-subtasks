@@ -38,6 +38,7 @@
             <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubTasksDialogAction"
                     alias="MultipleSubTasks" roles-required="use">
                 <view name="success">/templates/dialog.vm</view>
+                <view name="error">/templates/dialog.vm</view>
             </action>
         </actions>
     </webwork1>
