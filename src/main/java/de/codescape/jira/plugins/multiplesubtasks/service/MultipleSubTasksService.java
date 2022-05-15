@@ -14,8 +14,8 @@ import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.opensymphony.workflow.loader.ActionDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +34,7 @@ public class MultipleSubTasksService {
     private final SubTaskManager subTaskManager;
     private final PriorityManager priorityManager;
     private final AssigneeService assigneeService;
+    private final UserManager userManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SyntaxService syntaxService;
 
@@ -44,6 +45,7 @@ public class MultipleSubTasksService {
                                    @ComponentImport SubTaskManager subTaskManager,
                                    @ComponentImport PriorityManager priorityManager,
                                    @ComponentImport AssigneeService assigneeService,
+                                   @ComponentImport UserManager userManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                    SyntaxService syntaxService) {
         this.issueService = issueService;
@@ -52,6 +54,7 @@ public class MultipleSubTasksService {
         this.subTaskManager = subTaskManager;
         this.priorityManager = priorityManager;
         this.assigneeService = assigneeService;
+        this.userManager = userManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.syntaxService = syntaxService;
     }
@@ -112,13 +115,21 @@ public class MultipleSubTasksService {
                 newSubTask.setIssueType(subTaskTypes.get(0));
             }
 
-            // Assignee
+            // assignee
             // try to find provided assignee in the list of assignable users for current project and ignore users who are not assignable
             if (subTaskRequest.getAssignee() != null) {
                 ApplicationUser assignee = assigneeService.findAssignableUsers(subTaskRequest.getAssignee(), projectObject).stream()
                     .findFirst().orElse(null);
                 newSubTask.setAssignee(assignee);
             }
+
+            // reporter
+            // try to find provided reporter and otherwise use the current user
+            ApplicationUser reporter = null;
+            if (subTaskRequest.getReporter() != null) {
+                reporter = userManager.getUserByName(subTaskRequest.getReporter());
+            }
+            newSubTask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());
 
             // create and link the sub-task to the parent issue
             try {

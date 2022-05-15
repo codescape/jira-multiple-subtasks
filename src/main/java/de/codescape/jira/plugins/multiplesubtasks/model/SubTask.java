@@ -39,8 +39,18 @@ public class SubTask {
         return attributes.get("priority");
     }
 
+    /**
+     * Return the optional issue type of the subtask.
+     */
     public String getIssueType() {
         return attributes.get("issueType");
+    }
+
+    /**
+     * Return the optional reporter of the subtask.
+     */
+    public String getReporter() {
+        return attributes.get("reporter");
     }
 
 }
