@@ -13,7 +13,7 @@ Click on the version in the following list to see all changes since the previous
 
 * ...
 
-### [1.0.0] - Pending
+### [22.5.0] - Pending
 
 **First runnable version of Multiple Subtasks for Jira**
 
@@ -52,6 +52,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: support explicit input for description of the created subtasks
 * feat: improve dialog layout
 * feat: allow to reset the form after successfully creating subtasks
+* chore: cleanup versioning and readme
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
-[1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
+[22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0
