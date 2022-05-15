@@ -46,6 +46,7 @@ Click on the version in the following list to see all changes since the previous
 * i18n: change label for multiple sub-tasks dialog
 * feat: display input string and potential input errors after submit
 * feat: support explicit input for issue type of the created sub-tasks
+* chore: remove link to Travis CI
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
