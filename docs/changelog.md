@@ -56,6 +56,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: hints only display when input element is visible
 * feat: correctly style close button on dialog
 * chore: extract constants in code
+* docs: add documentation of currently supported syntax
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0
