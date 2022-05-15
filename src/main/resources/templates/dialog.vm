@@ -66,7 +66,7 @@
         <div class="aui-dialog2-footer-actions">
             <input type="hidden" name="action" value="create">
             <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
-            <a href="#" class="cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
+            <a href="#" class="aui-button aui-button-link cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
         </div>
         <div class="aui-dialog2-footer-hint"><a href="#">Hinweise zur Verwendung</a></div>
     </footer>
