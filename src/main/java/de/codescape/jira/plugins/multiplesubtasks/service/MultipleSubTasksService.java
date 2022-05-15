@@ -36,7 +36,7 @@ public class MultipleSubTasksService {
     private final AssigneeService assigneeService;
     private final UserManager userManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final SyntaxService syntaxService;
+    private final SubTasksSyntaxService subtasksSyntaxService;
 
     @Autowired
     public MultipleSubTasksService(@ComponentImport IssueService issueService,
@@ -47,7 +47,7 @@ public class MultipleSubTasksService {
                                    @ComponentImport AssigneeService assigneeService,
                                    @ComponentImport UserManager userManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
-                                   SyntaxService syntaxService) {
+                                   SubTasksSyntaxService subtasksSyntaxService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
@@ -56,7 +56,7 @@ public class MultipleSubTasksService {
         this.assigneeService = assigneeService;
         this.userManager = userManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
-        this.syntaxService = syntaxService;
+        this.subtasksSyntaxService = subtasksSyntaxService;
     }
 
     // docs https://community.atlassian.com/t5/Answers-Developer-Questions/Auto-create-subtask-and-assign-to-users/qaq-p/530837
@@ -79,7 +79,7 @@ public class MultipleSubTasksService {
             throw new RuntimeException("No sub-task types found.");
         }
 
-        syntaxService.parseString(inputString).forEach(subTaskRequest -> {
+        subtasksSyntaxService.parseString(inputString).forEach(subTaskRequest -> {
             MutableIssue newSubTask = issueFactory.getIssue();
             // parent issue
             newSubTask.setParentObject(parent);

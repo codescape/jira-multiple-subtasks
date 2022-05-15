@@ -3,10 +3,12 @@ package de.codescape.jira.plugins.multiplesubtasks.action;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubTasksService;
-import de.codescape.jira.plugins.multiplesubtasks.service.SubTaskFormatException;
+import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+
+import static de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubTasksDialogAction.Parameters.INPUT_STRING;
 
 // TODO add documentation
 // TODO create tests
@@ -14,24 +16,36 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
 
-    private String issueKey;
-    private String tasksInput = "";
-    private List<Issue> createdSubTasks;
-
-    private final MultipleSubTasksService multipleSubTasksService;
-
-    @Autowired
-    public MultipleSubTasksDialogAction(MultipleSubTasksService multipleSubTasksService) {
-        this.multipleSubTasksService = multipleSubTasksService;
-    }
-
     /**
-     * Names of all parameters used on the dialog page.
+     * Names of all parameters used on this page.
      */
     static final class Parameters {
 
         static final String ACTION = "action";
+        static final String INPUT_STRING = "inputString";
 
+    }
+
+    /**
+     * Values of all actions used on this page.
+     */
+    static final class Actions {
+
+        static final String CREATE = "create";
+        static final String RESET = "reset";
+
+
+    }
+
+    private final MultipleSubTasksService multipleSubTasksService;
+
+    private String issueKey;
+    private String inputString = "";
+    private List<Issue> createdSubTasks;
+
+    @Autowired
+    public MultipleSubTasksDialogAction(MultipleSubTasksService multipleSubTasksService) {
+        this.multipleSubTasksService = multipleSubTasksService;
     }
 
     /**
@@ -44,30 +58,47 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
         return getHttpRequest().getParameter(parameterName);
     }
 
+    /**
+     * Returns the current issue key.
+     */
     public String getIssueKey() {
         return issueKey;
     }
 
+    /**
+     * Returns the list of created subtasks.
+     */
     public List<Issue> getCreatedSubTasks() {
         return createdSubTasks;
     }
 
-    public String getTasksInput() { return tasksInput; }
+    /**
+     * Returns the original input string.
+     */
+    public String getInputString() {
+        return inputString;
+    }
 
     @Override
     protected String doExecute() {
         issueKey = getParameter("issueKey");
         String action = getParameter(Parameters.ACTION);
-        if (action != null && action.equals("create")) {
-            tasksInput = getParameter("tasks");
+        if (action != null && action.equals(Actions.CREATE)) {
+            inputString = getParameter(INPUT_STRING);
             try {
-                createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, tasksInput);
-            } catch (SubTaskFormatException e) {
+                createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
+            } catch (SyntaxFormatException e) {
                 addErrorMessage(e.getMessage());
                 return ERROR;
             }
+        } else if (action != null && action.equals(Actions.RESET)) {
+            clearInputString();
         }
         return SUCCESS;
+    }
+
+    private void clearInputString() {
+        inputString = "";
     }
 
 }

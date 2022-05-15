@@ -1,6 +1,7 @@
 package de.codescape.jira.plugins.multiplesubtasks.service;
 
 import de.codescape.jira.plugins.multiplesubtasks.model.SubTask;
+import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,13 +11,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class SyntaxServiceTest {
+public class SubTasksSyntaxServiceTest {
 
-    private SyntaxService syntaxService;
+    private SubTasksSyntaxService subtasksSyntaxService;
 
     @Before
     public void before() {
-        syntaxService = new SyntaxService();
+        subtasksSyntaxService = new SubTasksSyntaxService();
     }
 
     // positive tests
@@ -25,7 +26,7 @@ public class SyntaxServiceTest {
     public void shouldCreateSubTaskFromWellFormedLine() {
         String singleSubTask = "- create a single sub-task";
 
-        List<SubTask> subTasks = syntaxService.parseString(singleSubTask);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(singleSubTask);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getSummary(), is(equalTo("create a single sub-task")));
     }
@@ -34,7 +35,7 @@ public class SyntaxServiceTest {
     public void shouldCreateSubTaskFromLineWithMissingWhitespaceSeparator() {
         String singleSubTask = "-sub-task with missing whitespace-separator";
 
-        List<SubTask> subTasks = syntaxService.parseString(singleSubTask);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(singleSubTask);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with missing whitespace-separator")));
     }
@@ -43,7 +44,7 @@ public class SyntaxServiceTest {
     public void shouldCreateSubTaskFromLineWithLeadingWhitespace() {
         String singleSubTask = "   - sub-task with leading whitespace";
 
-        List<SubTask> subTasks = syntaxService.parseString(singleSubTask);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(singleSubTask);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with leading whitespace")));
     }
@@ -61,7 +62,7 @@ public class SyntaxServiceTest {
             "-       ein Task mit etwas vielen Leerzeichen am Anfang\n" +
             "- ein Task mit - Zeichen im Text\n" +
             " - ein Task mit Leerzeichen vor dem - Zeichen im Text";
-        List<SubTask> subTasks = syntaxService.parseString(complexCombinationOfSubTasks);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(complexCombinationOfSubTasks);
         assertThat(subTasks.size(), is(equalTo(7)));
     }
 
@@ -70,7 +71,7 @@ public class SyntaxServiceTest {
         String subTaskWithAssignee = "- sub-task with assignee\n" +
             "  assignee: codescape";
 
-        List<SubTask> subTasks = syntaxService.parseString(subTaskWithAssignee);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithAssignee);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with assignee")));
         assertThat(subTasks.get(0).getAssignee(), is(equalTo("codescape")));
@@ -81,7 +82,7 @@ public class SyntaxServiceTest {
         String subTaskWithAssignee = "- sub-task with priority\n" +
             "  priority: Critical";
 
-        List<SubTask> subTasks = syntaxService.parseString(subTaskWithAssignee);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithAssignee);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with priority")));
         assertThat(subTasks.get(0).getPriority(), is(equalTo("Critical")));
@@ -91,7 +92,7 @@ public class SyntaxServiceTest {
     public void shouldCreateSubTaskFromSummaryWithColon() {
         String subTaskWithColon = "- developer: implement logic";
 
-        List<SubTask> subTasks = syntaxService.parseString(subTaskWithColon);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithColon);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getSummary(), is(equalTo("developer: implement logic")));
     }
@@ -100,31 +101,31 @@ public class SyntaxServiceTest {
     public void shouldCreateSubTaskFromSummaryWithMultipleColons() {
         String subTaskWithMultipleColons = "- developer: implement logic: some details";
 
-        List<SubTask> subTasks = syntaxService.parseString(subTaskWithMultipleColons);
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithMultipleColons);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getSummary(), is(equalTo("developer: implement logic: some details")));
     }
 
     // negative tests
 
-    @Test(expected = SubTaskFormatException.class)
+    @Test(expected = SyntaxFormatException.class)
     public void shouldRejectASingleLineOfText() {
-        syntaxService.parseString("ein Task?");
+        subtasksSyntaxService.parseString("ein Task?");
     }
 
-    @Test(expected = SubTaskFormatException.class)
+    @Test(expected = SyntaxFormatException.class)
     public void shouldRejectMultipleLinesOfText() {
-        syntaxService.parseString("ein Task?\nund noch mehr Text?");
+        subtasksSyntaxService.parseString("ein Task?\nund noch mehr Text?");
     }
 
-    @Test(expected = SubTaskFormatException.class)
+    @Test(expected = SyntaxFormatException.class)
     public void shouldRejectMultipleLinesOfTextNotStartingWithATaskInFirstLine() {
-        syntaxService.parseString("kein Task\n- und jetzt ein Task");
+        subtasksSyntaxService.parseString("kein Task\n- und jetzt ein Task");
     }
 
-    @Test(expected = SubTaskFormatException.class)
+    @Test(expected = SyntaxFormatException.class)
     public void shouldRejectTaskWithAttributesThatAreNotKeyValueAttributes() {
-        syntaxService.parseString("- Ein Task mit Attribut ohne Wert\n" +
+        subtasksSyntaxService.parseString("- Ein Task mit Attribut ohne Wert\n" +
             "  assignee");
     }
 
