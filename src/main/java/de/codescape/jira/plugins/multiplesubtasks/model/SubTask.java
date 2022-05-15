@@ -26,6 +26,13 @@ public class SubTask {
     }
 
     /**
+     * Return the description of the subtask.
+     */
+    public String getDescription() {
+        return attributes.get("description");
+    }
+    
+    /**
      * Return the optional assignee of the subtask.
      */
     public String getAssignee() {

@@ -90,6 +90,12 @@ public class MultipleSubTasksService {
             // summary
             newSubTask.setSummary(subTaskRequest.getSummary());
 
+            // description
+            // use the optionally provided description
+            if (subTaskRequest.getDescription() != null) {
+                newSubTask.setDescription(subTaskRequest.getDescription());
+            }
+
             // priority
             // try to find provided priority otherwise fall back to priority of parent issue
             if (subTaskRequest.getPriority() != null) {
