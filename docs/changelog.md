@@ -50,6 +50,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: support explicit input for assignee of the created subtasks
 * feat: support explicit input for reporter of the created subtasks
 * feat: support explicit input for description of the created subtasks
+* feat: improve dialog layout
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0

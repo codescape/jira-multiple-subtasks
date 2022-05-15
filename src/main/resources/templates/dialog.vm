@@ -16,18 +16,17 @@
     <input type="hidden" name="issueKey" value="${issueKey}">
     <div class="content-body">
         <div class="field-group">
-            <label>$i18n.getText('multiplesubtasks.input.label') <span class="aui-icon icon-required"></span></label>
-            <textarea name="tasks" class="textarea long-field" rows="10">${tasksInput}</textarea>
-            <div class="description">$i18n.getText('multiplesubtasks.input.desc')</div>
+            <textarea name="tasks" class="textarea long-field" rows="10" required="required">${tasksInput}</textarea>
         </div>
     </div>
-    <div class="buttons-container content-footer">
-        <div class="buttons">
+  <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
             <input type="hidden" name="action" value="create">
             <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
             <a href="#" class="cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
         </div>
-    </div>
+        <div class="aui-dialog2-footer-hint"><a href="#">Hinweise zur Verwendung</a></div>
+    </footer>
 </form>
 
 #if ($createdSubTasks)
