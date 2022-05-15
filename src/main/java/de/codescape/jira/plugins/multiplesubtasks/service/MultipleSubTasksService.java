@@ -1,6 +1,7 @@
 package de.codescape.jira.plugins.multiplesubtasks.service;
 
 import com.atlassian.jira.bc.issue.IssueService;
+import com.atlassian.jira.config.PriorityManager;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
@@ -8,6 +9,7 @@ import com.atlassian.jira.issue.IssueFactory;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -26,6 +28,7 @@ public class MultipleSubTasksService {
     private final IssueFactory issueFactory;
     private final IssueManager issueManager;
     private final SubTaskManager subTaskManager;
+    private final PriorityManager priorityManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SyntaxService syntaxService;
 
@@ -34,12 +37,14 @@ public class MultipleSubTasksService {
                                    @ComponentImport IssueFactory issueFactory,
                                    @ComponentImport IssueManager issueManager,
                                    @ComponentImport SubTaskManager subTaskManager,
+                                   @ComponentImport PriorityManager priorityManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                    SyntaxService syntaxService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
         this.subTaskManager = subTaskManager;
+        this.priorityManager = priorityManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.syntaxService = syntaxService;
     }
@@ -66,10 +71,23 @@ public class MultipleSubTasksService {
 
         syntaxService.parseString(input).forEach(subTaskRequest -> {
             MutableIssue newSubTask = issueFactory.getIssue();
-            newSubTask.setSummary(subTaskRequest.getSummary());
             newSubTask.setParentObject(parent);
             newSubTask.setProjectObject(parent.getProjectObject());
-            newSubTask.setPriority(parent.getPriority());
+
+            // summary
+            newSubTask.setSummary(subTaskRequest.getSummary());
+
+            // priority
+            if (subTaskRequest.getPriority() != null) {
+                Priority priority = priorityManager.getPriorities().stream()
+                    .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
+                    .findFirst()
+                    .orElse(parent.getPriority());
+                newSubTask.setPriority(priority);
+            } else {
+                newSubTask.setPriority(parent.getPriority());
+            }
+
             newSubTask.setIssueType(subTaskType);
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubTask);

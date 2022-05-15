@@ -42,6 +42,7 @@ Click on the version in the following list to see all changes since the previous
 * chore: update supported Jira versions and dependency versions
 * chore: update Maven profiles using template from Scrum Poker for Jira
 * chore: replace deprecated JUnit assertions by Hamcrest assertions
+* feat: use provided priority or else fall back to priority of parent issue 
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
