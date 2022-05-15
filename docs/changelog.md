@@ -40,6 +40,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: add documentation to subtask request
 * feat: improve parsing and accept colons in subtask summary
 * chore: update supported Jira versions and dependency versions
+* chore: update Maven profiles using template from Scrum Poker for Jira
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/1.0.0...HEAD
 [1.0.0]: https://github.com/codescape/jira-multiple-subtasks/tree/1.0.0
