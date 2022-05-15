@@ -39,4 +39,8 @@ public class SubTask {
         return attributes.get("priority");
     }
 
+    public String getIssueType() {
+        return attributes.get("issueType");
+    }
+
 }

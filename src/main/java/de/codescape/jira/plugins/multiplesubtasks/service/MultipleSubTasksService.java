@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // TODO extract interface
 // TODO create tests
@@ -50,8 +51,8 @@ public class MultipleSubTasksService {
     }
 
     // docs https://community.atlassian.com/t5/Answers-Developer-Questions/Auto-create-subtask-and-assign-to-users/qaq-p/530837
-    public List<Issue> subTasksFromString(String issueKey, String input) {
-        ArrayList<Issue> subTasks = new ArrayList<>();
+    public List<Issue> subTasksFromString(String issueKey, String inputString) {
+        ArrayList<Issue> subTasksCreated = new ArrayList<>();
 
         IssueService.IssueResult issueResult = issueService.getIssue(jiraAuthenticationContext.getLoggedInUser(), issueKey);
         MutableIssue parent = issueResult.getIssue();
@@ -64,20 +65,24 @@ public class MultipleSubTasksService {
             throw new RuntimeException("Parent project not found.");
         }
 
-        IssueType subTaskType = projectObject.getIssueTypes().stream().filter(IssueType::isSubTask).findFirst().orElse(null);
-        if (subTaskType == null) {
-            throw new RuntimeException("No sub task types found.");
+        List<IssueType> subTaskTypes = projectObject.getIssueTypes().stream().filter(IssueType::isSubTask).collect(Collectors.toList());
+        if (subTaskTypes.isEmpty()) {
+            throw new RuntimeException("No sub-task types found.");
         }
 
-        syntaxService.parseString(input).forEach(subTaskRequest -> {
+        syntaxService.parseString(inputString).forEach(subTaskRequest -> {
             MutableIssue newSubTask = issueFactory.getIssue();
+            // parent issue
             newSubTask.setParentObject(parent);
+
+            // project
             newSubTask.setProjectObject(parent.getProjectObject());
 
             // summary
             newSubTask.setSummary(subTaskRequest.getSummary());
 
             // priority
+            // try to find provided priority otherwise fall back to priority of parent issue
             if (subTaskRequest.getPriority() != null) {
                 Priority priority = priorityManager.getPriorities().stream()
                     .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
@@ -88,17 +93,29 @@ public class MultipleSubTasksService {
                 newSubTask.setPriority(parent.getPriority());
             }
 
-            newSubTask.setIssueType(subTaskType);
+            // issueType
+            // try to find provided issue type otherwise fall back and use first sub-task type found
+            if (subTaskRequest.getIssueType() != null) {
+                IssueType issueType = subTaskTypes.stream()
+                    .filter(availableIssueType -> availableIssueType.getName().equals(subTaskRequest.getIssueType()))
+                    .findFirst().orElse(null);
+                newSubTask.setIssueType(issueType);
+            }
+            if (newSubTask.getIssueType() == null) {
+                newSubTask.setIssueType(subTaskTypes.get(0));
+            }
+
+            // create and link the sub-task to the parent issue
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubTask);
                 subTaskManager.createSubTaskIssueLink(parent, newSubTask, jiraAuthenticationContext.getLoggedInUser());
+                subTasksCreated.add(newSubTask);
             } catch (CreateException e) {
                 throw new RuntimeException(e);
             }
-            subTasks.add(newSubTask);
         });
 
-        return subTasks;
+        return subTasksCreated;
     }
 
 }
