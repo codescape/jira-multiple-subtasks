@@ -42,7 +42,7 @@
         <!-- see com.atlassian.jira:jira-project:${jira.version} for correct versions -->
         <amps.version>8.1.0</amps.version>
         <atlassian-spring-scanner.version>2.1.16</atlassian-spring-scanner.version>
-        <guava.version>26.0-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
         <jsr311.version>1.1.1</jsr311.version>
         <junit.version>4.13.1</junit.version>
