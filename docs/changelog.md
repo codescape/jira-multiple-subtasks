@@ -53,6 +53,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: improve dialog layout
 * feat: allow to reset the form after successfully creating subtasks
 * chore: cleanup versioning and readme
+* feat: hints only display when input element is visible
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0

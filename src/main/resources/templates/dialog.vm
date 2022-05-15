@@ -50,7 +50,6 @@
             <input class="aui-button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.reset')" />
             <a href="#" class="aui-button aui-button-primary cancel">$i18n.getText('multiplesubtasks.dialog.close')</a>
         </div>
-        <div class="aui-dialog2-footer-hint"><a href="#">Hinweise zur Verwendung</a></div>
     </footer>
 </form>
 
