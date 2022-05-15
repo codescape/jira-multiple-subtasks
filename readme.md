@@ -20,5 +20,4 @@ For users:
 
 For developers:
 
-* [Contribution Guide](https://github.com/codescape/jira-multiple-subtasks/blob/master/contributing.md)
 * [Changelog](https://github.com/codescape/jira-multiple-subtasks/blob/master/docs/changelog.md)
