@@ -23,6 +23,7 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
         static final String ACTION = "action";
         static final String INPUT_STRING = "inputString";
+        static final String ISSUE_KEY = "issueKey";
 
     }
 
@@ -81,18 +82,23 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
     @Override
     protected String doExecute() {
-        issueKey = getParameter("issueKey");
+        issueKey = getParameter(Parameters.ISSUE_KEY);
         String action = getParameter(Parameters.ACTION);
-        if (action != null && action.equals(Actions.CREATE)) {
-            inputString = getParameter(INPUT_STRING);
-            try {
-                createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
-            } catch (SyntaxFormatException e) {
-                addErrorMessage(e.getMessage());
-                return ERROR;
+        if (action != null) {
+            switch (action) {
+                case Actions.CREATE:
+                    inputString = getParameter(INPUT_STRING);
+                    try {
+                        createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
+                    } catch (SyntaxFormatException e) {
+                        addErrorMessage(e.getMessage());
+                        return ERROR;
+                    }
+                    break;
+                case Actions.RESET:
+                    clearInputString();
+                    break;
             }
-        } else if (action != null && action.equals(Actions.RESET)) {
-            clearInputString();
         }
         return SUCCESS;
     }
