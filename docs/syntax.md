@@ -91,3 +91,11 @@ In this example you will create a subtask with the components `backend` and `fro
       component: frontend
 
 Please note: If a provided component does not exist it will be ignored.
+
+If you want to inherit the components used on the parent issue you can specify this.
+You can also add other components explicitly.
+Given an issue with the component `backend` you can use the following statement to create a subtask with the component `backend` and another component `testing` added:
+
+    - A subtask that takes components from the parent issue
+      component: @inherit
+      component: testing

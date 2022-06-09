@@ -1,6 +1,7 @@
 package de.codescape.jira.plugins.multiplesubtasks.service;
 
 import com.atlassian.jira.bc.issue.IssueService;
+import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.bc.user.search.AssigneeService;
 import com.atlassian.jira.config.PriorityManager;
@@ -24,12 +25,15 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 // TODO extract interface (?)
 // TODO create tests
 @Component
 public class MultipleSubTasksService {
+
+    private static final String INHERIT_MARKER = "@inherit";
 
     private final IssueService issueService;
     private final IssueFactory issueFactory;
@@ -148,12 +152,17 @@ public class MultipleSubTasksService {
 
             // component(s)
             // add optional components to the subtask and ignore components that do not exist
-            newSubTask.setComponent(
-                subTaskRequest.getComponents().stream()
+            if (!subTaskRequest.getComponents().isEmpty()) {
+                Set<ProjectComponent> components = subTaskRequest.getComponents().stream()
+                    .filter(component -> !INHERIT_MARKER.equals(component))
                     .map(component -> projectComponentManager.findByComponentName(projectObject.getId(), component))
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toSet())
-            );
+                    .collect(Collectors.toSet());
+                if (subTaskRequest.getComponents().contains(INHERIT_MARKER)) {
+                    components.addAll(parent.getComponents());
+                }
+                newSubTask.setComponent(components);
+            }
 
             // create and link the sub-task to the parent issue
             try {
