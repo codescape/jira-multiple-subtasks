@@ -57,6 +57,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: correctly style close button on dialog
 * chore: extract constants in code
 * docs: add documentation of currently supported syntax
+* feat: support explicit input for labels of the created subtasks
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0

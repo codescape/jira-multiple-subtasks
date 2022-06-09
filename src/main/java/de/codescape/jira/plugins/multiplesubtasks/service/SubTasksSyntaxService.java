@@ -1,6 +1,7 @@
 package de.codescape.jira.plugins.multiplesubtasks.service;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
 import de.codescape.jira.plugins.multiplesubtasks.model.SubTask;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +36,7 @@ public class SubTasksSyntaxService {
         List<SubTask> subTasks = new ArrayList<>();
         splitInputIntoTasks(cleanedUpInput).forEach(entry -> {
             try {
-                subTasks.add(new SubTask(createMapFromSubTaskAttributes(entry)));
+                subTasks.add(new SubTask(createListOfSubTaskAttributes(entry)));
             } catch (IllegalArgumentException e) {
                 throw new SyntaxFormatException("Error reading subtask definition for entry '" + entry + "'", e);
             }
@@ -48,16 +48,25 @@ public class SubTasksSyntaxService {
      * Split the textual subtask representation into lines and create map entries from every line. As the starting line
      * only contains a value we add the key before interpreting the list of attributes.
      */
-    private Map<String, String> createMapFromSubTaskAttributes(String entry) {
-        String prependSummaryKey = "summary: " + entry;
-        return Splitter
+    private ArrayListMultimap<String, String> createListOfSubTaskAttributes(String entry) {
+        String entryWithSummary = "summary: " + entry;
+        List<String> attributesAsList = Splitter
             .on(NEWLINE)
-            .withKeyValueSeparator(Splitter
-                .on(":")
-                .limit(2)
-                .trimResults()
-                .omitEmptyStrings())
-            .split(prependSummaryKey);
+            .splitToList(entryWithSummary);
+        Splitter keyValueSeparator = Splitter
+            .on(":")
+            .limit(2)
+            .trimResults()
+            .omitEmptyStrings();
+        ArrayListMultimap<String, String> keyValues = ArrayListMultimap.create();
+        attributesAsList.forEach(attribute -> {
+            List<String> result = keyValueSeparator.splitToList(attribute);
+            if (result.size() != 2) {
+                throw new SyntaxFormatException("Attribute " + result.get(0) + " is missing a value!");
+            }
+            keyValues.put(result.get(0), result.get(1));
+        });
+        return keyValues;
     }
 
     /**

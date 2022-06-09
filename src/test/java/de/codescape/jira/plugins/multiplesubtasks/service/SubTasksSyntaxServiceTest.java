@@ -8,8 +8,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class SubTasksSyntaxServiceTest {
 
@@ -106,6 +105,16 @@ public class SubTasksSyntaxServiceTest {
         assertThat(subTasks.get(0).getSummary(), is(equalTo("developer: implement logic: some details")));
     }
 
+    @Test
+    public void shouldCreateSubTaskWithMultipleLabels() {
+        String subTaskWithMultipleLabels = "- a very label-ful task\n  label: one\n  label: two";
+
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithMultipleLabels);
+        assertThat(subTasks.size(), is(equalTo(1)));
+        assertThat(subTasks.get(0).getLabels().size(), is(equalTo(2)));
+        assertThat(subTasks.get(0).getLabels(), containsInAnyOrder("one", "two"));
+    }
+
     // negative tests
 
     @Test(expected = SyntaxFormatException.class)
@@ -127,6 +136,12 @@ public class SubTasksSyntaxServiceTest {
     public void shouldRejectTaskWithAttributesThatAreNotKeyValueAttributes() {
         subtasksSyntaxService.parseString("- Ein Task mit Attribut ohne Wert\n" +
             "  assignee");
+    }
+
+    @Test(expected = SyntaxFormatException.class)
+    public void shouldRejectTaskWithLabelThatContainsSpaces() {
+        subtasksSyntaxService.parseString("- Ein Task mit ungültigem Label\n" +
+            "  label: ein Label mit Leerzeichen");
     }
 
 }

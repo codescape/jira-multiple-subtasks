@@ -10,6 +10,7 @@ import com.atlassian.jira.issue.IssueFactory;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO extract interface
+// TODO extract interface (?)
 // TODO create tests
 @Component
 public class MultipleSubTasksService {
@@ -35,6 +36,7 @@ public class MultipleSubTasksService {
     private final PriorityManager priorityManager;
     private final AssigneeService assigneeService;
     private final UserManager userManager;
+    private final LabelManager labelManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SubTasksSyntaxService subtasksSyntaxService;
 
@@ -46,6 +48,7 @@ public class MultipleSubTasksService {
                                    @ComponentImport PriorityManager priorityManager,
                                    @ComponentImport AssigneeService assigneeService,
                                    @ComponentImport UserManager userManager,
+                                   @ComponentImport LabelManager labelManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                    SubTasksSyntaxService subtasksSyntaxService) {
         this.issueService = issueService;
@@ -55,6 +58,7 @@ public class MultipleSubTasksService {
         this.priorityManager = priorityManager;
         this.assigneeService = assigneeService;
         this.userManager = userManager;
+        this.labelManager = labelManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtasksSyntaxService = subtasksSyntaxService;
     }
@@ -145,6 +149,12 @@ public class MultipleSubTasksService {
             } catch (CreateException e) {
                 throw new RuntimeException(e);
             }
+
+            // label(s)
+            // add optional multiple labels to the just created sub task
+            subTaskRequest.getLabels().forEach(label ->
+                labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubTask.getId(), label, false)
+            );
         });
 
         return subTasksCreated;

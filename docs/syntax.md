@@ -19,6 +19,7 @@ In addition to the simple syntax you can specify additional attributes for each 
 
 #### Description
 
+By default, newly created subtasks will not have a description. 
 You can set the subtask's description.
 In this example you will create a subtask called `This subtask has a description!` with the description `This is the description to be added to the subtask.`: 
 
@@ -53,7 +54,7 @@ By default, newly created subtasks will not be assigned to a user.
 If you want to assign subtasks to a user you can do that using their usernames.
 In this example you will create a subtask assigned to user `bob`:
 
-    - Bob should do that subtasks
+    - Bob should do that subtask
       assignee: bob
 
 Please note: If the provided assignee cannot be found no assignee will be used.
@@ -68,3 +69,13 @@ In this example you will create a subtask with `stefan` as the reporter:
       reporter: stefan
 
 Please note: If the provided reporter cannot be found the current user will be used.
+
+### Label(s)
+
+By default, newly created subtasks will not have any labels.
+If you want to add one or more labels to the subtask you specify them.
+In this example you will create a subtask with the labels `release` and `bugfix` added.
+
+    - A subtask with labels, yeah!
+      label: release
+      label: bugfix
