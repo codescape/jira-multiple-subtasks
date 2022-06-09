@@ -1,6 +1,7 @@
 package de.codescape.jira.plugins.multiplesubtasks.service;
 
 import com.atlassian.jira.bc.issue.IssueService;
+import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.bc.user.search.AssigneeService;
 import com.atlassian.jira.config.PriorityManager;
 import com.atlassian.jira.config.SubTaskManager;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 // TODO extract interface (?)
@@ -36,6 +38,7 @@ public class MultipleSubTasksService {
     private final PriorityManager priorityManager;
     private final AssigneeService assigneeService;
     private final UserManager userManager;
+    private final ProjectComponentManager projectComponentManager;
     private final LabelManager labelManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SubTasksSyntaxService subtasksSyntaxService;
@@ -48,6 +51,7 @@ public class MultipleSubTasksService {
                                    @ComponentImport PriorityManager priorityManager,
                                    @ComponentImport AssigneeService assigneeService,
                                    @ComponentImport UserManager userManager,
+                                   @ComponentImport ProjectComponentManager projectComponentManager,
                                    @ComponentImport LabelManager labelManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                    SubTasksSyntaxService subtasksSyntaxService) {
@@ -58,6 +62,7 @@ public class MultipleSubTasksService {
         this.priorityManager = priorityManager;
         this.assigneeService = assigneeService;
         this.userManager = userManager;
+        this.projectComponentManager = projectComponentManager;
         this.labelManager = labelManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtasksSyntaxService = subtasksSyntaxService;
@@ -141,6 +146,15 @@ public class MultipleSubTasksService {
             }
             newSubTask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());
 
+            // component(s)
+            // add optional components to the subtask and ignore components that do not exist
+            newSubTask.setComponent(
+                subTaskRequest.getComponents().stream()
+                    .map(component -> projectComponentManager.findByComponentName(projectObject.getId(), component))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet())
+            );
+
             // create and link the sub-task to the parent issue
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubTask);
@@ -151,7 +165,7 @@ public class MultipleSubTasksService {
             }
 
             // label(s)
-            // add optional multiple labels to the just created sub task
+            // add optional multiple labels to the just created sub task (we need the ID of the sub task to add them)
             subTaskRequest.getLabels().forEach(label ->
                 labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubTask.getId(), label, false)
             );

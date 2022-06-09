@@ -73,9 +73,21 @@ Please note: If the provided reporter cannot be found the current user will be u
 #### Label(s)
 
 By default, newly created subtasks will not have any labels.
-If you want to add one or more labels to the subtask you specify them.
+If you want to add one or more labels to the subtask you can specify them.
 In this example you will create a subtask with the labels `release` and `bugfix` added.
 
     - A subtask with labels, yeah!
       label: release
       label: bugfix
+
+#### Component(s)
+
+By default, newly created subtasks will not have any components.
+If you want to add one or more components to the subtask you can specify them.
+In this example you will create a subtask with the components `backend` and `frontend` added.
+
+    - A subtask with components
+      component: backend
+      component: frontend
+
+Please note: If a provided component does not exist it will be ignored.

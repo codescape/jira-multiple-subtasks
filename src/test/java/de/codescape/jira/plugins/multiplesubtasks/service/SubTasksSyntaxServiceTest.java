@@ -107,12 +107,27 @@ public class SubTasksSyntaxServiceTest {
 
     @Test
     public void shouldCreateSubTaskWithMultipleLabels() {
-        String subTaskWithMultipleLabels = "- a very label-ful task\n  label: one\n  label: two";
+        String subTaskWithMultipleLabels = "- a very label-ful task\n" +
+            "  label: one\n" +
+            "  label: two";
 
         List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithMultipleLabels);
         assertThat(subTasks.size(), is(equalTo(1)));
         assertThat(subTasks.get(0).getLabels().size(), is(equalTo(2)));
         assertThat(subTasks.get(0).getLabels(), containsInAnyOrder("one", "two"));
+    }
+
+    @Test
+    public void shouldCreateSubTaskWithMultipleComponents() {
+        String subTaskWithMultipleComponents = "- full stack implementation task\n" +
+            "  component: backend\n" +
+            "  component: frontend\n" +
+            "  component: rest";
+
+        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithMultipleComponents);
+        assertThat(subTasks.size(), is(equalTo(1)));
+        assertThat(subTasks.get(0).getComponents().size(), is(equalTo(3)));
+        assertThat(subTasks.get(0).getComponents(), containsInAnyOrder("backend", "frontend", "rest"));
     }
 
     // negative tests
@@ -124,12 +139,14 @@ public class SubTasksSyntaxServiceTest {
 
     @Test(expected = SyntaxFormatException.class)
     public void shouldRejectMultipleLinesOfText() {
-        subtasksSyntaxService.parseString("ein Task?\nund noch mehr Text?");
+        subtasksSyntaxService.parseString("ein Task?\n" +
+            "und noch mehr Text?");
     }
 
     @Test(expected = SyntaxFormatException.class)
     public void shouldRejectMultipleLinesOfTextNotStartingWithATaskInFirstLine() {
-        subtasksSyntaxService.parseString("kein Task\n- und jetzt ein Task");
+        subtasksSyntaxService.parseString("kein Task\n" +
+            "- und jetzt ein Task");
     }
 
     @Test(expected = SyntaxFormatException.class)

@@ -17,6 +17,7 @@ public class SubTask {
     private final String issueType;
     private final String reporter;
     private final List<String> labels;
+    private final List<String> components;
 
     /**
      * Create a subtask with the provided attributes.
@@ -31,6 +32,7 @@ public class SubTask {
         issueType = ensureSingleValue(attributes, "issueType");
         reporter = ensureSingleValue(attributes, "reporter");
         labels = ensureValidLabels(attributes);
+        components = attributes.get("component");
     }
 
     /**
@@ -80,6 +82,13 @@ public class SubTask {
      */
     public List<String> getLabels() {
         return labels;
+    }
+
+    /**
+     * Return the optional components of the subtask.
+     */
+    public List<String> getComponents() {
+        return components;
     }
 
     private String ensureSingleValue(ArrayListMultimap<String, String> attributes, String key) {
