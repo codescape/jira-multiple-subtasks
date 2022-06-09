@@ -175,9 +175,18 @@ public class MultipleSubTasksService {
 
             // label(s)
             // add optional multiple labels to the just created sub task (we need the ID of the sub task to add them)
-            subTaskRequest.getLabels().forEach(label ->
-                labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubTask.getId(), label, false)
-            );
+            if (!subTaskRequest.getLabels().isEmpty()) {
+                if (subTaskRequest.getLabels().contains(INHERIT_MARKER)) {
+                    parent.getLabels().forEach(label ->
+                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubTask.getId(), label.getLabel(), false)
+                    );
+                }
+                subTaskRequest.getLabels().stream()
+                    .filter(label -> !INHERIT_MARKER.equals(label))
+                    .forEach(label ->
+                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubTask.getId(), label, false)
+                    );
+            }
         });
 
         return subTasksCreated;
