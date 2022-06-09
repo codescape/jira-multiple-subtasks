@@ -80,6 +80,14 @@ In this example you will create a subtask with the labels `release` and `bugfix`
       label: release
       label: bugfix
 
+If you want to inherit the labels used on the parent issue you can specify this.
+In this example you will inherit the labels from the parent issue:
+
+    - A subtask with labels, yeah!
+      label: @inherit
+
+Please note: You can still add other labels while inheriting labels from the parent issue.
+
 #### Component(s)
 
 By default, newly created subtasks will not have any components.
