@@ -70,7 +70,7 @@ In this example you will create a subtask with `stefan` as the reporter:
 
 Please note: If the provided reporter cannot be found the current user will be used.
 
-### Label(s)
+#### Label(s)
 
 By default, newly created subtasks will not have any labels.
 If you want to add one or more labels to the subtask you specify them.
