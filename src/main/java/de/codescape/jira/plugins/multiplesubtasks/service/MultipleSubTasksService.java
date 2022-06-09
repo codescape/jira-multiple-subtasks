@@ -106,7 +106,7 @@ public class MultipleSubTasksService {
             // description
             // use the optionally provided description
             if (subTaskRequest.getDescription() != null) {
-                newSubTask.setDescription(subTaskRequest.getDescription());
+                newSubTask.setDescription(subTaskRequest.getDescription().replaceAll("\\{n}", "\n"));
             }
 
             // priority

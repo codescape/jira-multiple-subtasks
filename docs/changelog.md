@@ -61,6 +61,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: support explicit input for components of the created subtasks
 * feat: components can be inherited from parent issue
 * feat: labels can be inherited from parent issue
+* feat: description can be a multi-line description
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0

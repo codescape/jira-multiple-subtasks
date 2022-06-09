@@ -26,6 +26,19 @@ In this example you will create a subtask called `This subtask has a description
     - This subtask has a description!
       description: This is the description to be added to the subtask. 
 
+You can also provide a multi-line description using `{n}` to declare a newline.
+In this example you will create a subtask with a multi-line description that also has a list in it:
+
+    - demo for multi-line description
+      description: This description{n}- comes with a list item{n}- and another list item{n}{n}and a new paragraph
+
+The result will look like this:
+
+    This description
+    - comes with a list item
+    - and another list item
+    and a new paragraph
+
 #### Priority
 
 By default, the priority of the parent issue will be used for the new subtask.
