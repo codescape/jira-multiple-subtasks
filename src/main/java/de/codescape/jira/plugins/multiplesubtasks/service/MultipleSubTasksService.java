@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 public class MultipleSubTasksService {
 
     private static final String INHERIT_MARKER = "@inherit";
+    private static final String CURRENT_MARKER = "@current";
 
     private final IssueService issueService;
     private final IssueFactory issueFactory;
@@ -137,9 +138,14 @@ public class MultipleSubTasksService {
             // assignee
             // try to find provided assignee in the list of assignable users for current project and ignore users who are not assignable
             if (subTaskRequest.getAssignee() != null) {
-                ApplicationUser assignee = assigneeService.findAssignableUsers(subTaskRequest.getAssignee(), projectObject).stream()
-                    .findFirst().orElse(null);
-                newSubTask.setAssignee(assignee);
+                if (INHERIT_MARKER.equals(subTaskRequest.getAssignee())) {
+                    newSubTask.setAssignee(parent.getAssignee());
+                } else if (CURRENT_MARKER.equals(subTaskRequest.getAssignee())) {
+                    newSubTask.setAssignee(jiraAuthenticationContext.getLoggedInUser());
+                } else {
+                    newSubTask.setAssignee(assigneeService.findAssignableUsers(subTaskRequest.getAssignee(), projectObject)
+                        .stream().findFirst().orElse(null));
+                }
             }
 
             // reporter

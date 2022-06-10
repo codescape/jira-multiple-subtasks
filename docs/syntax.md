@@ -72,6 +72,16 @@ In this example you will create a subtask assigned to user `bob`:
 
 Please note: If the provided assignee cannot be found no assignee will be used.
 
+You can also assign the subtask to the current user:
+
+    - This subtask is assigned to the logged in user
+      assignee: @current
+
+And you can also inherit the assignee of the parent issue:
+
+    - This subtask is assigned to the assignee of the parent issue
+      assignee: @inherit
+
 #### Reporter
 
 By default, the current user will be used as the reporter on newly created subtasks.
