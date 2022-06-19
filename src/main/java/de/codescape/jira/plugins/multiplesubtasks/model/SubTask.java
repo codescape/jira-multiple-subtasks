@@ -1,14 +1,32 @@
 package de.codescape.jira.plugins.multiplesubtasks.model;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * This class represents the request to create a new subtask with the given attributes.
  */
 public class SubTask {
+
+    /**
+     * Container for all named attributes that are interpreted in sub task syntax.
+     */
+    static class Attributes {
+
+        static final String SUMMARY = "summary";
+        static final String DESCRIPTION = "description";
+        static final String ASSIGNEE = "assignee";
+        static final String PRIORITY = "priority";
+        static final String ISSUE_TYPE = "issueType";
+        static final String REPORTER = "reporter";
+        static final String COMPONENT = "component";
+        static final String LABEL = "label";
+
+        static final List<String> ALL = Arrays.asList(SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL);
+
+    }
 
     private final String summary;
     private final String description;
@@ -25,14 +43,15 @@ public class SubTask {
      * @param attributes map of attributes
      */
     public SubTask(ArrayListMultimap<String, String> attributes) {
-        summary = ensureSingleValue(attributes, "summary");
-        description = ensureSingleValue(attributes, "description");
-        assignee = ensureSingleValue(attributes, "assignee");
-        priority = ensureSingleValue(attributes, "priority");
-        issueType = ensureSingleValue(attributes, "issueType");
-        reporter = ensureSingleValue(attributes, "reporter");
+        verifyOnlyKnownAttributes(attributes);
+        summary = ensureSingleValue(attributes, Attributes.SUMMARY);
+        description = ensureSingleValue(attributes, Attributes.DESCRIPTION);
+        assignee = ensureSingleValue(attributes, Attributes.ASSIGNEE);
+        priority = ensureSingleValue(attributes, Attributes.PRIORITY);
+        issueType = ensureSingleValue(attributes, Attributes.ISSUE_TYPE);
+        reporter = ensureSingleValue(attributes, Attributes.REPORTER);
         labels = ensureValidLabels(attributes);
-        components = attributes.get("component");
+        components = attributes.get(Attributes.COMPONENT);
     }
 
     /**
@@ -91,20 +110,29 @@ public class SubTask {
         return components;
     }
 
+    /* internal helper methods */
+
     private String ensureSingleValue(ArrayListMultimap<String, String> attributes, String key) {
-        List<String> valuesForKey = attributes.get(key);
-        if (valuesForKey.size() > 1) {
+        List<String> values = attributes.get(key);
+        if (values.size() > 1) {
             throw new SyntaxFormatException("Attribute " + key + " may only be used once per task.");
         }
-        return valuesForKey.size() == 0 ? null : valuesForKey.get(0);
+        return values.isEmpty() ? null : values.get(0);
     }
 
     private List<String> ensureValidLabels(ArrayListMultimap<String, String> attributes) {
-        List<String> values = attributes.get("label");
+        List<String> values = attributes.get(Attributes.LABEL);
         if (values.stream().anyMatch(s -> s.contains(" "))) {
             throw new SyntaxFormatException("Labels must not contain spaces.");
         }
         return values;
+    }
+
+    private void verifyOnlyKnownAttributes(ArrayListMultimap<String, String> attributes) {
+        attributes.forEach((key, value) -> {
+            if (!Attributes.ALL.contains(key))
+                throw new SyntaxFormatException("Unknown attribute " + key + " found.");
+        });
     }
 
 }
