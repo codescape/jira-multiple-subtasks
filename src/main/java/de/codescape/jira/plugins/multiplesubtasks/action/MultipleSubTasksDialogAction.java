@@ -1,6 +1,8 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.security.request.RequestMethod;
+import com.atlassian.jira.security.request.SupportedMethods;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubTasksService;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
@@ -34,7 +36,6 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
         static final String CREATE = "create";
         static final String RESET = "reset";
-
 
     }
 
@@ -81,23 +82,24 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
     }
 
     @Override
+    @SupportedMethods({ RequestMethod.GET, RequestMethod.POST})
     protected String doExecute() {
         issueKey = getParameter(Parameters.ISSUE_KEY);
         String action = getParameter(Parameters.ACTION);
         if (action != null) {
             switch (action) {
-                case Actions.CREATE:
-                    inputString = getParameter(INPUT_STRING);
-                    try {
-                        createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
-                    } catch (SyntaxFormatException e) {
-                        addErrorMessage(e.getMessage());
-                        return ERROR;
-                    }
-                    break;
-                case Actions.RESET:
-                    clearInputString();
-                    break;
+            case Actions.CREATE:
+                inputString = getParameter(INPUT_STRING);
+                try {
+                    createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
+                } catch (SyntaxFormatException e) {
+                    addErrorMessage(e.getMessage());
+                    return ERROR;
+                }
+                break;
+            case Actions.RESET:
+                clearInputString();
+                break;
             }
         }
         return SUCCESS;
