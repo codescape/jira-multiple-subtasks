@@ -16,6 +16,7 @@
 
 <form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
     <input type="hidden" name="issueKey" value="${issueKey}">
+    <input type="hidden" name="atl_token" value="$atl_token">
 
     <div class="aui-message aui-message-confirmation">
         <p class="title">$i18n.getText("multiplesubtasks.dialog.success")</p>
@@ -57,6 +58,7 @@
 
 <form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
     <input type="hidden" name="issueKey" value="${issueKey}">
+    <input type="hidden" name="atl_token" value="$atl_token">
     <div class="content-body">
         <div class="field-group">
             <textarea name="inputString" class="textarea long-field" rows="12" required="required">${inputString}</textarea>
