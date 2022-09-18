@@ -1,7 +1,8 @@
 package de.codescape.jira.plugins.multiplesubtasks.condition;
 
-import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.issuetype.MockIssueType;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
@@ -13,24 +14,26 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 public class DisplayDialogForIssueConditionTest {
 
     @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
+    public MockitoRule mockitoRule = MockitoJUnit.rule().silent();
 
     @InjectMocks
     private DisplayDialogForIssueCondition condition;
 
     @Mock
-    private Issue issue;
+    private ApplicationUser user;
 
     @Mock
-    private ApplicationUser applicationUser;
+    private MutableIssue issue;
 
     @Mock
     private JiraHelper jiraHelper;
@@ -38,67 +41,41 @@ public class DisplayDialogForIssueConditionTest {
     @Mock
     private Project project;
 
-    @Mock
-    private IssueType issueType;
-
-    /* shouldDisplay */
-
     @Test
-    public void shouldDisplayWhenIssueIsNotASubtaskAndProjectHasSubtasksConfigured() {
-        issueIsNotASubtask();
-        projectHasSubtasksConfigured();
-
-        assertThat(condition.shouldDisplay(applicationUser, issue, jiraHelper), is(true));
+    public void shouldReturnFalseForSubtask() {
+        expectIssueToBeSubtask(true);
+        expectProjectHasSubtasks(true);
+        assertThat(condition.shouldDisplay(user, issue, jiraHelper), is(equalTo(false)));
     }
 
     @Test
-    public void shouldNotDisplayWhenIssueIsASubtaskAndProjectHasSubtasksConfigured() {
-        issueIsASubtask();
-        projectHasSubtasksConfigured();
-
-        assertThat(condition.shouldDisplay(applicationUser, issue, jiraHelper), is(false));
+    public void shouldReturnFalseForProjectWithoutSubtasks() {
+        expectIssueToBeSubtask(false);
+        expectProjectHasSubtasks(false);
+        assertThat(condition.shouldDisplay(user, issue, jiraHelper), is(equalTo(false)));
     }
 
     @Test
-    public void shouldNotDisplayWhenIssueIsANotSubtaskAndProjectHasNotSubtasksConfigured() {
-        issueIsNotASubtask();
-        projectHasNoSubtasksConfigured();
-
-        assertThat(condition.shouldDisplay(applicationUser, issue, jiraHelper), is(false));
+    public void shouldReturnTrueForIssueInProjectWithSubtasks() {
+        expectIssueToBeSubtask(false);
+        expectProjectHasSubtasks(true);
+        assertThat(condition.shouldDisplay(user, issue, jiraHelper), is(equalTo(true)));
     }
 
-    @Test
-    public void shouldNotDisplayWhenIssueIsASubtaskAndProjectHasNoSubtasksConfigured() {
-        issueIsASubtask();
-        projectHasNoSubtasksConfigured();
+    /* helper methods */
 
-        assertThat(condition.shouldDisplay(applicationUser, issue, jiraHelper), is(false));
+    private void expectIssueToBeSubtask(boolean isSubtask) {
+        when(issue.isSubTask()).thenReturn(isSubtask);
     }
 
-    /* helpers */
-
-    private void projectHasNoSubtasksConfigured() {
+    private void expectProjectHasSubtasks(boolean projectHasSubtasks) {
         when(issue.getProjectObject()).thenReturn(project);
-        ArrayList<IssueType> issueTypes = new ArrayList<>();
-        issueTypes.add(issueType);
+        Collection<IssueType> issueTypes = new ArrayList<>();
+        issueTypes.add(new MockIssueType("110", "ISSUE", "Standard Issue", false));
+        if (projectHasSubtasks) {
+            issueTypes.add(new MockIssueType("111", "SUBTASK", "Sub Task", true));
+        }
         when(project.getIssueTypes()).thenReturn(issueTypes);
-        when(issueType.isSubTask()).thenReturn(false);
-    }
-
-    private void projectHasSubtasksConfigured() {
-        when(issue.getProjectObject()).thenReturn(project);
-        ArrayList<IssueType> issueTypes = new ArrayList<>();
-        issueTypes.add(issueType);
-        when(project.getIssueTypes()).thenReturn(issueTypes);
-        when(issueType.isSubTask()).thenReturn(true);
-    }
-
-    private void issueIsNotASubtask() {
-        when(issue.isSubTask()).thenReturn(false);
-    }
-
-    private void issueIsASubtask() {
-        when(issue.isSubTask()).thenReturn(true);
     }
 
 }

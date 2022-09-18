@@ -1,9 +1,12 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.security.request.RequestMethod;
+import com.atlassian.jira.security.request.SupportedMethods;
+import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
-import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubTasksService;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
+import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubTasksService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -34,7 +37,6 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
         static final String CREATE = "create";
         static final String RESET = "reset";
-
 
     }
 
@@ -81,23 +83,41 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
     }
 
     @Override
-    protected String doExecute() {
+    @SupportedMethods({ RequestMethod.GET })
+    public String doDefault() {
         issueKey = getParameter(Parameters.ISSUE_KEY);
+
+        if (issueKey == null) {
+            addErrorMessage("No issue key provided!");
+            return ERROR;
+        }
+
+        return SUCCESS;
+    }
+
+    @Override
+    @RequiresXsrfCheck
+    @SupportedMethods({ RequestMethod.POST })
+    protected String doExecute() {
+        if (ERROR.equals(doDefault())) {
+            return ERROR;
+        }
+
         String action = getParameter(Parameters.ACTION);
         if (action != null) {
             switch (action) {
-                case Actions.CREATE:
-                    inputString = getParameter(INPUT_STRING);
-                    try {
-                        createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
-                    } catch (SyntaxFormatException e) {
-                        addErrorMessage(e.getMessage());
-                        return ERROR;
-                    }
-                    break;
-                case Actions.RESET:
-                    clearInputString();
-                    break;
+            case Actions.CREATE:
+                inputString = getParameter(INPUT_STRING);
+                try {
+                    createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
+                } catch (SyntaxFormatException e) {
+                    addErrorMessage(e.getMessage());
+                    return ERROR;
+                }
+                break;
+            case Actions.RESET:
+                clearInputString();
+                break;
             }
         }
         return SUCCESS;

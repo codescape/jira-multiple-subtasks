@@ -63,7 +63,10 @@ Click on the version in the following list to see all changes since the previous
 * feat: labels can be inherited from parent issue
 * feat: description can be a multi-line description
 * feat: assign subtask to current user or inherit from parent issue
-* test: add tests for condition to render popup
+* test: add tests for condition checks to render dialog
+* feat: reject unknown attributes for subtasks
+* feat: improve compatibility with Jira 9.0.0
+* feat: include xsrf check for form submission (#31)
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0
