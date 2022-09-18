@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
  * - issue is not a sub-task itself and thus is allowed to have sub-tasks
  * - project the issue is in has sub-tasks configured
  */
-// TODO implement tests
 @Component
 public class DisplayDialogForIssueCondition extends AbstractIssueWebCondition {
 
