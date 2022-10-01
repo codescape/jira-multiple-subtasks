@@ -5,6 +5,9 @@ title: Changelog
 
 This document explains the syntax to create tasks with Multiple Subtasks for Jira.
 
+* Table of Contents
+{:toc}
+
 ## Simple Syntax
 
 To create three simple subtasks just have three lines starting with the `-` followed by the summary of each subtask:
