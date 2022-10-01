@@ -10,6 +10,9 @@
         <!-- logos -->
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
+
+        <!-- licensing -->
+        <param name="atlassian-licensing-enabled">${atlassian.licensing.enabled}</param>
     </plugin-info>
 
     <!-- i18n message bundle -->
