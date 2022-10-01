@@ -67,6 +67,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: reject unknown attributes for subtasks
 * feat: improve compatibility with Jira 9.0.0
 * feat: include xsrf check for form submission (#31)
+* feat: ensure compatibility with Jira 8.x and 9.x
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0
