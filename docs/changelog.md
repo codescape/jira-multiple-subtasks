@@ -13,7 +13,7 @@ Click on the version in the following list to see all changes since the previous
 
 * ...
 
-### [22.5.0] - Pending
+### [22.X.0] - Pending
 
 **First runnable version of Multiple Subtasks for Jira**
 

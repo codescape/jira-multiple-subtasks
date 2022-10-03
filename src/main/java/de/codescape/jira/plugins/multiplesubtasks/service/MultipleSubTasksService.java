@@ -124,7 +124,7 @@ public class MultipleSubTasksService {
             }
 
             // issueType
-            // try to find provided issue type otherwise fall back and use first sub-task type found
+            // try to find provided issue type otherwise fall back and use first subtask type found
             if (subTaskRequest.getIssueType() != null) {
                 IssueType issueType = subTaskTypes.stream()
                     .filter(availableIssueType -> availableIssueType.getName().equals(subTaskRequest.getIssueType()))
@@ -170,7 +170,7 @@ public class MultipleSubTasksService {
                 newSubTask.setComponent(components);
             }
 
-            // create and link the sub-task to the parent issue
+            // create and link the subtask to the parent issue
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubTask);
                 subTaskManager.createSubTaskIssueLink(parent, newSubTask, jiraAuthenticationContext.getLoggedInUser());
@@ -180,7 +180,7 @@ public class MultipleSubTasksService {
             }
 
             // label(s)
-            // add optional multiple labels to the just created sub task (we need the ID of the sub task to add them)
+            // add optional multiple labels to the just created subtask (we need the ID of the subtask to add them)
             if (!subTaskRequest.getLabels().isEmpty()) {
                 if (subTaskRequest.getLabels().contains(INHERIT_MARKER)) {
                     parent.getLabels().forEach(label ->

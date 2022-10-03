@@ -11,7 +11,7 @@ import java.util.List;
 public class SubTask {
 
     /**
-     * Container for all named attributes that are interpreted in sub task syntax.
+     * Container for all named attributes that are interpreted in subtask syntax.
      */
     static class Attributes {
 
