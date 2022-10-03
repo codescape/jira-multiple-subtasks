@@ -22,7 +22,7 @@ public class SubTasksSyntaxService {
     private static final String MINUS_SIGN = "-";
 
     /**
-     * Parse a input string and try to transform it into potentially multiple subtasks.
+     * Parse an input string and try to transform it into potentially multiple subtasks.
      *
      * @param input given textual representation of subtasks
      * @return list of subtasks
@@ -71,7 +71,7 @@ public class SubTasksSyntaxService {
 
     /**
      * Split the provided input string whenever a minus sign is the first element after a newline. This is what we
-     * interpret as the start of a new subtask. Since the first sub task has no newline before the minus sign we add
+     * interpret as the start of a new subtask. Since the first subtask has no newline before the minus sign we add
      * this before splitting.
      */
     private Iterable<String> splitInputIntoTasks(String cleanedUpInput) {
