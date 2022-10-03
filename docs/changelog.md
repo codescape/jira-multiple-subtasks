@@ -72,6 +72,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: add table of content to syntax page
 * feat: enable licensing for plugin
 * docs: provide initial version of the documentation pages
+* docs: update readme and reference documentation
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0

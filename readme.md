@@ -7,16 +7,4 @@ Multiple Subtasks for Jira enables your teams to easily create multiple subtasks
 [![License](https://img.shields.io/github/license/codescape/jira-multiple-subtasks.svg)](license.txt)
 [![CalVer](https://img.shields.io/badge/calver-YY.MM.MICRO-22bfda.svg)](https://calver.org/)
 
-## Highlights
-
-* TODO
-
-## Resources
-
-For users:
-
-* [Syntax](https://github.com/codescape/jira-multiple-subtasks/blob/master/docs/syntax.md)
-
-For developers:
-
-* [Changelog](https://github.com/codescape/jira-multiple-subtasks/blob/master/docs/changelog.md)
+Visit our official documentation at [jira-multiple-subtasks.codescape.de](https://jira-multiple-subtasks.codescape.de) to learn more about Multiple Subtasks for Jira.
