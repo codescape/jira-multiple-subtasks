@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Changelog
+title: Syntax for subtask creation
 ---
 
 This document explains the syntax to create tasks with Multiple Subtasks for Jira.
