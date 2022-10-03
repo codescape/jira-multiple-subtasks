@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/skeleton.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="/js/site.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <section class="header">
+        <img class="logo" src="/images/multiple-subtasks-logo.png" alt="Multiple Subtasks for Jira">
+        <h1 class="title">{{ site.title }}</h1>
+        {% if page.category %}
+        <h3>{{ page.category }}</h3>
+        {% endif %}
+    </section>
+
+    <div class="navbar-spacer"></div>
+    <nav class="navbar">
+        <a href="#top" class="hamburger">&#9776;</a>
+        <div class="container">
+            <ul class="navbar-list">
+                <li class="navbar-item"><a class="navbar-link" href="/">Introduction</a></li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#" data-popover="#userGuideNavPopover">User Guide</a>
+                    <div id="userGuideNavPopover" class="popover">
+                        <ul class="popover-list">
+                            <li class="popover-item">
+                                <a class="popover-link" href="/syntax">Syntax for Subtask Creation</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#" data-popover="#administrationNavPopover">Administration</a>
+                    <div id="administrationNavPopover" class="popover">
+                        <ul class="popover-list">
+                            <li class="popover-item">
+                                <a class="popover-link" href="/installation">Installation</a>
+                            </li>
+                            <li class="popover-item">
+                                <a class="popover-link" href="/configuration">Configuration</a>
+                            </li>
+                            <li class="popover-item">
+                                <a class="popover-link" href="/compatibility-matrix">Compatibility Matrix</a>
+                            </li>
+                            <li class="popover-item">
+                                <a class="popover-link" href="/changelog">Changelog</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#" data-popover="#legalNavPopover">Legal</a>
+                    <div id="legalNavPopover" class="popover">
+                        <ul class="popover-list">
+                            <li class="popover-item">
+                                <a class="popover-link" href="/privacy-statement">Privacy Statement</a>
+                            </li>
+                            <li class="popover-item">
+                                <a class="popover-link" href="/end-user-license-agreement">End User License Agreement</a>
+                            </li>
+                            <li class="popover-item">
+                                <a class="popover-link" href="/imprint">Imprint</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="navbar-item">
+                    <a class="navbar-link" href="#" data-popover="#moreNavPopover">More</a>
+                    <div id="moreNavPopover" class="popover">
+                        <ul class="popover-list">
+                            <li class="popover-item">
+                                <a class="popover-link" href="{{ site.github_url }}">Multiple Subtasks on GitHub</a>
+                            </li>
+                            <li class="popover-item">
+                                <a class="popover-link" href="{{ site.marketplace_url }}">Multiple Subtasks on Marketplace</a>
+                            </li>
+                            <li class="popover-item">
+                                <a class="popover-link" href="/support">Get Support</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="docs-section" id="intro">
+        <h2 class="docs-header">{{ page.title }}</h2>
+
+        {{ content }}
+
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2015 - <script>document.write(new Date().getFullYear())</script> <a href="https://www.codescape.de">codescape</a></p>
+    </div>
+
+</div>
+
+</body>
+</html>
