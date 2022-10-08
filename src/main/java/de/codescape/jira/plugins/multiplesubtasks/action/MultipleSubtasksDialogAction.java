@@ -1,21 +1,26 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.request.RequestMethod;
 import com.atlassian.jira.security.request.SupportedMethods;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
-import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubTasksService;
+import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
+import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubTasksDialogAction.Parameters.INPUT_STRING;
+import static de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubtasksDialogAction.Parameters.INPUT_STRING;
 
 // TODO add documentation
 // TODO create tests
-public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
+public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,15 +45,21 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
     }
 
-    private final MultipleSubTasksService multipleSubTasksService;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final SubtasksCreationService subtasksCreationService;
+    private final SubtaskTemplateService subtaskTemplateService;
 
     private String issueKey;
     private String inputString = "";
     private List<Issue> createdSubTasks;
 
     @Autowired
-    public MultipleSubTasksDialogAction(MultipleSubTasksService multipleSubTasksService) {
-        this.multipleSubTasksService = multipleSubTasksService;
+    public MultipleSubtasksDialogAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
+                                        SubtasksCreationService subtasksCreationService,
+                                        SubtaskTemplateService subtaskTemplateService) {
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.subtasksCreationService = subtasksCreationService;
+        this.subtaskTemplateService = subtaskTemplateService;
     }
 
     /**
@@ -83,7 +94,7 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
     }
 
     @Override
-    @SupportedMethods({ RequestMethod.GET })
+    @SupportedMethods({RequestMethod.GET})
     public String doDefault() {
         issueKey = getParameter(Parameters.ISSUE_KEY);
 
@@ -97,7 +108,7 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
 
     @Override
     @RequiresXsrfCheck
-    @SupportedMethods({ RequestMethod.POST })
+    @SupportedMethods({RequestMethod.POST})
     protected String doExecute() {
         if (ERROR.equals(doDefault())) {
             return ERROR;
@@ -106,21 +117,31 @@ public class MultipleSubTasksDialogAction extends JiraWebActionSupport {
         String action = getParameter(Parameters.ACTION);
         if (action != null) {
             switch (action) {
-            case Actions.CREATE:
-                inputString = getParameter(INPUT_STRING);
-                try {
-                    createdSubTasks = multipleSubTasksService.subTasksFromString(issueKey, inputString);
-                } catch (SyntaxFormatException e) {
-                    addErrorMessage(e.getMessage());
-                    return ERROR;
-                }
-                break;
-            case Actions.RESET:
-                clearInputString();
-                break;
+                case Actions.CREATE:
+                    inputString = getParameter(INPUT_STRING);
+                    try {
+                        createdSubTasks = subtasksCreationService.subtasksFromString(issueKey, inputString);
+                    } catch (SyntaxFormatException e) {
+                        addErrorMessage(e.getMessage());
+                        return ERROR;
+                    }
+                    break;
+                case Actions.RESET:
+                    clearInputString();
+                    break;
             }
         }
         return SUCCESS;
+    }
+
+    /**
+     * Returns a list of all existing user templates for the currently logged in user.
+     */
+    public List<ShowSubtaskTemplate> getUserTemplates() {
+        return subtaskTemplateService.getUserTemplates(jiraAuthenticationContext.getLoggedInUser())
+            .stream()
+            .map(ShowSubtaskTemplate::new)
+            .collect(Collectors.toList());
     }
 
     private void clearInputString() {

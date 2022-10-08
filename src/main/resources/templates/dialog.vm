@@ -1,4 +1,4 @@
-<h2 class="dialog-title">$i18n.getText('multiplesubtasks.dialog.open')</h2>
+<h2 class="aui-dialog2-header-main">$i18n.getText('multiplesubtasks.dialog.open')</h2>
 
 #if($action.hasAnyErrors())
     <div class="aui-message aui-message-error">
@@ -14,7 +14,7 @@
 
 #if ($createdSubTasks && !$createdSubTasks.isEmpty())
 
-<form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
+<form class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
     <input type="hidden" name="issueKey" value="${issueKey}">
     <input type="hidden" name="atl_token" value="$atl_token">
 
@@ -56,12 +56,33 @@
 
 #else
 
-<form class="aui top-label" action="MultipleSubTasks.jspa" method="post">
+<form class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
     <input type="hidden" name="issueKey" value="${issueKey}">
     <input type="hidden" name="atl_token" value="$atl_token">
     <div class="content-body">
         <div class="field-group">
-            <textarea name="inputString" class="textarea long-field" rows="12" required="required">${inputString}</textarea>
+            <select id="subtaskTemplate" name="subtaskTemplate" class="select long-field">
+            <option>$i18n.getText("multiplesubtasks.templates.use")</option>
+            <optgroup label="Personal Templates">
+            #if(!$userTemplates.isEmpty())
+                #foreach($template in $userTemplates)
+                    <option value="$template.id" data-template="$template.template">$template.name</option>
+                #end
+            #else
+                <option disabled>$i18n.getText("multiplesubtasks.templates.list.empty")</option>
+            #end
+            </optgroup>
+            </select>
+            <script>
+              AJS.toInit(function(){
+                   $('#subtaskTemplate').change(function() {
+                        $('#subtaskInputString').val( $('#subtaskTemplate option:selected').data('template') );
+                   });
+              });
+            </script>
+        </div>
+        <div class="field-group">
+            <textarea id="subtaskInputString" name="inputString" class="textarea long-field" rows="12" required="required">${inputString}</textarea>
         </div>
     </div>
   <footer class="aui-dialog2-footer">
@@ -70,7 +91,7 @@
             <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
             <a href="#" class="aui-button aui-button-link cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
         </div>
-        <div class="aui-dialog2-footer-hint"><a href="https://github.com/codescape/jira-multiple-subtasks/blob/master/docs/syntax.md" target="blank">Hinweise zur Verwendung</a></div>
+        <div class="aui-dialog2-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="blank">Hinweise zur Verwendung</a></div>
     </footer>
 </form>
 

@@ -1,0 +1,93 @@
+<html>
+<head>
+    <title>$i18n.getText("multiplesubtasks.title") - $i18n.getText("TODO")</title>
+    <meta name="decorator" content="atl.userprofile"/>
+    <meta name="tab" content="foo.bar">
+</head>
+<body class="multiple-subtasks">
+
+<header class="aui-page-header">
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-image">
+            <span class="aui-avatar aui-avatar-large aui-avatar-project">
+                <span class="aui-avatar-inner">
+                    <img alt="Multiple Subtasks" src="$req.contextPath/download/resources/de.codescape.jira.plugins.multiple-subtasks:multiple-subtasks-resources/images/multiple-subtasks-logo-144.png">
+                </span>
+            </span>
+        </div>
+        <div class="aui-page-header-main">
+            <ol class="aui-nav aui-nav-breadcrumbs">
+                <li>$i18n.getText("multiplesubtasks.title")</li>
+            </ol>
+            <h1>$i18n.getText("multiplesubtasks.templates")</h1>
+        </div>
+        <div class="aui-page-header-actions">
+            <div class="aui-buttons">
+                <!-- TODO <a href="$action.documentationUrl" target="_blank" class="aui-button"><span class="aui-icon aui-icon-small aui-iconfont-question-filled"></span> $i18n.getText("scrumpoker.documentation")</a> -->
+            </div>
+        </div>
+    </div>
+</header>
+
+<p>$i18n.getText("multiplesubtasks.templates.description")</p>
+
+<h2>$i18n.getText("multiplesubtasks.templates.list")</h2>
+
+#if(!$userTemplates.isEmpty())
+    <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
+    <input type="hidden" name="atl_token" value="$atl_token">
+    <input type="hidden" name="action" value="delete">
+    <table width="100%" class="aui">
+    <thead>
+        <tr>
+            <th>$i18n.getText("multiplesubtasks.templates.name")</th>
+            <th>$i18n.getText("multiplesubtasks.templates.template")</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    #set($counter = 1)
+    #foreach($template in $userTemplates)
+        <tr>
+            <td>$template.name</td>
+            <td><pre>$template.template</pre></td>
+            <td>
+                <button name="templateId" value="$template.id" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-trash"></span></button>
+            </td>
+        </tr>
+    #set($counter = $counter + 1)
+    #end
+    </table>
+    </form>
+#else
+    <p><i>$i18n.getText("multiplesubtasks.templates.list.empty")</i></p>
+#end
+
+<h2>$i18n.getText("multiplesubtasks.templates.addnew")</h2>
+
+<form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
+    <input type="hidden" name="atl_token" value="$atl_token">
+    <div class="form-body">
+        <div class="field-group">
+            <label for="templateName">$i18n.getText("multiplesubtasks.templates.name")</label>
+            <input id="templateName" name="templateName" type="text" class="text long-field" required="required" />
+            <div class="description">$i18n.getText("multiplesubtasks.templates.name.description")</div>
+        </div>
+
+        <div class="field-group">
+            <label for="template">$i18n.getText("multiplesubtasks.templates.template")</label>
+            <textarea id="template" name="template" class="textarea long-field" rows="12" required="required"></textarea>
+            <div class="description">$i18n.getText("multiplesubtasks.templates.template.description")</div>
+        </div>
+    </div>
+    <div class="buttons-container form-footer">
+        <div class="buttons">
+            <button name="action" value="save" type="submit" id="save-button" class="aui-button aui-button-primary">
+                <span class="aui-icon aui-icon-small aui-iconfont-check-circle"></span> $i18n.getText("multiplesubtasks.templates.save")
+            </button>
+        </div>
+    </div>
+</form>
+
+</body>
+</html>

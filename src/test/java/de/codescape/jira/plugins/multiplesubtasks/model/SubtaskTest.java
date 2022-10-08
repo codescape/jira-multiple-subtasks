@@ -7,29 +7,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class SubTaskTest {
+public class SubtaskTest {
 
     @Test(expected = SyntaxFormatException.class)
     public void summaryMustNotOccurMultipleTimes() {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
-        map.put(SubTask.Attributes.SUMMARY, "First summary!");
-        map.put(SubTask.Attributes.SUMMARY, "Second summary");
-        new SubTask(map);
+        map.put(Subtask.Attributes.SUMMARY, "First summary!");
+        map.put(Subtask.Attributes.SUMMARY, "Second summary");
+        new Subtask(map);
     }
 
     @Test(expected = SyntaxFormatException.class)
     public void shouldRejectUnknownAttributes() {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
         map.put("unknown-attribute", "some value");
-        new SubTask(map);
+        new Subtask(map);
     }
 
     // TODO: improve test case and check all attributes individually
     @Test
     public void shouldAcceptAllKnownAttributes() {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
-        SubTask.Attributes.ALL.forEach(key -> map.put(key, "value"));
-        SubTask subTask = new SubTask(map);
+        Subtask.Attributes.ALL.forEach(key -> map.put(key, "value"));
+        Subtask subTask = new Subtask(map);
         assertThat(subTask.getSummary(), is(equalTo("value")));
     }
 

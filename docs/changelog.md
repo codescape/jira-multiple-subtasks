@@ -73,6 +73,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: enable licensing for plugin
 * docs: provide initial version of the documentation pages
 * docs: update readme and reference documentation
+* feat: allow managing and using user defined subtask templates
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0

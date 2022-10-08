@@ -2,7 +2,7 @@ package de.codescape.jira.plugins.multiplesubtasks.service;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
-import de.codescape.jira.plugins.multiplesubtasks.model.SubTask;
+import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Service implementation to interpret and transform the textual representation of a list of subtasks.
  */
 @Component
-public class SubTasksSyntaxService {
+public class SubtasksSyntaxService {
 
     private static final String NEWLINE = "\n";
     private static final String MINUS_SIGN = "-";
@@ -28,20 +28,20 @@ public class SubTasksSyntaxService {
      * @return list of subtasks
      * @throws SyntaxFormatException if input format contains errors
      */
-    public List<SubTask> parseString(String input) {
+    public List<Subtask> parseString(String input) {
         String cleanedUpInput = trimWhitespaceLineByLine(input);
         if (!cleanedUpInput.startsWith(MINUS_SIGN)) {
             throw new SyntaxFormatException("Subtasks always must be introduced with a minus sign.");
         }
-        List<SubTask> subTasks = new ArrayList<>();
+        List<Subtask> subtasks = new ArrayList<>();
         splitInputIntoTasks(cleanedUpInput).forEach(entry -> {
             try {
-                subTasks.add(new SubTask(createListOfSubTaskAttributes(entry)));
+                subtasks.add(new Subtask(createListOfSubTaskAttributes(entry)));
             } catch (IllegalArgumentException e) {
                 throw new SyntaxFormatException("Error reading subtask definition for entry '" + entry + "'", e);
             }
         });
-        return subTasks;
+        return subtasks;
     }
 
     /**

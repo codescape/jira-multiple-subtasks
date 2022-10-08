@@ -40,6 +40,7 @@
 
         <!-- Dependency versions -->
         <!-- see com.atlassian.jira:jira-project:${jira.version} for correct versions -->
+        <activeobjects.version>3.5.1</activeobjects.version>
         <amps.version>8.1.0</amps.version>
         <atlassian-spring-scanner.version>2.1.16</atlassian-spring-scanner.version>
         <guava.version>26.0-jre</guava.version>
@@ -67,6 +68,12 @@
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-api</artifactId>
             <version>${jira.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>${activeobjects.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

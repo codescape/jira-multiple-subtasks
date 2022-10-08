@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * - project the issue is in has sub-tasks configured
  */
 @Component
-public class DisplayDialogForIssueCondition extends AbstractIssueWebCondition {
+public class MultipleSubtasksDialogForIssueCondition extends AbstractIssueWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, Issue issue, JiraHelper jiraHelper) {

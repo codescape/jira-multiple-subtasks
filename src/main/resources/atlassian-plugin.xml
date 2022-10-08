@@ -30,20 +30,35 @@
     <!-- button to open create dialog -->
     <web-item key="multiple-subtasks-start-from-context-menu" section="operations-subtasks" weight="200">
         <label key="multiplesubtasks.dialog.open"/>
-        <condition class="de.codescape.jira.plugins.multiplesubtasks.condition.DisplayDialogForIssueCondition"/>
-        <link>/secure/MultipleSubTasks!default.jspa?issueKey=$issue.key</link>
+        <condition class="de.codescape.jira.plugins.multiplesubtasks.condition.MultipleSubtasksDialogForIssueCondition"/>
+        <link>/secure/MultipleSubtasksDialog!default.jspa?issueKey=$issue.key</link>
         <styleClass>trigger-dialog</styleClass>
+    </web-item>
+
+    <!-- menu option for user specific subtask templates -->
+    <web-item key="multiple-subtasks-templates-user" section="system.user.profile.links/operations" weight="200">
+        <label key="multiplesubtasks.templates"/>
+        <link>/secure/MultipleSubtasksUserTemplates!default.jspa</link>
     </web-item>
 
     <!-- webworks -->
     <webwork1 key="multiple-subtasks-webwork">
         <actions>
-            <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubTasksDialogAction"
-                    alias="MultipleSubTasks" roles-required="use">
+            <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubtasksDialogAction"
+                    alias="MultipleSubtasksDialog" roles-required="use">
                 <view name="success">/templates/dialog.vm</view>
                 <view name="error">/templates/dialog.vm</view>
             </action>
+            <action name="de.codescape.jira.plugins.multiplesubtasks.action.UserSubtaskTemplatesAction"
+                    alias="MultipleSubtasksUserTemplates" roles-required="use">
+                <view name="success">/templates/userTemplates.vm</view>
+            </action>
         </actions>
     </webwork1>
+
+    <!-- persistence with active objects -->
+    <ao key="multiple-subtasks-active-objects">
+        <entity>de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate</entity>
+    </ao>
 
 </atlassian-plugin>

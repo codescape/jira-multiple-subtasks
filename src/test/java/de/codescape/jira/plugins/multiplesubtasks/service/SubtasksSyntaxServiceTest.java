@@ -1,6 +1,6 @@
 package de.codescape.jira.plugins.multiplesubtasks.service;
 
-import de.codescape.jira.plugins.multiplesubtasks.model.SubTask;
+import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +10,13 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class SubTasksSyntaxServiceTest {
+public class SubtasksSyntaxServiceTest {
 
-    private SubTasksSyntaxService subtasksSyntaxService;
+    private SubtasksSyntaxService subtasksSyntaxService;
 
     @Before
     public void before() {
-        subtasksSyntaxService = new SubTasksSyntaxService();
+        subtasksSyntaxService = new SubtasksSyntaxService();
     }
 
     // positive tests
@@ -25,27 +25,27 @@ public class SubTasksSyntaxServiceTest {
     public void shouldCreateSubTaskFromWellFormedLine() {
         String singleSubTask = "- create a single sub-task";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(singleSubTask);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getSummary(), is(equalTo("create a single sub-task")));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(singleSubTask);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getSummary(), is(equalTo("create a single sub-task")));
     }
 
     @Test
     public void shouldCreateSubTaskFromLineWithMissingWhitespaceSeparator() {
         String singleSubTask = "-sub-task with missing whitespace-separator";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(singleSubTask);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with missing whitespace-separator")));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(singleSubTask);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getSummary(), is(equalTo("sub-task with missing whitespace-separator")));
     }
 
     @Test
     public void shouldCreateSubTaskFromLineWithLeadingWhitespace() {
         String singleSubTask = "   - sub-task with leading whitespace";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(singleSubTask);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with leading whitespace")));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(singleSubTask);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getSummary(), is(equalTo("sub-task with leading whitespace")));
     }
 
     @Test
@@ -61,8 +61,8 @@ public class SubTasksSyntaxServiceTest {
             "-       ein Task mit etwas vielen Leerzeichen am Anfang\n" +
             "- ein Task mit - Zeichen im Text\n" +
             " - ein Task mit Leerzeichen vor dem - Zeichen im Text";
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(complexCombinationOfSubTasks);
-        assertThat(subTasks.size(), is(equalTo(7)));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(complexCombinationOfSubTasks);
+        assertThat(subtasks.size(), is(equalTo(7)));
     }
 
     @Test
@@ -70,10 +70,10 @@ public class SubTasksSyntaxServiceTest {
         String subTaskWithAssignee = "- sub-task with assignee\n" +
             "  assignee: codescape";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithAssignee);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with assignee")));
-        assertThat(subTasks.get(0).getAssignee(), is(equalTo("codescape")));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(subTaskWithAssignee);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getSummary(), is(equalTo("sub-task with assignee")));
+        assertThat(subtasks.get(0).getAssignee(), is(equalTo("codescape")));
     }
 
     @Test
@@ -81,28 +81,28 @@ public class SubTasksSyntaxServiceTest {
         String subTaskWithAssignee = "- sub-task with priority\n" +
             "  priority: Critical";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithAssignee);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getSummary(), is(equalTo("sub-task with priority")));
-        assertThat(subTasks.get(0).getPriority(), is(equalTo("Critical")));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(subTaskWithAssignee);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getSummary(), is(equalTo("sub-task with priority")));
+        assertThat(subtasks.get(0).getPriority(), is(equalTo("Critical")));
     }
 
     @Test
     public void shouldCreateSubTaskFromSummaryWithColon() {
         String subTaskWithColon = "- developer: implement logic";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithColon);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getSummary(), is(equalTo("developer: implement logic")));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(subTaskWithColon);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getSummary(), is(equalTo("developer: implement logic")));
     }
 
     @Test
     public void shouldCreateSubTaskFromSummaryWithMultipleColons() {
         String subTaskWithMultipleColons = "- developer: implement logic: some details";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithMultipleColons);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getSummary(), is(equalTo("developer: implement logic: some details")));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(subTaskWithMultipleColons);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getSummary(), is(equalTo("developer: implement logic: some details")));
     }
 
     @Test
@@ -111,10 +111,10 @@ public class SubTasksSyntaxServiceTest {
             "  label: one\n" +
             "  label: two";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithMultipleLabels);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getLabels().size(), is(equalTo(2)));
-        assertThat(subTasks.get(0).getLabels(), containsInAnyOrder("one", "two"));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(subTaskWithMultipleLabels);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getLabels().size(), is(equalTo(2)));
+        assertThat(subtasks.get(0).getLabels(), containsInAnyOrder("one", "two"));
     }
 
     @Test
@@ -124,10 +124,10 @@ public class SubTasksSyntaxServiceTest {
             "  component: frontend\n" +
             "  component: rest";
 
-        List<SubTask> subTasks = subtasksSyntaxService.parseString(subTaskWithMultipleComponents);
-        assertThat(subTasks.size(), is(equalTo(1)));
-        assertThat(subTasks.get(0).getComponents().size(), is(equalTo(3)));
-        assertThat(subTasks.get(0).getComponents(), containsInAnyOrder("backend", "frontend", "rest"));
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(subTaskWithMultipleComponents);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getComponents().size(), is(equalTo(3)));
+        assertThat(subtasks.get(0).getComponents(), containsInAnyOrder("backend", "frontend", "rest"));
     }
 
     // negative tests

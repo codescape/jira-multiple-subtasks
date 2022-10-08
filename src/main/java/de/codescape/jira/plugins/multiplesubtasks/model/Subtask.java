@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * This class represents the request to create a new subtask with the given attributes.
  */
-public class SubTask {
+public class Subtask {
 
     /**
      * Container for all named attributes that are interpreted in subtask syntax.
@@ -42,7 +42,7 @@ public class SubTask {
      *
      * @param attributes map of attributes
      */
-    public SubTask(ArrayListMultimap<String, String> attributes) {
+    public Subtask(ArrayListMultimap<String, String> attributes) {
         verifyOnlyKnownAttributes(attributes);
         summary = ensureSingleValue(attributes, Attributes.SUMMARY);
         description = ensureSingleValue(attributes, Attributes.DESCRIPTION);

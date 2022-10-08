@@ -21,13 +21,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
-public class DisplayDialogForIssueConditionTest {
+public class MultipleSubtasksDialogForIssueConditionTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule().silent();
 
     @InjectMocks
-    private DisplayDialogForIssueCondition condition;
+    private MultipleSubtasksDialogForIssueCondition condition;
 
     @Mock
     private ApplicationUser user;

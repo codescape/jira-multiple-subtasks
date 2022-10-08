@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 // TODO extract interface (?)
 // TODO create tests
 @Component
-public class MultipleSubTasksService {
+public class SubtasksCreationService {
 
     private static final String INHERIT_MARKER = "@inherit";
     private static final String CURRENT_MARKER = "@current";
@@ -46,10 +46,10 @@ public class MultipleSubTasksService {
     private final ProjectComponentManager projectComponentManager;
     private final LabelManager labelManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final SubTasksSyntaxService subtasksSyntaxService;
+    private final SubtasksSyntaxService subtasksSyntaxService;
 
     @Autowired
-    public MultipleSubTasksService(@ComponentImport IssueService issueService,
+    public SubtasksCreationService(@ComponentImport IssueService issueService,
                                    @ComponentImport IssueFactory issueFactory,
                                    @ComponentImport IssueManager issueManager,
                                    @ComponentImport SubTaskManager subTaskManager,
@@ -59,7 +59,7 @@ public class MultipleSubTasksService {
                                    @ComponentImport ProjectComponentManager projectComponentManager,
                                    @ComponentImport LabelManager labelManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
-                                   SubTasksSyntaxService subtasksSyntaxService) {
+                                   SubtasksSyntaxService subtasksSyntaxService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
@@ -74,8 +74,8 @@ public class MultipleSubTasksService {
     }
 
     // docs https://community.atlassian.com/t5/Answers-Developer-Questions/Auto-create-subtask-and-assign-to-users/qaq-p/530837
-    public List<Issue> subTasksFromString(String issueKey, String inputString) {
-        ArrayList<Issue> subTasksCreated = new ArrayList<>();
+    public List<Issue> subtasksFromString(String issueKey, String inputString) {
+        ArrayList<Issue> subtasksCreated = new ArrayList<>();
 
         IssueService.IssueResult issueResult = issueService.getIssue(jiraAuthenticationContext.getLoggedInUser(), issueKey);
         MutableIssue parent = issueResult.getIssue();
@@ -94,20 +94,20 @@ public class MultipleSubTasksService {
         }
 
         subtasksSyntaxService.parseString(inputString).forEach(subTaskRequest -> {
-            MutableIssue newSubTask = issueFactory.getIssue();
+            MutableIssue newSubtask = issueFactory.getIssue();
             // parent issue
-            newSubTask.setParentObject(parent);
+            newSubtask.setParentObject(parent);
 
             // project
-            newSubTask.setProjectObject(parent.getProjectObject());
+            newSubtask.setProjectObject(parent.getProjectObject());
 
             // summary
-            newSubTask.setSummary(subTaskRequest.getSummary());
+            newSubtask.setSummary(subTaskRequest.getSummary());
 
             // description
             // use the optionally provided description
             if (subTaskRequest.getDescription() != null) {
-                newSubTask.setDescription(subTaskRequest.getDescription().replaceAll("\\{n}", "\n"));
+                newSubtask.setDescription(subTaskRequest.getDescription().replaceAll("\\{n}", "\n"));
             }
 
             // priority
@@ -118,9 +118,9 @@ public class MultipleSubTasksService {
                     .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
                     .findFirst()
                     .orElse(parent.getPriority());
-                newSubTask.setPriority(priority);
+                newSubtask.setPriority(priority);
             } else {
-                newSubTask.setPriority(parent.getPriority());
+                newSubtask.setPriority(parent.getPriority());
             }
 
             // issueType
@@ -129,21 +129,21 @@ public class MultipleSubTasksService {
                 IssueType issueType = subTaskTypes.stream()
                     .filter(availableIssueType -> availableIssueType.getName().equals(subTaskRequest.getIssueType()))
                     .findFirst().orElse(null);
-                newSubTask.setIssueType(issueType);
+                newSubtask.setIssueType(issueType);
             }
-            if (newSubTask.getIssueType() == null) {
-                newSubTask.setIssueType(subTaskTypes.get(0));
+            if (newSubtask.getIssueType() == null) {
+                newSubtask.setIssueType(subTaskTypes.get(0));
             }
 
             // assignee
             // try to find provided assignee in the list of assignable users for current project and ignore users who are not assignable
             if (subTaskRequest.getAssignee() != null) {
                 if (INHERIT_MARKER.equals(subTaskRequest.getAssignee())) {
-                    newSubTask.setAssignee(parent.getAssignee());
+                    newSubtask.setAssignee(parent.getAssignee());
                 } else if (CURRENT_MARKER.equals(subTaskRequest.getAssignee())) {
-                    newSubTask.setAssignee(jiraAuthenticationContext.getLoggedInUser());
+                    newSubtask.setAssignee(jiraAuthenticationContext.getLoggedInUser());
                 } else {
-                    newSubTask.setAssignee(assigneeService.findAssignableUsers(subTaskRequest.getAssignee(), projectObject)
+                    newSubtask.setAssignee(assigneeService.findAssignableUsers(subTaskRequest.getAssignee(), projectObject)
                         .stream().findFirst().orElse(null));
                 }
             }
@@ -154,7 +154,7 @@ public class MultipleSubTasksService {
             if (subTaskRequest.getReporter() != null) {
                 reporter = userManager.getUserByName(subTaskRequest.getReporter());
             }
-            newSubTask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());
+            newSubtask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());
 
             // component(s)
             // add optional components to the subtask and ignore components that do not exist
@@ -167,14 +167,14 @@ public class MultipleSubTasksService {
                 if (subTaskRequest.getComponents().contains(INHERIT_MARKER)) {
                     components.addAll(parent.getComponents());
                 }
-                newSubTask.setComponent(components);
+                newSubtask.setComponent(components);
             }
 
             // create and link the subtask to the parent issue
             try {
-                issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubTask);
-                subTaskManager.createSubTaskIssueLink(parent, newSubTask, jiraAuthenticationContext.getLoggedInUser());
-                subTasksCreated.add(newSubTask);
+                issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubtask);
+                subTaskManager.createSubTaskIssueLink(parent, newSubtask, jiraAuthenticationContext.getLoggedInUser());
+                subtasksCreated.add(newSubtask);
             } catch (CreateException e) {
                 throw new RuntimeException(e);
             }
@@ -184,18 +184,18 @@ public class MultipleSubTasksService {
             if (!subTaskRequest.getLabels().isEmpty()) {
                 if (subTaskRequest.getLabels().contains(INHERIT_MARKER)) {
                     parent.getLabels().forEach(label ->
-                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubTask.getId(), label.getLabel(), false)
+                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label.getLabel(), false)
                     );
                 }
                 subTaskRequest.getLabels().stream()
                     .filter(label -> !INHERIT_MARKER.equals(label))
                     .forEach(label ->
-                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubTask.getId(), label, false)
+                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label, false)
                     );
             }
         });
 
-        return subTasksCreated;
+        return subtasksCreated;
     }
 
 }
