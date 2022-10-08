@@ -21,7 +21,7 @@ To do this follow these steps:
 That's it!
 On this page you can create and delete your personal templates.
 
-![Manage subtask templates](/images/manage-subtask-templates.png)
+![Create subtask templates](/images/create-subtask-templates.png)
 
 In the upper part of the page existing subtask templates are listed and can be easily deleted.
 In the lower part of the page new subtask templates can be created.
