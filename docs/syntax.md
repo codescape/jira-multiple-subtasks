@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Syntax for subtask creation
+category: User Guide
 ---
 
 This document explains the syntax to create tasks with Multiple Subtasks for Jira.

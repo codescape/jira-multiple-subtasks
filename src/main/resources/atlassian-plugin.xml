@@ -8,8 +8,8 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
 
         <!-- logos -->
-        <param name="plugin-icon">images/pluginIcon.png</param>
-        <param name="plugin-logo">images/pluginLogo.png</param>
+        <param name="plugin-icon">images/multiple-subtasks-logo-32.png</param>
+        <param name="plugin-logo">images/multiple-subtasks-logo-144.png</param>
 
         <!-- licensing -->
         <param name="atlassian-licensing-enabled">${atlassian.licensing.enabled}</param>
