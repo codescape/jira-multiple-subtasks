@@ -7,7 +7,7 @@ category: User Guide
 This page explains how to create subtask templates that can be used from the dialog.
 
 * Table of Contents
-  {:toc}
+{:toc}
 
 ## Manage User Templates
 
