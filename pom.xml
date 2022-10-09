@@ -51,6 +51,7 @@
         <quick.reload.version>3.0.0</quick.reload.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <spring.version>5.3.18</spring.version>
+        <upm.version>5.1.2</upm.version>
 
         <!-- Source encoding -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -68,6 +69,18 @@
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-api</artifactId>
             <version>${jira.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>licensing-api</artifactId>
+            <version>${upm.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-api</artifactId>
+            <version>${upm.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

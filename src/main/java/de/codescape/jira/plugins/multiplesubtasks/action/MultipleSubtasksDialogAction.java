@@ -9,6 +9,7 @@ import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
+import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksLicenseService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SubtasksCreationService subtasksCreationService;
     private final SubtaskTemplateService subtaskTemplateService;
+    private final MultipleSubtasksLicenseService multipleSubtasksLicenseService;
 
     private String issueKey;
     private String inputString = "";
@@ -57,10 +59,12 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     @Autowired
     public MultipleSubtasksDialogAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                         SubtasksCreationService subtasksCreationService,
-                                        SubtaskTemplateService subtaskTemplateService) {
+                                        SubtaskTemplateService subtaskTemplateService,
+                                        MultipleSubtasksLicenseService multipleSubtasksLicenseService) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtasksCreationService = subtasksCreationService;
         this.subtaskTemplateService = subtaskTemplateService;
+        this.multipleSubtasksLicenseService = multipleSubtasksLicenseService;
     }
 
     /**
@@ -97,13 +101,15 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     @Override
     @SupportedMethods({RequestMethod.GET})
     public String doDefault() {
+        if (!multipleSubtasksLicenseService.hasValidLicense()) {
+            addErrorMessage("Invalid or missing plugin license.");
+            return ERROR;
+        }
         issueKey = getParameter(Parameters.ISSUE_KEY);
-
         if (issueKey == null) {
             addErrorMessage("No issue key provided!");
             return ERROR;
         }
-
         return SUCCESS;
     }
 
