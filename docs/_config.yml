@@ -10,8 +10,7 @@ title: Multiple Subtasks for Jira
 # url configuration
 # -----------------
 github_url: https://github.com/codescape/jira-multiple-subtasks
-# TODO change marketplace URL when product is listed on marketplace
-marketplace_url: https://marketplace.atlassian.com/vendors/1215070/codescape-stefan-glase
+marketplace_url: https://marketplace.atlassian.com/apps/1229293/multiple-subtasks-for-jira
 servicedesk_url: https://codescape.atlassian.net/servicedesk
 
 # contact data
