@@ -13,6 +13,7 @@ Click on the version in the following list to see all changes since the previous
 
 * feat: prepare application for Data Center compatibility tests
 * feat: allow to close the dialog even with missing or invalid license
+* chore: adjust dependency versions to versions defined by Jira 9.3.0
 
 ### [22.10.0] - 2022-10-09
 
