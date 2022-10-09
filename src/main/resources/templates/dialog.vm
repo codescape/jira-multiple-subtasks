@@ -14,7 +14,7 @@
 
 #if ($createdSubTasks && !$createdSubTasks.isEmpty())
 
-<form class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
+<form id="subtaskForm" class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
     <input type="hidden" name="issueKey" value="${issueKey}">
     <input type="hidden" name="atl_token" value="$atl_token">
 
@@ -47,16 +47,16 @@
     </div>
   <footer class="aui-dialog2-footer">
         <div class="aui-dialog2-footer-actions">
-            <input type="hidden" name="action" value="reset">
+            <input id="subtaskAction" type="hidden" name="action" value="reset">
             <input class="aui-button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.reset')" />
-            <a href="#" class="aui-button aui-button-primary cancel">$i18n.getText('multiplesubtasks.dialog.close')</a>
+            <a href="#" rel="refreshIssue" class="aui-button aui-button-primary">$i18n.getText('multiplesubtasks.dialog.close')</a>
         </div>
     </footer>
 </form>
 
 #else
 
-<form class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
+<form id="subtaskForm" class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
     <input type="hidden" name="issueKey" value="${issueKey}">
     <input type="hidden" name="atl_token" value="$atl_token">
     <div class="content-body">
@@ -73,6 +73,7 @@
             #end
             </optgroup>
             </select>
+            <!-- TODO move into js file -->
             <script>
               AJS.toInit(function(){
                    $('#subtaskTemplate').change(function() {
@@ -87,12 +88,23 @@
     </div>
   <footer class="aui-dialog2-footer">
         <div class="aui-dialog2-footer-actions">
-            <input type="hidden" name="action" value="create">
+            <input id="subtaskAction" type="hidden" name="action" value="create">
             <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.submit')" />
-            <a href="#" class="aui-button aui-button-link cancel">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
+            <a href="#" rel="refreshIssue" class="aui-button aui-button-link">$i18n.getText('multiplesubtasks.dialog.cancel')</a>
         </div>
         <div class="aui-dialog2-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="blank">Hinweise zur Verwendung</a></div>
     </footer>
 </form>
 
 #end
+
+<!-- TODO move into js file -->
+<script>
+    AJS.toInit(function(){
+        $('a[rel="refreshIssue"]').click(function(event) {
+               event.preventDefault();
+               $('#subtaskAction').val('close');
+               $('#subtaskForm').submit();
+        });
+    });
+</script>

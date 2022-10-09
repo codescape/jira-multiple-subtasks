@@ -42,6 +42,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
 
         static final String CREATE = "create";
         static final String RESET = "reset";
+        static final String CLOSE = "close";
 
     }
 
@@ -129,6 +130,8 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
                 case Actions.RESET:
                     clearInputString();
                     break;
+                case Actions.CLOSE:
+                    return returnComplete();
             }
         }
         return SUCCESS;
