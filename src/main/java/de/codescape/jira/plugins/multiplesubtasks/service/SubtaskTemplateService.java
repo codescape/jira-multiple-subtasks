@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Subtask template service to persist and load templates from and to the database.
+ */
 @Transactional
 @Component
 public class SubtaskTemplateService {

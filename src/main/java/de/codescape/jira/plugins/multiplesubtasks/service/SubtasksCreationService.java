@@ -28,8 +28,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// TODO extract interface (?)
-// TODO create tests
+/**
+ * Service to create multiple subtasks from the results of the {@link SubtasksSyntaxService} for a given issue.
+ */
 @Component
 public class SubtasksCreationService {
 

@@ -15,6 +15,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: allow to close the dialog even with missing or invalid license
 * chore: adjust dependency versions to versions defined by Jira 9.3.0
 * docs: update Marketplace URL in online documentation
+* docs: improve developer documentation for all Java classes
 
 ### [22.10.0] - 2022-10-09
 

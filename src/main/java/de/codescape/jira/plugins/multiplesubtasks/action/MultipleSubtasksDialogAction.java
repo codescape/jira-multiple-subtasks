@@ -19,8 +19,9 @@ import java.util.stream.Collectors;
 
 import static de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubtasksDialogAction.Parameters.INPUT_STRING;
 
-// TODO add documentation
-// TODO create tests
+/**
+ * This action provides everything required for the subtask creation dialog.
+ */
 public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
@@ -65,16 +66,6 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
         this.subtasksCreationService = subtasksCreationService;
         this.subtaskTemplateService = subtaskTemplateService;
         this.multipleSubtasksLicenseService = multipleSubtasksLicenseService;
-    }
-
-    /**
-     * Short form for resolving a parameter from the HTTP request.
-     *
-     * @param parameterName name of the parameter
-     * @return value of the parameter
-     */
-    String getParameter(String parameterName) {
-        return getHttpRequest().getParameter(parameterName);
     }
 
     /**
@@ -153,8 +144,14 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
             .collect(Collectors.toList());
     }
 
+    /* helper methods */
+
     private void clearInputString() {
         inputString = "";
+    }
+
+    private String getParameter(String parameterName) {
+        return getHttpRequest().getParameter(parameterName);
     }
 
 }

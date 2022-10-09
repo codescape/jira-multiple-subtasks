@@ -6,6 +6,9 @@ import com.atlassian.upm.api.license.entity.PluginLicense;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * License service to check for the existence of a valid license to use the plugin.
+ */
 @Component
 public class MultipleSubtasksLicenseService {
 

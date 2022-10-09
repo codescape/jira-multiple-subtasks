@@ -2,6 +2,9 @@ package de.codescape.jira.plugins.multiplesubtasks.model;
 
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 
+/**
+ * Wrapper object for a given {@link SubtaskTemplate} that can be used in velocity templates for displaying purposes.
+ */
 public class ShowSubtaskTemplate {
 
     private final Long id;

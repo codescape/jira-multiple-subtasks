@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service implementation to interpret and transform the textual representation of a list of subtasks.
+ * Service implementation to interpret and transform the textual representation into a list of subtasks.
  */
 @Component
 public class SubtasksSyntaxService {

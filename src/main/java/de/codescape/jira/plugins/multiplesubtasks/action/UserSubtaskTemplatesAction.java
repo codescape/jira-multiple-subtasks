@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This action is used to manage the page where users can create their own subtasks templates.
+ */
 public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
@@ -81,13 +84,9 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
             .collect(Collectors.toList());
     }
 
-    /**
-     * Short form for resolving a parameter from the HTTP request.
-     *
-     * @param parameterName name of the parameter
-     * @return value of the parameter
-     */
-    String getParameter(String parameterName) {
+    /* helper methods */
+
+    private String getParameter(String parameterName) {
         return getHttpRequest().getParameter(parameterName);
     }
 
