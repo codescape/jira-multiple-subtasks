@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codescape.jira.plugins</groupId>
     <artifactId>multiple-subtasks</artifactId>
-    <version>22.X.0</version>
+    <version>22.10.0</version>
     <packaging>atlassian-plugin</packaging>
 
     <name>Multiple Subtasks for Jira</name>

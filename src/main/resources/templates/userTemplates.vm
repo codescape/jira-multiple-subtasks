@@ -73,10 +73,9 @@
             <input id="templateName" name="templateName" type="text" class="text long-field" required="required" />
             <div class="description">$i18n.getText("multiplesubtasks.templates.name.description")</div>
         </div>
-
         <div class="field-group">
             <label for="template">$i18n.getText("multiplesubtasks.templates.template")</label>
-            <textarea id="template" name="template" class="textarea long-field" rows="12" required="required"></textarea>
+            <textarea id="template" name="template" class="textarea long-field" rows="12" maxlength="4000" required="required"></textarea>
             <div class="description">$i18n.getText("multiplesubtasks.templates.template.description")</div>
         </div>
     </div>

@@ -13,9 +13,9 @@ Click on the version in the following list to see all changes since the previous
 
 * ...
 
-### [22.X.0] - Pending
+### [22.10.0] - 2022-10-09
 
-**First runnable version of Multiple Subtasks for Jira**
+**Multiple Subtasks for Jira is born!**
 
 * chore: initial commit
 * docs: add changelog to future online documentation
@@ -79,6 +79,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: support Jira 9.3.0 and enterprise versions 8.20.13 and 8.13.26
 * feat: reload page after subtasks are created and dialog is closed (#30)
 * feat: check for valid license in subtask dialog (#6)
+* feat: restrict the maximum length of a template to 4000 characters
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
-[22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.10.0...HEAD
+[22.10.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.10.0
