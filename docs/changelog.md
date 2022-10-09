@@ -76,6 +76,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: allow managing and using user defined subtask templates
 * feat: provide app logo (#4)
 * docs: add documentation to manage subtasks
+* feat: support Jira 9.3.0 and enterprise versions 8.20.13 and 8.13.26
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.5.0...HEAD
 [22.5.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.5.0
