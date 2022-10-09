@@ -11,7 +11,7 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
-* ...
+* feat: prepare application for Data Center compatibility tests
 
 ### [22.10.0] - 2022-10-09
 

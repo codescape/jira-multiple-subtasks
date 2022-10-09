@@ -13,6 +13,10 @@
 
         <!-- licensing -->
         <param name="atlassian-licensing-enabled">${atlassian.licensing.enabled}</param>
+
+        <!-- data center -->
+        <param name="atlassian-data-center-status">compatible</param>
+        <param name="atlassian-data-center-compatible">true</param>
     </plugin-info>
 
     <!-- i18n message bundle -->
