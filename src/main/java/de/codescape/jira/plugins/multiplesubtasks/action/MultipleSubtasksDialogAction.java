@@ -117,11 +117,11 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     @RequiresXsrfCheck
     @SupportedMethods({RequestMethod.POST})
     protected String doExecute() {
-        if (ERROR.equals(doDefault())) {
+        String action = getParameter(Parameters.ACTION);
+        // always allow to close the dialog
+        if (!Actions.CLOSE.equals(action) && ERROR.equals(doDefault())) {
             return ERROR;
         }
-
-        String action = getParameter(Parameters.ACTION);
         if (action != null) {
             switch (action) {
                 case Actions.CREATE:
