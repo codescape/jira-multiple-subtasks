@@ -17,6 +17,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: update Marketplace URL in online documentation
 * docs: improve developer documentation for all Java classes
 * chore: update OWASP dependency check to latest version for DC review
+* chore: add dependency and security report for DC review
 
 ### [22.10.0] - 2022-10-09
 
