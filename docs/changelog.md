@@ -18,6 +18,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: improve developer documentation for all Java classes
 * chore: update OWASP dependency check to latest version for DC review
 * chore: add dependency and security report for DC review
+* chore: provide dialog with id to be accessible from performance tests
 
 ### [22.10.0] - 2022-10-09
 
