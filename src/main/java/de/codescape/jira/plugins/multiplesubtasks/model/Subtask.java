@@ -44,7 +44,7 @@ public class Subtask {
      */
     public Subtask(ArrayListMultimap<String, String> attributes) {
         verifyOnlyKnownAttributes(attributes);
-        summary = ensureSingleValue(attributes, Attributes.SUMMARY);
+        summary = ensureValidSummary(attributes);
         description = ensureSingleValue(attributes, Attributes.DESCRIPTION);
         assignee = ensureSingleValue(attributes, Attributes.ASSIGNEE);
         priority = ensureSingleValue(attributes, Attributes.PRIORITY);
@@ -133,6 +133,19 @@ public class Subtask {
             if (!Attributes.ALL.contains(key))
                 throw new SyntaxFormatException("Unknown attribute " + key + " found.");
         });
+    }
+
+    private String ensureValidSummary(ArrayListMultimap<String, String> attributes) {
+        String summary = ensureSingleValue(attributes, Attributes.SUMMARY);
+        // Summary is required
+        if (summary == null) {
+            throw new SyntaxFormatException("Summary for creation of a new task is mandatory.");
+        }
+        // Summary may not be longer than 255 characters
+        if (summary.length() > 255) {
+            throw new SyntaxFormatException("Summary (" + summary + ") exceeds allowed maximum length of 255 characters.");
+        }
+        return summary;
     }
 
 }

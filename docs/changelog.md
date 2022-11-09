@@ -20,6 +20,7 @@ Click on the version in the following list to see all changes since the previous
 * chore: add dependency and security report for DC review
 * chore: provide dialog with id to be accessible from performance tests
 * chore: allow license check to be ignored for testing purposes
+* feat: ensure summary length does not exceed 255 characters
 
 ### [22.10.0] - 2022-10-09
 
