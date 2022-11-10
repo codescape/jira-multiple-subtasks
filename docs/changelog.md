@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Changelog
+category: Administration
 ---
 
 This changelog helps developers and users to keep track of new features, fixes and improvements for Multiple Subtasks for Jira.
@@ -21,6 +22,7 @@ Click on the version in the following list to see all changes since the previous
 * chore: provide dialog with id to be accessible from performance tests
 * chore: allow license check to be ignored for testing purposes
 * feat: ensure summary length does not exceed 255 characters
+* docs: changelog is now part of the administration chapter
 
 ### [22.10.0] - 2022-10-09
 
