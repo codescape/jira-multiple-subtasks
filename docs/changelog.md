@@ -23,6 +23,8 @@ Click on the version in the following list to see all changes since the previous
 * chore: allow license check to be ignored for testing purposes
 * feat: ensure summary length does not exceed 255 characters
 * docs: changelog is now part of the administration chapter
+* feat: provide full i18n for dialog and template page
+* feat: add placeholders for subtask input field
 
 ### [22.10.0] - 2022-10-09
 

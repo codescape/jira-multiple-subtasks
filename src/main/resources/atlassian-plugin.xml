@@ -33,7 +33,7 @@
 
     <!-- button to open create dialog -->
     <web-item key="multiple-subtasks-start-from-context-menu" section="operations-subtasks" weight="200">
-        <label key="multiplesubtasks.dialog.open"/>
+        <label key="multiplesubtasks.dialog.label"/>
         <condition class="de.codescape.jira.plugins.multiplesubtasks.condition.MultipleSubtasksDialogForIssueCondition"/>
         <link linkId="multiple-subtasks-open-dialog">/secure/MultipleSubtasksDialog!default.jspa?issueKey=$issue.key</link>
         <styleClass>trigger-dialog</styleClass>
@@ -41,7 +41,7 @@
 
     <!-- menu option for user specific subtask templates -->
     <web-item key="multiple-subtasks-templates-user" section="system.user.profile.links/operations" weight="200">
-        <label key="multiplesubtasks.templates"/>
+        <label key="multiplesubtasks.templates.label"/>
         <link>/secure/MultipleSubtasksUserTemplates!default.jspa</link>
     </web-item>
 

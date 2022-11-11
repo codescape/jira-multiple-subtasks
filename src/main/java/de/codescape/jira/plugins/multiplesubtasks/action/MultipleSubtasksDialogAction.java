@@ -25,6 +25,7 @@ import static de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubtasks
 public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
+    private static final String EMPTY_STRING = "";
 
     /**
      * Names of all parameters used on this page.
@@ -54,14 +55,14 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     private final MultipleSubtasksLicenseService multipleSubtasksLicenseService;
 
     private String issueKey;
-    private String inputString = "";
+    private String inputString = EMPTY_STRING;
     private List<Issue> createdSubTasks;
 
     @Autowired
     public MultipleSubtasksDialogAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
-                                        SubtasksCreationService subtasksCreationService,
-                                        SubtaskTemplateService subtaskTemplateService,
-                                        MultipleSubtasksLicenseService multipleSubtasksLicenseService) {
+        SubtasksCreationService subtasksCreationService,
+        SubtaskTemplateService subtaskTemplateService,
+        MultipleSubtasksLicenseService multipleSubtasksLicenseService) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtasksCreationService = subtasksCreationService;
         this.subtaskTemplateService = subtaskTemplateService;
@@ -90,7 +91,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     }
 
     @Override
-    @SupportedMethods({RequestMethod.GET})
+    @SupportedMethods({ RequestMethod.GET })
     public String doDefault() {
         if (!multipleSubtasksLicenseService.hasValidLicense()) {
             addErrorMessage("Invalid or missing plugin license.");
@@ -106,7 +107,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
 
     @Override
     @RequiresXsrfCheck
-    @SupportedMethods({RequestMethod.POST})
+    @SupportedMethods({ RequestMethod.POST })
     protected String doExecute() {
         String action = getParameter(Parameters.ACTION);
         // always allow to close the dialog
@@ -115,20 +116,20 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
         }
         if (action != null) {
             switch (action) {
-                case Actions.CREATE:
-                    inputString = getParameter(INPUT_STRING);
-                    try {
-                        createdSubTasks = subtasksCreationService.subtasksFromString(issueKey, inputString);
-                    } catch (SyntaxFormatException e) {
-                        addErrorMessage(e.getMessage());
-                        return ERROR;
-                    }
-                    break;
-                case Actions.RESET:
-                    clearInputString();
-                    break;
-                case Actions.CLOSE:
-                    return returnComplete();
+            case Actions.CREATE:
+                inputString = getParameter(INPUT_STRING);
+                try {
+                    createdSubTasks = subtasksCreationService.subtasksFromString(issueKey, inputString);
+                } catch (SyntaxFormatException e) {
+                    addErrorMessage(e.getMessage());
+                    return ERROR;
+                }
+                break;
+            case Actions.RESET:
+                clearInputString();
+                break;
+            case Actions.CLOSE:
+                return returnComplete();
             }
         }
         return SUCCESS;
@@ -147,7 +148,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     /* helper methods */
 
     private void clearInputString() {
-        inputString = "";
+        inputString = EMPTY_STRING;
     }
 
     private String getParameter(String parameterName) {
