@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
+    private static final long MAXIMUM_TEMPLATES_PER_USER = 10;
+    private static final long MAXIMUM_TEMPLATES_SIZE = 64000;
 
     /**
      * Names of all parameters used on the page.
@@ -82,6 +84,20 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the maximum number of templates per user.
+     */
+    public long getMaximumTemplatesPerUser() {
+        return MAXIMUM_TEMPLATES_PER_USER;
+    }
+
+    /**
+     * Returns the maximum number of characters to be used for a template.
+     */
+    public long getMaximumTemplatesSize() {
+        return MAXIMUM_TEMPLATES_SIZE;
     }
 
     /* helper methods */

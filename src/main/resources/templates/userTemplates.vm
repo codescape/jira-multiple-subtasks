@@ -31,8 +31,16 @@
 
 <p>$i18n.getText("multiplesubtasks.templates.description")</p>
 
-<h2>$i18n.getText("multiplesubtasks.templates.list")</h2>
+#set($counter = 0)
+#if(!$userTemplates.isEmpty())
+    #foreach($template in $userTemplates)
+        #set($counter = $counter + 1)
+    #end
+#end
 
+<h2>$i18n.getText("multiplesubtasks.templates.list") ($counter / $maximumTemplatesPerUser)</h2>
+
+#set($counter = 0)
 #if(!$userTemplates.isEmpty())
     <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
     <input type="hidden" name="atl_token" value="$atl_token">
@@ -46,8 +54,8 @@
         </tr>
     </thead>
     <tbody>
-    #set($counter = 1)
     #foreach($template in $userTemplates)
+    #set($counter = $counter + 1)
         <tr>
             <td>$template.name</td>
             <td><pre>$template.template</pre></td>
@@ -55,7 +63,6 @@
                 <button name="templateId" value="$template.id" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-trash"></span></button>
             </td>
         </tr>
-    #set($counter = $counter + 1)
     #end
     </table>
     </form>
@@ -64,6 +71,8 @@
 #end
 
 <h2>$i18n.getText("multiplesubtasks.templates.addnew")</h2>
+
+#if ($counter < $maximumTemplatesPerUser)
 
 <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
     <input type="hidden" name="atl_token" value="$atl_token">
@@ -75,7 +84,7 @@
         </div>
         <div class="field-group">
             <label for="template">$i18n.getText("multiplesubtasks.templates.template")</label>
-            <textarea id="template" name="template" class="textarea long-field" rows="12" maxlength="4000" required="required" placeholder="$i18n.getText('multiplesubtasks.templates.templates.placeholder')"></textarea>
+            <textarea id="template" name="template" class="textarea long-field" rows="12" maxlength="$maximumTemplatesSize" required="required" placeholder="$i18n.getText('multiplesubtasks.templates.templates.placeholder')"></textarea>
             <div class="description">$i18n.getText("multiplesubtasks.templates.template.description")</div>
         </div>
     </div>
@@ -87,6 +96,10 @@
         </div>
     </div>
 </form>
+
+#else
+ <p><i>$i18n.getText("multiplesubtasks.templates.addnew.maximum")</i></p>
+#end
 
 </body>
 </html>

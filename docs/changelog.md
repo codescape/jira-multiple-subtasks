@@ -26,6 +26,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: provide full i18n for dialog and template page
 * feat: add placeholders for subtask input field
 * docs: add developer documentation on releasing new versions
+* feat: limit number of subtask templates per user
 
 ### [22.10.0] - 2022-10-09
 
