@@ -27,6 +27,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: add placeholders for subtask input field
 * docs: add developer documentation on releasing new versions
 * feat: limit number of subtask templates per user
+* feat: ensure label length does not exceed 255 characters
 
 ### [22.10.0] - 2022-10-09
 

@@ -125,6 +125,9 @@ public class Subtask {
         if (values.stream().anyMatch(s -> s.contains(" "))) {
             throw new SyntaxFormatException("Labels must not contain spaces.");
         }
+        if (values.stream().anyMatch(s -> s.length() > 255)) {
+            throw new SyntaxFormatException("Labels must not be longer than 255 characters.");
+        }
         return values;
     }
 
