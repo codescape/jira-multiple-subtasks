@@ -25,6 +25,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: changelog is now part of the administration chapter
 * feat: provide full i18n for dialog and template page
 * feat: add placeholders for subtask input field
+* docs: add developer documentation on releasing new versions
 
 ### [22.10.0] - 2022-10-09
 
