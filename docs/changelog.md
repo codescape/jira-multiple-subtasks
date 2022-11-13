@@ -28,6 +28,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: add developer documentation on releasing new versions
 * feat: limit number of subtask templates per user
 * feat: ensure label length does not exceed 255 characters
+* feat: support Jira 9.3.1 and enterprise versions 8.20.14 and 8.13.27
 
 ### [22.10.0] - 2022-10-09
 
