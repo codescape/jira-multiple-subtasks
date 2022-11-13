@@ -79,12 +79,12 @@
     <div class="form-body">
         <div class="field-group">
             <label for="templateName">$i18n.getText("multiplesubtasks.templates.name")</label>
-            <input id="templateName" name="templateName" type="text" class="text long-field" required="required" maxlength="255" />
+            <input id="templateName" name="templateName" type="text" class="text long-field" required="required" maxlength="$maximumTemplateNameLength" />
             <div class="description">$i18n.getText("multiplesubtasks.templates.name.description")</div>
         </div>
         <div class="field-group">
             <label for="template">$i18n.getText("multiplesubtasks.templates.template")</label>
-            <textarea id="template" name="template" class="textarea long-field" rows="12" maxlength="$maximumTemplatesSize" required="required" placeholder="$i18n.getText('multiplesubtasks.templates.templates.placeholder')"></textarea>
+            <textarea id="template" name="template" class="textarea long-field" rows="12" maxlength="$maximumTemplateLength" required="required" placeholder="$i18n.getText('multiplesubtasks.templates.templates.placeholder')"></textarea>
             <div class="description">$i18n.getText("multiplesubtasks.templates.template.description")</div>
         </div>
     </div>
