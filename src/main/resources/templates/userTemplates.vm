@@ -79,7 +79,7 @@
     <div class="form-body">
         <div class="field-group">
             <label for="templateName">$i18n.getText("multiplesubtasks.templates.name")</label>
-            <input id="templateName" name="templateName" type="text" class="text long-field" required="required" />
+            <input id="templateName" name="templateName" type="text" class="text long-field" required="required" maxlength="255" />
             <div class="description">$i18n.getText("multiplesubtasks.templates.name.description")</div>
         </div>
         <div class="field-group">
