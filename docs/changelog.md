@@ -12,12 +12,18 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
+* ...
+
+### [22.11.0] - 2022-11-14
+
+**Multiple Subtasks is ready for Data Center**
+
 * feat: prepare application for Data Center compatibility tests
 * feat: allow to close the dialog even with missing or invalid license
 * chore: adjust dependency versions to versions defined by Jira 9.3.0
 * docs: update Marketplace URL in online documentation
 * docs: improve developer documentation for all Java classes
-* chore: update OWASP dependency check to latest version for DC review
+* chore: update OWASP dependency check to the latest version for DC review
 * chore: add dependency and security report for DC review
 * chore: provide dialog with id to be accessible from performance tests
 * chore: allow license check to be ignored for testing purposes
@@ -100,5 +106,6 @@ Click on the version in the following list to see all changes since the previous
 * feat: check for valid license in subtask dialog (#6)
 * feat: restrict the maximum length of a template to 4000 characters
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.10.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.0...HEAD
+[22.11.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.10.0...22.11.0
 [22.10.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.10.0
