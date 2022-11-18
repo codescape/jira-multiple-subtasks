@@ -12,7 +12,7 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
-* ...
+* chore: drop support for Jira 8.13.x and ensure support for latest versions
 
 ### [22.11.0] - 2022-11-14
 
