@@ -8,7 +8,9 @@ import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
+import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
+import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksSyntaxService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -49,13 +51,17 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private final SubtaskTemplateService subtaskTemplateService;
     private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final SubtasksSyntaxService subtasksSyntaxService;
+
     private ShowSubtaskTemplate editTemplate;
 
     @Autowired
     public UserSubtaskTemplatesAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
-                                      SubtaskTemplateService subtaskTemplateService) {
+                                      SubtaskTemplateService subtaskTemplateService,
+                                      SubtasksSyntaxService subtasksSyntaxService) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtaskTemplateService = subtaskTemplateService;
+        this.subtasksSyntaxService = subtasksSyntaxService;
     }
 
     @Override
@@ -77,6 +83,13 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
         // perform the requested action
         switch (action) {
             case Actions.SAVE:
+                try {
+                    subtasksSyntaxService.parseString(templateText);
+                } catch (SyntaxFormatException sfe) {
+                    addErrorMessage(sfe.getMessage());
+                    editTemplate = new ShowSubtaskTemplate(templateName, templateText);
+                    return SUCCESS;
+                }
                 subtaskTemplateService.saveUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateId, templateName, templateText);
                 break;
             case Actions.DELETE:

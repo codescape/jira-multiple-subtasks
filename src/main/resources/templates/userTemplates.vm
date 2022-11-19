@@ -23,7 +23,7 @@
         </div>
         <div class="aui-page-header-actions">
             <div class="aui-buttons">
-                <!-- TODO <a href="$action.documentationUrl" target="_blank" class="aui-button"><span class="aui-icon aui-icon-small aui-iconfont-question-filled"></span> $i18n.getText("multiplesubtasks.templates.documentation")</a> -->
+                <a href="https://jira-multiple-subtasks.codescape.de/create-subtask-templates" target="_blank" class="aui-button"><span class="aui-icon aui-icon-small aui-iconfont-question-filled"></span> $i18n.getText("multiplesubtasks.templates.documentation")</a>
             </div>
         </div>
     </div>
@@ -77,6 +77,18 @@
     <h2>$i18n.getText("multiplesubtasks.templates.edit")</h2>
 #else
     <h2>$i18n.getText("multiplesubtasks.templates.addnew")</h2>
+#end
+
+#if($action.hasAnyErrors())
+    <div class="aui-message aui-message-error">
+        <p class="title">$i18n.getText("multiplesubtasks.error")</p>
+        #foreach($error in $action.errorMessages)
+            <p>$error</p>
+        #end
+        #foreach($error in $action.errors)
+            <p>$error</p>
+        #end
+    </div>
 #end
 
 #if(($editTemplate.id) || ($counter < $maximumTemplatesPerUser))

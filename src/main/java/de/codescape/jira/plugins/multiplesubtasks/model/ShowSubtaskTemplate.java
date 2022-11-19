@@ -7,12 +7,12 @@ import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
  */
 public class ShowSubtaskTemplate {
 
-    private final Long id;
-    private final SubtaskTemplateType templateType;
-    private final Long userId;
-    private final Long projectId;
-    private final String name;
-    private final String template;
+    private Long id;
+    private SubtaskTemplateType templateType;
+    private Long userId;
+    private Long projectId;
+    private String name;
+    private String template;
 
     public ShowSubtaskTemplate(SubtaskTemplate subtaskTemplate) {
         this.id = subtaskTemplate.getID();
@@ -21,6 +21,11 @@ public class ShowSubtaskTemplate {
         this.projectId = subtaskTemplate.getProjectId();
         this.name = subtaskTemplate.getName();
         this.template = subtaskTemplate.getTemplate();
+    }
+
+    public ShowSubtaskTemplate(String name, String template) {
+        this.name = name;
+        this.template = template;
     }
 
     public Long getId() {

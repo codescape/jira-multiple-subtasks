@@ -2,7 +2,7 @@
 
 #if($action.hasAnyErrors())
     <div class="aui-message aui-message-error">
-        <p class="title">$i18n.getText("multiplesubtasks.dialog.error")</p>
+        <p class="title">$i18n.getText("multiplesubtasks.error")</p>
         #foreach($error in $action.errorMessages)
             <p>$error</p>
         #end
