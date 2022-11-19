@@ -3,7 +3,6 @@ package de.codescape.jira.plugins.multiplesubtasks.service;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginInformation;
-import com.atlassian.plugin.metadata.PluginMetadataManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.upm.api.license.PluginLicenseManager;
 import com.atlassian.upm.api.license.entity.PluginLicense;

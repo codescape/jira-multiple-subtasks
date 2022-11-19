@@ -16,6 +16,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: allow users to edit existing user templates (#51)
 * feat: validate syntax when creating and editing user templates (#42)
 * feat: extend syntax and allow to provide estimates for subtasks (#18)
+* chore: optimize imports for all Java classes
 
 ### [22.11.0] - 2022-11-14
 

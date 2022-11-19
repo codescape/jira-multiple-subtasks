@@ -2,7 +2,6 @@ package de.codescape.jira.plugins.multiplesubtasks.model;
 
 import com.google.common.collect.ArrayListMultimap;
 import org.junit.Test;
-import org.junit.platform.commons.util.StringUtils;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
