@@ -42,12 +42,10 @@
 
 #set($counter = 0)
 #if(!$userTemplates.isEmpty())
-    <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
-    <input type="hidden" name="atl_token" value="$atl_token">
-    <input type="hidden" name="action" value="delete">
     <table width="100%" class="aui">
     <thead>
         <tr>
+            <th>#</th>
             <th>$i18n.getText("multiplesubtasks.templates.name")</th>
             <th>$i18n.getText("multiplesubtasks.templates.template")</th>
             <th></th>
@@ -57,34 +55,54 @@
     #foreach($template in $userTemplates)
     #set($counter = $counter + 1)
         <tr>
+            <td>$counter</td>
             <td>$template.name</td>
             <td><pre>$template.template</pre></td>
             <td>
-                <button name="templateId" value="$template.id" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-trash"></span></button>
+                <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
+                    <input type="hidden" name="atl_token" value="$atl_token">
+                    <input type="hidden" name="templateId" value="$template.id">
+                    <button name="action" value="edit" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-edit-filled"></span></button>
+                    <button name="action" value="delete" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-trash"></span></button>
+                </form>
             </td>
         </tr>
     #end
     </table>
-    </form>
 #else
     <p><i>$i18n.getText("multiplesubtasks.templates.list.empty")</i></p>
 #end
 
-<h2>$i18n.getText("multiplesubtasks.templates.addnew")</h2>
+#if($editTemplate.id)
+    <h2>$i18n.getText("multiplesubtasks.templates.edit")</h2>
+#else
+    <h2>$i18n.getText("multiplesubtasks.templates.addnew")</h2>
+#end
 
-#if ($counter < $maximumTemplatesPerUser)
+#if(($editTemplate.id) || ($counter < $maximumTemplatesPerUser))
 
 <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
     <input type="hidden" name="atl_token" value="$atl_token">
+    #if($editTemplate.id)
+        <input type="hidden" name="templateId" value="$editTemplate.id">
+    #end
     <div class="form-body">
         <div class="field-group">
             <label for="templateName">$i18n.getText("multiplesubtasks.templates.name")</label>
-            <input id="templateName" name="templateName" type="text" class="text long-field" required="required" maxlength="$maximumTemplateNameLength" />
+            #if($editTemplate.name)
+                <input id="templateName" name="templateName" type="text" class="text long-field" required="required" maxlength="$maximumTemplateNameLength" placeholder="$i18n.getText('multiplesubtasks.templates.name.placeholder')" value="$editTemplate.name" />
+            #else
+                <input id="templateName" name="templateName" type="text" class="text long-field" required="required" maxlength="$maximumTemplateNameLength" placeholder="$i18n.getText('multiplesubtasks.templates.name.placeholder')" />
+            #end
             <div class="description">$i18n.getText("multiplesubtasks.templates.name.description")</div>
         </div>
         <div class="field-group">
             <label for="template">$i18n.getText("multiplesubtasks.templates.template")</label>
-            <textarea id="template" name="template" class="textarea long-field" rows="12" maxlength="$maximumTemplateLength" required="required" placeholder="$i18n.getText('multiplesubtasks.templates.templates.placeholder')"></textarea>
+            #if($editTemplate.template)
+               <textarea id="template" name="templateText" class="textarea long-field" rows="12" maxlength="$maximumTemplateLength" required="required" placeholder="$i18n.getText('multiplesubtasks.templates.templates.placeholder')">$editTemplate.template</textarea>
+            #else
+               <textarea id="template" name="templateText" class="textarea long-field" rows="12" maxlength="$maximumTemplateLength" required="required" placeholder="$i18n.getText('multiplesubtasks.templates.templates.placeholder')"></textarea>
+            #end
             <div class="description">$i18n.getText("multiplesubtasks.templates.template.description")</div>
         </div>
     </div>
@@ -93,6 +111,9 @@
             <button name="action" value="save" type="submit" id="save-button" class="aui-button aui-button-primary">
                 <span class="aui-icon aui-icon-small aui-iconfont-check-circle"></span> $i18n.getText("multiplesubtasks.templates.buttons.save")
             </button>
+             <button name="action" value="show" type="submit" class="aui-button" formnovalidate="formnovalidate">
+                <span class="aui-icon aui-icon-small aui-iconfont-undo"></span> $i18n.getText("multiplesubtasks.templates.buttons.cancel")
+             </button>
         </div>
     </div>
 </form>

@@ -28,14 +28,23 @@ public class SubtaskTemplateService {
         this.activeObjects = activeObjects;
     }
 
-    public void saveUserTemplate(ApplicationUser applicationUser, String name, String template) {
-        SubtaskTemplate subtaskTemplate = activeObjects.create(SubtaskTemplate.class,
-            new DBParam("TEMPLATE_TYPE", SubtaskTemplateType.USER),
-            new DBParam("USER_ID", applicationUser.getId()),
-            new DBParam("NAME", name),
-            new DBParam("TEMPLATE", template)
-        );
-        subtaskTemplate.save();
+    public void saveUserTemplate(ApplicationUser applicationUser, Long id, String name, String template) {
+        if (id == null) {
+            SubtaskTemplate subtaskTemplate = activeObjects.create(SubtaskTemplate.class,
+                new DBParam("TEMPLATE_TYPE", SubtaskTemplateType.USER),
+                new DBParam("USER_ID", applicationUser.getId()),
+                new DBParam("NAME", name),
+                new DBParam("TEMPLATE", template)
+            );
+            subtaskTemplate.save();
+        } else {
+            SubtaskTemplate userTemplate = findUserTemplate(applicationUser, id);
+            if (userTemplate != null) {
+                userTemplate.setName(name);
+                userTemplate.setTemplate(template);
+                userTemplate.save();
+            }
+        }
     }
 
     public List<SubtaskTemplate> getUserTemplates(ApplicationUser applicationUser) {
@@ -45,11 +54,16 @@ public class SubtaskTemplateService {
     }
 
     public void deleteUserTemplate(ApplicationUser applicationUser, Long templateId) {
+        SubtaskTemplate userTemplate = findUserTemplate(applicationUser, templateId);
+        if (userTemplate != null) {
+            activeObjects.delete(userTemplate);
+        }
+    }
+
+    public SubtaskTemplate findUserTemplate(ApplicationUser applicationUser, Long templateId) {
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class,
             Query.select().where("USER_ID = ? and ID = ?", applicationUser.getId(), templateId));
-        if (subtaskTemplates.length > 0) {
-            activeObjects.delete(subtaskTemplates[0]);
-        }
+        return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
     }
 
 }

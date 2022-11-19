@@ -6,6 +6,7 @@ import com.atlassian.jira.security.request.SupportedMethods;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
     static final class Parameters {
 
         static final String ACTION = "action";
+        static final String TEMPLATE_ID = "templateId";
+        static final String TEMPLATE_NAME = "templateName";
+        static final String TEMPLATE_TEXT = "templateText";
 
     }
 
@@ -39,11 +43,13 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
 
         static final String SAVE = "save";
         static final String DELETE = "delete";
+        static final String EDIT = "edit";
 
     }
 
     private final SubtaskTemplateService subtaskTemplateService;
     private final JiraAuthenticationContext jiraAuthenticationContext;
+    private ShowSubtaskTemplate editTemplate;
 
     @Autowired
     public UserSubtaskTemplatesAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
@@ -62,18 +68,28 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
     @RequiresXsrfCheck
     @SupportedMethods({RequestMethod.POST})
     protected String doExecute() {
+        // extract all parameters
         String action = getParameter(Parameters.ACTION);
+        String templateIdString = getParameter(Parameters.TEMPLATE_ID);
+        Long templateId = templateIdString != null ? Long.valueOf(templateIdString) : null;
+        String templateName = getParameter(Parameters.TEMPLATE_NAME);
+        String templateText = getParameter(Parameters.TEMPLATE_TEXT);
+        // perform the requested action
         switch (action) {
             case Actions.SAVE:
-                String templateName = getParameter("templateName");
-                String template = getParameter("template");
-                subtaskTemplateService.saveUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateName, template);
+                subtaskTemplateService.saveUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateId, templateName, templateText);
                 break;
             case Actions.DELETE:
-                String templateId = getParameter("templateId");
-                subtaskTemplateService.deleteUserTemplate(jiraAuthenticationContext.getLoggedInUser(), Long.valueOf(templateId));
+                subtaskTemplateService.deleteUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateId);
+                break;
+            case Actions.EDIT:
+                SubtaskTemplate userTemplate = subtaskTemplateService.findUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateId);
+                if (userTemplate != null) {
+                    editTemplate = new ShowSubtaskTemplate(userTemplate);
+                }
                 break;
         }
+        // render page
         return SUCCESS;
     }
 
@@ -106,6 +122,13 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
      */
     public long getMaximumTemplateNameLength() {
         return MAXIMUM_TEMPLATE_NAME_LENGTH;
+    }
+
+    /**
+     * Returns the selected subtask template for edit.
+     */
+    public ShowSubtaskTemplate getEditTemplate() {
+        return editTemplate;
     }
 
     /* helper methods */
