@@ -26,6 +26,8 @@ public class SubtaskTest {
     public void shouldAcceptAllKnownAttributes() {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
         Subtask.Attributes.ALL.forEach(key -> map.put(key, "value"));
+        map.removeAll(Subtask.Attributes.ESTIMATE);
+        map.put(Subtask.Attributes.ESTIMATE, "4d");
         Subtask subTask = new Subtask(map);
         assertThat(subTask.getSummary(), is(equalTo("value")));
     }
@@ -89,6 +91,17 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.LABEL, characters(118));
         map.put(Subtask.Attributes.LABEL, characters(255));
         new Subtask(map);
+    }
+
+    /* estimate */
+
+    @Test
+    public void shouldAcceptValidEstimate() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has an estimate!");
+        map.put(Subtask.Attributes.ESTIMATE, "1h 42m");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getEstimate(), is(equalTo("1h 42m")));
     }
 
     /* helper methods */

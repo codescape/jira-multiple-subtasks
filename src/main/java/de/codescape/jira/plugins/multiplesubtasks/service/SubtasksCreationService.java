@@ -48,6 +48,7 @@ public class SubtasksCreationService {
     private final LabelManager labelManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SubtasksSyntaxService subtasksSyntaxService;
+    private final EstimateStringService estimateStringService;
 
     @Autowired
     public SubtasksCreationService(@ComponentImport IssueService issueService,
@@ -60,7 +61,8 @@ public class SubtasksCreationService {
                                    @ComponentImport ProjectComponentManager projectComponentManager,
                                    @ComponentImport LabelManager labelManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
-                                   SubtasksSyntaxService subtasksSyntaxService) {
+                                   SubtasksSyntaxService subtasksSyntaxService,
+                                   EstimateStringService estimateStringService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
@@ -72,6 +74,7 @@ public class SubtasksCreationService {
         this.labelManager = labelManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtasksSyntaxService = subtasksSyntaxService;
+        this.estimateStringService = estimateStringService;
     }
 
     // docs https://community.atlassian.com/t5/Answers-Developer-Questions/Auto-create-subtask-and-assign-to-users/qaq-p/530837
@@ -169,6 +172,12 @@ public class SubtasksCreationService {
                     components.addAll(parent.getComponents());
                 }
                 newSubtask.setComponent(components);
+            }
+
+            // estimate
+            // parse the estimate and set the duration in seconds
+            if (subTaskRequest.getEstimate() != null) {
+                newSubtask.setEstimate(estimateStringService.estimateStringToSeconds(subTaskRequest.getEstimate()));
             }
 
             // create and link the subtask to the parent issue

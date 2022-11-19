@@ -1,9 +1,11 @@
 package de.codescape.jira.plugins.multiplesubtasks.model;
 
 import com.google.common.collect.ArrayListMultimap;
+import de.codescape.jira.plugins.multiplesubtasks.service.EstimateStringService;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * This class represents the request to create a new subtask with the given attributes.
@@ -23,8 +25,9 @@ public class Subtask {
         static final String REPORTER = "reporter";
         static final String COMPONENT = "component";
         static final String LABEL = "label";
+        static final String ESTIMATE = "estimate";
 
-        static final List<String> ALL = Arrays.asList(SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL);
+        static final List<String> ALL = Arrays.asList(SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL, ESTIMATE);
 
     }
 
@@ -36,6 +39,7 @@ public class Subtask {
     private final String reporter;
     private final List<String> labels;
     private final List<String> components;
+    private final String estimate;
 
     /**
      * Create a subtask with the provided attributes.
@@ -52,6 +56,7 @@ public class Subtask {
         reporter = ensureSingleValue(attributes, Attributes.REPORTER);
         labels = ensureValidLabels(attributes);
         components = attributes.get(Attributes.COMPONENT);
+        estimate = ensureValidEstimate(attributes);
     }
 
     /**
@@ -110,6 +115,13 @@ public class Subtask {
         return components;
     }
 
+    /**
+     * Return the optional estimate.
+     */
+    public String getEstimate() {
+        return estimate;
+    }
+
     /* internal helper methods */
 
     private String ensureSingleValue(ArrayListMultimap<String, String> attributes, String key) {
@@ -129,6 +141,18 @@ public class Subtask {
             throw new SyntaxFormatException("Labels must not be longer than 255 characters.");
         }
         return values;
+    }
+
+    private String ensureValidEstimate(ArrayListMultimap<String, String> attributes) {
+        String estimate = ensureSingleValue(attributes, Attributes.ESTIMATE);
+        if (estimate == null) {
+            return null;
+        }
+        Matcher matcher = EstimateStringService.PATTERN.matcher(estimate);
+        if (!matcher.matches()) {
+            throw new SyntaxFormatException("Invalid pattern for estimate: " + estimate);
+        }
+        return estimate;
     }
 
     private void verifyOnlyKnownAttributes(ArrayListMultimap<String, String> attributes) {

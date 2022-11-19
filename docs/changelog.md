@@ -15,6 +15,7 @@ Click on the version in the following list to see all changes since the previous
 * chore: drop support for Jira 8.13.x and ensure support for latest versions
 * feat: allow users to edit existing user templates (#51)
 * feat: validate syntax when creating and editing user templates (#42)
+* feat: extend syntax and allow to provide estimates for subtasks (#18)
 
 ### [22.11.0] - 2022-11-14
 

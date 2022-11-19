@@ -134,3 +134,16 @@ Given an issue with the component `backend` you can use the following statement 
     - A subtask that takes components from the parent issue
       component: @inherit
       component: testing
+
+#### Estimate
+
+By default, newly created subtasks will not have an estimate.
+If you want to provide an estimate for the subtask you can do that with a simple syntax.
+The estimate can be provided in weeks (`w`), days (`d`), hours (`h`), minutes (`m`) and a combination of all of them:
+
+    - This subtask takes one hour and 15 minutes
+      estimate: 1h 15m
+    - This is a take for one week
+      estimate: 1w
+
+Please note: The order of the estimate attributes is fixed. A value of `2d 1w` will not be accepted while a value of `1w 2d` is valid and will be accepted.
