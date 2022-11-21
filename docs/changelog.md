@@ -12,6 +12,12 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
+* ...
+
+### [22.11.1] - 2022-11-21
+
+**Improve management of user templates and suppurt estimates for subtasks**
+
 * chore: drop support for Jira 8.13.x and ensure support for latest versions
 * feat: allow users to edit existing user templates (#51)
 * feat: validate syntax when creating and editing user templates (#42)
@@ -110,6 +116,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: check for valid license in subtask dialog (#6)
 * feat: restrict the maximum length of a template to 4000 characters
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.1...HEAD
+[22.11.1]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.0...22.11.1
 [22.11.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.10.0...22.11.0
 [22.10.0]: https://github.com/codescape/jira-multiple-subtasks/tree/22.10.0
