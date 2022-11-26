@@ -12,7 +12,7 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
-* ...
+* feat: improve implementation for subtask templates persistence
 
 ### [22.11.1] - 2022-11-21
 

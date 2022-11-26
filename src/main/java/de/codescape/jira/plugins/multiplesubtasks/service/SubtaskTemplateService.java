@@ -28,6 +28,9 @@ public class SubtaskTemplateService {
         this.activeObjects = activeObjects;
     }
 
+    /**
+     * Save a user specific subtask template.
+     */
     public void saveUserTemplate(ApplicationUser applicationUser, Long id, String name, String template) {
         if (id == null) {
             SubtaskTemplate subtaskTemplate = activeObjects.create(SubtaskTemplate.class,
@@ -47,12 +50,20 @@ public class SubtaskTemplateService {
         }
     }
 
+    /**
+     * Return a list of all subtask templates for a user.
+     */
     public List<SubtaskTemplate> getUserTemplates(ApplicationUser applicationUser) {
         return Arrays.asList(activeObjects.find(SubtaskTemplate.class,
-            Query.select().where("USER_ID = ?", applicationUser.getId()).order("ID DESC"))
+            Query.select()
+                .where("USER_ID = ? and TEMPLATE_TYPE = ?", applicationUser.getId(), SubtaskTemplateType.USER)
+                .order("ID DESC"))
         );
     }
 
+    /**
+     * Delete a given subtask template for a user.
+     */
     public void deleteUserTemplate(ApplicationUser applicationUser, Long templateId) {
         SubtaskTemplate userTemplate = findUserTemplate(applicationUser, templateId);
         if (userTemplate != null) {
@@ -60,9 +71,12 @@ public class SubtaskTemplateService {
         }
     }
 
+    /**
+     * Find a given subtask template for a user.
+     */
     public SubtaskTemplate findUserTemplate(ApplicationUser applicationUser, Long templateId) {
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class,
-            Query.select().where("USER_ID = ? and ID = ?", applicationUser.getId(), templateId));
+            Query.select().where("USER_ID = ? and ID = ? and TEMPLATE_TYPE = ?", applicationUser.getId(), templateId, SubtaskTemplateType.USER));
         return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
     }
 
