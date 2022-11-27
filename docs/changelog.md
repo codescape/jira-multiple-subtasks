@@ -19,7 +19,7 @@ Click on the version in the following list to see all changes since the previous
 
 ### [22.11.1] - 2022-11-21
 
-**Improve management of user templates and support estimates for subtasks**
+**Improve user templates and support estimates for subtasks**
 
 * chore: drop support for Jira 8.13.x and ensure support for latest versions
 * feat: allow users to edit existing user templates (#51)
