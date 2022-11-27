@@ -76,7 +76,8 @@ public class SubtaskTemplateService {
      */
     public SubtaskTemplate findUserTemplate(ApplicationUser applicationUser, Long templateId) {
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class,
-            Query.select().where("USER_ID = ? and ID = ? and TEMPLATE_TYPE = ?", applicationUser.getId(), templateId, SubtaskTemplateType.USER));
+            Query.select()
+                .where("USER_ID = ? and ID = ? and TEMPLATE_TYPE = ?", applicationUser.getId(), templateId, SubtaskTemplateType.USER));
         return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
     }
 
