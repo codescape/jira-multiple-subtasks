@@ -15,6 +15,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: improve implementation for subtask templates persistence
 * test: improve overall test coverage for model classes
 * docs: add developer documentation for service classes
+* chore: format dialog action class
 
 ### [22.11.1] - 2022-11-21
 
