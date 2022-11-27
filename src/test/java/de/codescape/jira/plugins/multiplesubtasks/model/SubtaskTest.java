@@ -7,8 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class SubtaskTest {
 
@@ -63,6 +62,18 @@ public class SubtaskTest {
         assertThat(subtask.getSummary().length(), is(255));
     }
 
+    /* description */
+
+    @Test
+    public void shouldAcceptTaskWithDescription() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a description");
+        String expectedDescription = "This is the description of the task.";
+        map.put(Subtask.Attributes.DESCRIPTION, expectedDescription);
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getDescription(), is(equalTo(expectedDescription)));
+    }
+
     /* label */
 
     @Test(expected = SyntaxFormatException.class)
@@ -89,7 +100,19 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.SUMMARY, "This task has two long but valid labels.");
         map.put(Subtask.Attributes.LABEL, characters(118));
         map.put(Subtask.Attributes.LABEL, characters(255));
-        new Subtask(map);
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getLabels().size(), is(2));
+    }
+
+    @Test
+    public void shouldAcceptMultipleLabels() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has two valid labels.");
+        map.put(Subtask.Attributes.LABEL, "first-label");
+        map.put(Subtask.Attributes.LABEL, "second-label");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getLabels().size(), is(2));
+        assertThat(subtask.getLabels(), hasItems("first-label", "second-label"));
     }
 
     /* estimate */
@@ -97,10 +120,42 @@ public class SubtaskTest {
     @Test
     public void shouldAcceptValidEstimate() {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
-        map.put(Subtask.Attributes.SUMMARY, "This task has an estimate!");
+        map.put(Subtask.Attributes.SUMMARY, "This task has a valid estimate!");
         map.put(Subtask.Attributes.ESTIMATE, "1h 42m");
         Subtask subtask = new Subtask(map);
         assertThat(subtask.getEstimate(), is(equalTo("1h 42m")));
+    }
+
+    @Test(expected = SyntaxFormatException.class)
+    public void shouldRejectInvalidEstimate() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has an invalid estimate!");
+        map.put(Subtask.Attributes.ESTIMATE, "9p");
+        Subtask subtask = new Subtask(map);
+    }
+
+    /* component */
+
+    @Test
+    public void shouldAcceptSingleComponent() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a single component");
+        map.put(Subtask.Attributes.COMPONENT, "backend");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getComponents().size(), is(1));
+        assertThat(subtask.getComponents().get(0), is(equalTo("backend")));
+    }
+
+    @Test
+    public void shouldAcceptMultipleComponents() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a single component");
+        map.put(Subtask.Attributes.COMPONENT, "backend");
+        map.put(Subtask.Attributes.COMPONENT, "frontend");
+        map.put(Subtask.Attributes.COMPONENT, "design");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getComponents().size(), is(3));
+        assertThat(subtask.getComponents(), hasItems("backend", "frontend", "design"));
     }
 
     /* helper methods */
