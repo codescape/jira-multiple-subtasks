@@ -77,7 +77,13 @@ public class SubtasksCreationService {
         this.estimateStringService = estimateStringService;
     }
 
-    // docs https://community.atlassian.com/t5/Answers-Developer-Questions/Auto-create-subtask-and-assign-to-users/qaq-p/530837
+    /**
+     * Create subtasks for the given issue key using the provided input string and return all created subtasks.
+     *
+     * @param issueKey    issue key to create subtasks for
+     * @param inputString input string to be used
+     * @return list of all created subtasks
+     */
     public List<Issue> subtasksFromString(String issueKey, String inputString) {
         ArrayList<Issue> subtasksCreated = new ArrayList<>();
 

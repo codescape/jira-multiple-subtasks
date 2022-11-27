@@ -22,16 +22,20 @@ public class MultipleSubtasksLicenseService {
 
     @Autowired
     public MultipleSubtasksLicenseService(@ComponentImport PluginLicenseManager pluginLicenseManager,
-        @ComponentImport PluginAccessor pluginAccessor) {
+                                          @ComponentImport PluginAccessor pluginAccessor) {
         this.pluginLicenseManager = pluginLicenseManager;
         this.pluginAccessor = pluginAccessor;
     }
 
+    /**
+     * Return whether this plugin uses a valid license or not.
+     */
     public boolean hasValidLicense() {
         // if licensing is disabled we can ignore a further license check
         if (!isLicensingEnabled()) {
             return true;
         }
+        // if license exists check whether there are errors
         if (pluginLicenseManager.getLicense().isDefined()) {
             PluginLicense license = pluginLicenseManager.getLicense().get();
             return !license.getError().isDefined();
