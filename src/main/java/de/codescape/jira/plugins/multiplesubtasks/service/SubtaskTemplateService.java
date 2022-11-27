@@ -31,21 +31,21 @@ public class SubtaskTemplateService {
     /**
      * Save a user specific subtask template.
      */
-    public void saveUserTemplate(ApplicationUser applicationUser, Long id, String name, String template) {
-        if (id == null) {
+    public void saveUserTemplate(ApplicationUser applicationUser, Long templateId, String templateName, String templateText) {
+        if (templateId == null) {
             SubtaskTemplate subtaskTemplate = activeObjects.create(SubtaskTemplate.class,
                 new DBParam("TEMPLATE_TYPE", SubtaskTemplateType.USER),
                 new DBParam("USER_ID", applicationUser.getId()),
-                new DBParam("NAME", name),
-                new DBParam("TEMPLATE", template)
+                new DBParam("NAME", templateName),
+                new DBParam("TEMPLATE", templateText)
             );
             subtaskTemplate.save();
         } else {
-            SubtaskTemplate userTemplate = findUserTemplate(applicationUser, id);
-            if (userTemplate != null) {
-                userTemplate.setName(name);
-                userTemplate.setTemplate(template);
-                userTemplate.save();
+            SubtaskTemplate subtaskTemplate = findUserTemplate(applicationUser, templateId);
+            if (subtaskTemplate != null) {
+                subtaskTemplate.setName(templateName);
+                subtaskTemplate.setTemplate(templateText);
+                subtaskTemplate.save();
             }
         }
     }
@@ -65,9 +65,9 @@ public class SubtaskTemplateService {
      * Delete a given subtask template for a user.
      */
     public void deleteUserTemplate(ApplicationUser applicationUser, Long templateId) {
-        SubtaskTemplate userTemplate = findUserTemplate(applicationUser, templateId);
-        if (userTemplate != null) {
-            activeObjects.delete(userTemplate);
+        SubtaskTemplate subtaskTemplate = findUserTemplate(applicationUser, templateId);
+        if (subtaskTemplate != null) {
+            activeObjects.delete(subtaskTemplate);
         }
     }
 
@@ -78,6 +78,61 @@ public class SubtaskTemplateService {
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class,
             Query.select()
                 .where("USER_ID = ? and ID = ? and TEMPLATE_TYPE = ?", applicationUser.getId(), templateId, SubtaskTemplateType.USER));
+        return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
+    }
+
+    /**
+     * Save a project specific subtask template.
+     */
+    public void saveProjectTemplate(Long projectId, Long userId, Long templateId, String templateName, String templateText) {
+        if (templateId == null) {
+            SubtaskTemplate subtaskTemplate = activeObjects.create(SubtaskTemplate.class,
+                new DBParam("TEMPLATE_TYPE", SubtaskTemplateType.PROJECT),
+                new DBParam("PROJECT_ID", projectId),
+                new DBParam("USER_ID", userId),
+                new DBParam("NAME", templateName),
+                new DBParam("TEMPLATE", templateText)
+            );
+            subtaskTemplate.save();
+        } else {
+            SubtaskTemplate subtaskTemplate = findProjectTemplate(projectId, templateId);
+            if (subtaskTemplate != null) {
+                subtaskTemplate.setUserId(userId);
+                subtaskTemplate.setName(templateName);
+                subtaskTemplate.setTemplate(templateText);
+                subtaskTemplate.save();
+            }
+        }
+    }
+
+    /**
+     * Return a list of all subtask templates for a project.
+     */
+    public List<SubtaskTemplate> getProjectTemplates(Long projectId) {
+        return Arrays.asList(activeObjects.find(SubtaskTemplate.class,
+            Query.select()
+                .where("PROJECT_ID = ? and TEMPLATE_TYPE = ?", projectId, SubtaskTemplateType.PROJECT)
+                .order("ID DESC"))
+        );
+    }
+
+    /**
+     * Delete a given subtask template for a project.
+     */
+    public void deleteProjectTemplate(Long projectId, Long templateId) {
+        SubtaskTemplate subtaskTemplate = findProjectTemplate(projectId, templateId);
+        if (subtaskTemplate != null) {
+            activeObjects.delete(subtaskTemplate);
+        }
+    }
+
+    /**
+     * Find a given subtask template for a project.
+     */
+    public SubtaskTemplate findProjectTemplate(Long projectId, Long templateId) {
+        SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class,
+            Query.select()
+                .where("PROJECT_ID = ? and ID = ? and TEMPLATE_TYPE = ?", projectId, templateId, SubtaskTemplateType.PROJECT));
         return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
     }
 

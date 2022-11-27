@@ -1,12 +1,15 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.request.RequestMethod;
 import com.atlassian.jira.security.request.SupportedMethods;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksLicenseService;
@@ -14,6 +17,7 @@ import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +54,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     }
 
     private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final IssueManager issueManager;
     private final SubtasksCreationService subtasksCreationService;
     private final SubtaskTemplateService subtaskTemplateService;
     private final MultipleSubtasksLicenseService multipleSubtasksLicenseService;
@@ -60,10 +65,12 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
 
     @Autowired
     public MultipleSubtasksDialogAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
+                                        @ComponentImport IssueManager issueManager,
                                         SubtasksCreationService subtasksCreationService,
                                         SubtaskTemplateService subtaskTemplateService,
                                         MultipleSubtasksLicenseService multipleSubtasksLicenseService) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.issueManager = issueManager;
         this.subtasksCreationService = subtasksCreationService;
         this.subtaskTemplateService = subtaskTemplateService;
         this.multipleSubtasksLicenseService = multipleSubtasksLicenseService;
@@ -136,10 +143,24 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     }
 
     /**
-     * Returns a list of all existing user templates for the currently logged in user.
+     * Returns a list of all existing user templates for the currently logged-in user.
      */
     public List<ShowSubtaskTemplate> getUserTemplates() {
         return subtaskTemplateService.getUserTemplates(jiraAuthenticationContext.getLoggedInUser())
+            .stream()
+            .map(ShowSubtaskTemplate::new)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of all existing project templates for the current issue.
+     */
+    public List<ShowSubtaskTemplate> getProjectTemplates() {
+        Project project = issueManager.getIssueByCurrentKey(issueKey).getProjectObject();
+        if (project == null) {
+            return Collections.emptyList();
+        }
+        return subtaskTemplateService.getProjectTemplates(project.getId())
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());

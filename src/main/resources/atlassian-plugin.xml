@@ -45,6 +45,15 @@
         <link>/secure/MultipleSubtasksUserTemplates!default.jspa</link>
     </web-item>
 
+    <!-- project specific configuration in project configuration sidebar -->
+    <web-item key="multiple-subtasks-project-configuration-item" section="atl.jira.proj.config/projectgroup4" weight="200">
+        <label key="multiplesubtasks.templates.label"/>
+        <link linkId="multiple-subtasks-project-configuration-item-link">
+            /secure/MultipleSubtasksProjectTemplates!default.jspa?projectKey=$projectKeyEncoded
+        </link>
+        <condition class="de.codescape.jira.plugins.multiplesubtasks.condition.ProjectAdministrationCondition"/>
+    </web-item>
+
     <!-- webworks -->
     <webwork1 key="multiple-subtasks-webwork">
         <actions>
@@ -56,6 +65,10 @@
             <action name="de.codescape.jira.plugins.multiplesubtasks.action.UserSubtaskTemplatesAction"
                     alias="MultipleSubtasksUserTemplates" roles-required="use">
                 <view name="success">/templates/userTemplates.vm</view>
+            </action>
+            <action name="de.codescape.jira.plugins.multiplesubtasks.action.ProjectSubtaskTemplatesAction"
+                    alias="MultipleSubtasksProjectTemplates" roles-required="use">
+                <view name="success">/templates/projectTemplates.vm</view>
             </action>
         </actions>
     </webwork1>

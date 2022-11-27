@@ -16,6 +16,7 @@ Click on the version in the following list to see all changes since the previous
 * test: improve overall test coverage for model classes
 * docs: add developer documentation for service classes
 * chore: format dialog action class
+* feat: project specific subtask templates
 
 ### [22.11.1] - 2022-11-21
 

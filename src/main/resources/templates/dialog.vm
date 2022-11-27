@@ -62,25 +62,26 @@
     <div class="content-body">
         <div class="field-group">
             <select id="subtaskTemplate" name="subtaskTemplate" class="select long-field">
-            <option>$i18n.getText("multiplesubtasks.dialog.templates.instruction")</option>
-            <optgroup label="$i18n.getText('multiplesubtasks.dialog.templates.user')">
-            #if(!$userTemplates.isEmpty())
-                #foreach($template in $userTemplates)
-                    <option value="$template.id" data-template="$template.template">$template.name</option>
+                <option>$i18n.getText("multiplesubtasks.dialog.templates.instruction")</option>
+                <optgroup label="$i18n.getText('multiplesubtasks.dialog.templates.user')">
+                #if(!$userTemplates.isEmpty())
+                    #foreach($template in $userTemplates)
+                        <option value="$template.id" data-template="$template.template">$template.name</option>
+                    #end
+                #else
+                    <option disabled>$i18n.getText("multiplesubtasks.dialog.templates.empty")</option>
                 #end
-            #else
-                <option disabled>$i18n.getText("multiplesubtasks.dialog.templates.empty")</option>
-            #end
-            </optgroup>
+                </optgroup>
+                <optgroup label="$i18n.getText('multiplesubtasks.dialog.templates.project')">
+                #if(!$projectTemplates.isEmpty())
+                    #foreach($template in $projectTemplates)
+                        <option value="$template.id" data-template="$template.template">$template.name</option>
+                    #end
+                #else
+                    <option disabled>$i18n.getText("multiplesubtasks.dialog.templates.empty")</option>
+                #end
+                </optgroup>
             </select>
-            <!-- TODO move into js file or join with other js on this page -->
-            <script>
-              AJS.toInit(function(){
-                   $('#subtaskTemplate').change(function() {
-                        $('#subtaskInputString').val($('#subtaskTemplate option:selected').data('template'));
-                   });
-              });
-            </script>
         </div>
         <div class="field-group">
             <textarea id="subtaskInputString" name="inputString" class="textarea long-field" rows="12" required="required" placeholder="$i18n.getText('multiplesubtasks.dialog.input.placeholder')">${inputString}</textarea>
@@ -92,16 +93,20 @@
             <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.submit')" />
             <a href="#" rel="refreshIssue" class="aui-button aui-button-link">$i18n.getText('multiplesubtasks.dialog.buttons.cancel')</a>
         </div>
-        <!-- TODO get URL from constant -->
         <div class="aui-dialog2-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="blank">$i18n.getText('multiplesubtasks.dialog.documentation')</a></div>
     </footer>
 </form>
 
 #end
 
-<!-- TODO move into js file or join with other js on this page -->
 <script>
     AJS.toInit(function(){
+        // on selection of a subtask template from the list of available templates show the template in the textarea
+        $('#subtaskTemplate').change(function() {
+            $('#subtaskInputString').val($('#subtaskTemplate option:selected').data('template'));
+        });
+
+        // when clicking a button that closes the dialog send action close to refresh the page and display new subtasks
         $('a[rel="refreshIssue"]').click(function(event) {
                event.preventDefault();
                $('#subtaskAction').val('close');
