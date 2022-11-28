@@ -90,15 +90,15 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
                     editTemplate = new ShowSubtaskTemplate(templateName, templateText);
                     return SUCCESS;
                 }
-                subtaskTemplateService.saveUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateId, templateName, templateText);
+                subtaskTemplateService.saveUserTemplate(currentUserId(), templateId, templateName, templateText);
                 break;
             case Actions.DELETE:
-                subtaskTemplateService.deleteUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateId);
+                subtaskTemplateService.deleteUserTemplate(currentUserId(), templateId);
                 break;
             case Actions.EDIT:
-                SubtaskTemplate userTemplate = subtaskTemplateService.findUserTemplate(jiraAuthenticationContext.getLoggedInUser(), templateId);
-                if (userTemplate != null) {
-                    editTemplate = new ShowSubtaskTemplate(userTemplate);
+                SubtaskTemplate subtaskTemplate = subtaskTemplateService.findUserTemplate(currentUserId(), templateId);
+                if (subtaskTemplate != null) {
+                    editTemplate = new ShowSubtaskTemplate(subtaskTemplate);
                 }
                 break;
         }
@@ -107,10 +107,10 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
     }
 
     /**
-     * Returns a list of all existing user templates for the currently logged in user.
+     * Returns a list of all existing user templates for the currently logged-in user.
      */
     public List<ShowSubtaskTemplate> getUserTemplates() {
-        return subtaskTemplateService.getUserTemplates(jiraAuthenticationContext.getLoggedInUser())
+        return subtaskTemplateService.getUserTemplates(currentUserId())
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());
@@ -148,6 +148,10 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private String getParameter(String parameterName) {
         return getHttpRequest().getParameter(parameterName);
+    }
+
+    private Long currentUserId() {
+        return jiraAuthenticationContext.getLoggedInUser().getId();
     }
 
 }

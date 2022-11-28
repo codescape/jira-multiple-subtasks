@@ -146,7 +146,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
      * Returns a list of all existing user templates for the currently logged-in user.
      */
     public List<ShowSubtaskTemplate> getUserTemplates() {
-        return subtaskTemplateService.getUserTemplates(jiraAuthenticationContext.getLoggedInUser())
+        return subtaskTemplateService.getUserTemplates(jiraAuthenticationContext.getLoggedInUser().getId())
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());

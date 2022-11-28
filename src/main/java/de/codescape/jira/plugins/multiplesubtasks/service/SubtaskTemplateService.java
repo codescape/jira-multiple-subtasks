@@ -2,7 +2,6 @@ package de.codescape.jira.plugins.multiplesubtasks.service;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.tx.Transactional;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SubtaskTemplateType;
@@ -31,17 +30,17 @@ public class SubtaskTemplateService {
     /**
      * Save a user specific subtask template.
      */
-    public void saveUserTemplate(ApplicationUser applicationUser, Long templateId, String templateName, String templateText) {
+    public void saveUserTemplate(Long userId, Long templateId, String templateName, String templateText) {
         if (templateId == null) {
             SubtaskTemplate subtaskTemplate = activeObjects.create(SubtaskTemplate.class,
                 new DBParam("TEMPLATE_TYPE", SubtaskTemplateType.USER),
-                new DBParam("USER_ID", applicationUser.getId()),
+                new DBParam("USER_ID", userId),
                 new DBParam("NAME", templateName),
                 new DBParam("TEMPLATE", templateText)
             );
             subtaskTemplate.save();
         } else {
-            SubtaskTemplate subtaskTemplate = findUserTemplate(applicationUser, templateId);
+            SubtaskTemplate subtaskTemplate = findUserTemplate(userId, templateId);
             if (subtaskTemplate != null) {
                 subtaskTemplate.setName(templateName);
                 subtaskTemplate.setTemplate(templateText);
@@ -53,10 +52,10 @@ public class SubtaskTemplateService {
     /**
      * Return a list of all subtask templates for a user.
      */
-    public List<SubtaskTemplate> getUserTemplates(ApplicationUser applicationUser) {
+    public List<SubtaskTemplate> getUserTemplates(Long userId) {
         return Arrays.asList(activeObjects.find(SubtaskTemplate.class,
             Query.select()
-                .where("USER_ID = ? and TEMPLATE_TYPE = ?", applicationUser.getId(), SubtaskTemplateType.USER)
+                .where("USER_ID = ? and TEMPLATE_TYPE = ?", userId, SubtaskTemplateType.USER)
                 .order("ID DESC"))
         );
     }
@@ -64,8 +63,8 @@ public class SubtaskTemplateService {
     /**
      * Delete a given subtask template for a user.
      */
-    public void deleteUserTemplate(ApplicationUser applicationUser, Long templateId) {
-        SubtaskTemplate subtaskTemplate = findUserTemplate(applicationUser, templateId);
+    public void deleteUserTemplate(Long userId, Long templateId) {
+        SubtaskTemplate subtaskTemplate = findUserTemplate(userId, templateId);
         if (subtaskTemplate != null) {
             activeObjects.delete(subtaskTemplate);
         }
@@ -74,10 +73,10 @@ public class SubtaskTemplateService {
     /**
      * Find a given subtask template for a user.
      */
-    public SubtaskTemplate findUserTemplate(ApplicationUser applicationUser, Long templateId) {
+    public SubtaskTemplate findUserTemplate(Long userId, Long templateId) {
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class,
             Query.select()
-                .where("USER_ID = ? and ID = ? and TEMPLATE_TYPE = ?", applicationUser.getId(), templateId, SubtaskTemplateType.USER));
+                .where("USER_ID = ? and ID = ? and TEMPLATE_TYPE = ?", userId, templateId, SubtaskTemplateType.USER));
         return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
     }
 

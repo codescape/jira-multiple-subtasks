@@ -30,20 +30,23 @@ import static org.mockito.Mockito.when;
 @NameConverters
 public class SubtaskTemplateServiceTest {
 
+    private static final long CURRENT_USER = 42L;
+    private static final long ANOTHER_USER = 21L;
+
     @SuppressWarnings("unused")
     private EntityManager entityManager;
     private TestActiveObjects activeObjects;
 
     private SubtaskTemplateService subtaskTemplateService;
 
-    private ApplicationUser applicationUser;
+    private ApplicationUser currentUser;
     private ApplicationUser anotherUser;
 
     @Before
     public void before() {
         activeObjects = new TestActiveObjects(entityManager);
         subtaskTemplateService = new SubtaskTemplateService(activeObjects);
-        applicationUser = mock(ApplicationUser.class);
+        currentUser = mock(ApplicationUser.class);
         anotherUser = mock(ApplicationUser.class);
         deleteAllSubtaskTemplates();
     }
@@ -52,31 +55,31 @@ public class SubtaskTemplateServiceTest {
 
     @Test
     public void saveUserTemplateSavesNewTemplate() {
-        when(applicationUser.getId()).thenReturn(42L);
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
 
-        subtaskTemplateService.saveUserTemplate(applicationUser, null, "new template", "- task");
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "new template", "- task");
 
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(subtaskTemplates.length, is(equalTo(1)));
         assertThat(subtaskTemplates[0].getTemplateType(), is(equalTo(SubtaskTemplateType.USER)));
-        assertThat(subtaskTemplates[0].getUserId(), is(equalTo(42L)));
+        assertThat(subtaskTemplates[0].getUserId(), is(equalTo(CURRENT_USER)));
         assertThat(subtaskTemplates[0].getName(), is(equalTo("new template")));
         assertThat(subtaskTemplates[0].getTemplate(), is(equalTo("- task")));
     }
 
     @Test
     public void saveUserTemplateUpdatesExistingTemplate() {
-        when(applicationUser.getId()).thenReturn(42L);
-        subtaskTemplateService.saveUserTemplate(applicationUser, null, "new template", "- task");
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "new template", "- task");
         SubtaskTemplate[] existingSubtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(existingSubtaskTemplates.length, is(equalTo(1)));
 
-        subtaskTemplateService.saveUserTemplate(applicationUser, existingSubtaskTemplates[0].getID(), "better name", "- better task");
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, existingSubtaskTemplates[0].getID(), "better name", "- better task");
 
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(subtaskTemplates.length, is(equalTo(1)));
         assertThat(subtaskTemplates[0].getTemplateType(), is(equalTo(SubtaskTemplateType.USER)));
-        assertThat(subtaskTemplates[0].getUserId(), is(equalTo(42L)));
+        assertThat(subtaskTemplates[0].getUserId(), is(equalTo(CURRENT_USER)));
         assertThat(subtaskTemplates[0].getName(), is(equalTo("better name")));
         assertThat(subtaskTemplates[0].getTemplate(), is(equalTo("- better task")));
     }
@@ -85,14 +88,14 @@ public class SubtaskTemplateServiceTest {
 
     @Test
     public void getUserTemplatesReturnsAllTemplatesForUser() {
-        when(applicationUser.getId()).thenReturn(42L);
-        subtaskTemplateService.saveUserTemplate(applicationUser, null, "first template", "- task");
-        subtaskTemplateService.saveUserTemplate(applicationUser, null, "second template", "- task");
-        subtaskTemplateService.saveUserTemplate(applicationUser, null, "third template", "- task");
-        when(anotherUser.getId()).thenReturn(21L);
-        subtaskTemplateService.saveUserTemplate(anotherUser, null, "another template", "- task");
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "first template", "- task");
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "second template", "- task");
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "third template", "- task");
+        when(anotherUser.getId()).thenReturn(ANOTHER_USER);
+        subtaskTemplateService.saveUserTemplate(ANOTHER_USER, null, "another template", "- task");
 
-        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(applicationUser);
+        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(CURRENT_USER);
         assertThat(userTemplates.size(), is(equalTo(3)));
         assertThat(userTemplates.stream().map(SubtaskTemplate::getName).collect(Collectors.toList()),
             hasItems("first template", "second template", "third template"));
@@ -100,8 +103,8 @@ public class SubtaskTemplateServiceTest {
 
     @Test
     public void getUserTemplatesReturnsEmptyListForUserWithoutTemplates() {
-        when(applicationUser.getId()).thenReturn(42L);
-        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(applicationUser);
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(CURRENT_USER);
         assertThat(userTemplates, is(empty()));
     }
 
@@ -109,12 +112,12 @@ public class SubtaskTemplateServiceTest {
 
     @Test
     public void deleteUserTemplateRemovesTemplateForCorrectUser() {
-        when(applicationUser.getId()).thenReturn(42L);
-        subtaskTemplateService.saveUserTemplate(applicationUser, null, "template", "- task");
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "template", "- task");
         SubtaskTemplate[] existingSubtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(existingSubtaskTemplates.length, is(equalTo(1)));
 
-        subtaskTemplateService.deleteUserTemplate(applicationUser, existingSubtaskTemplates[0].getID());
+        subtaskTemplateService.deleteUserTemplate(CURRENT_USER, existingSubtaskTemplates[0].getID());
 
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(subtaskTemplates, is(emptyArray()));
@@ -122,13 +125,13 @@ public class SubtaskTemplateServiceTest {
 
     @Test
     public void deleteUserTemplateKeepsTemplateForDifferentUser() {
-        when(applicationUser.getId()).thenReturn(42L);
-        subtaskTemplateService.saveUserTemplate(applicationUser, null, "template", "- task");
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "template", "- task");
         SubtaskTemplate[] existingSubtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(existingSubtaskTemplates.length, is(equalTo(1)));
-        when(anotherUser.getId()).thenReturn(21L);
+        when(anotherUser.getId()).thenReturn(ANOTHER_USER);
 
-        subtaskTemplateService.deleteUserTemplate(anotherUser, existingSubtaskTemplates[0].getID());
+        subtaskTemplateService.deleteUserTemplate(ANOTHER_USER, existingSubtaskTemplates[0].getID());
 
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(subtaskTemplates.length, is(equalTo(1)));
