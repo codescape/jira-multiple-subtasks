@@ -18,6 +18,7 @@ Click on the version in the following list to see all changes since the previous
 * chore: format dialog action class
 * feat: project specific subtask templates
 * refactor: remove dependency on user from subtask template service
+* feat: ensure compatibility with Jira 9.5.0
 
 ### [22.11.1] - 2022-11-21
 

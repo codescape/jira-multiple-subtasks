@@ -33,7 +33,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Jira versions -->
-        <jira.version>9.4.0</jira.version>
+        <jira.version>9.5.0</jira.version>
         <jira.version.latest>${jira.version}</jira.version.latest>
         <jira.version.enterprise>9.4.0</jira.version.enterprise>
         <jira.version.oldest>8.20.15</jira.version.oldest>
@@ -52,7 +52,6 @@
         <profiling.version>4.8.1</profiling.version>
         <quick.reload.version>3.2.0</quick.reload.version>
         <servlet-api.version>4.0.1</servlet-api.version>
-        <slf4j.version>1.7.30</slf4j.version>
         <spring.version>5.3.19</spring.version>
         <upm.version>6.0.4</upm.version>
 
@@ -176,12 +175,6 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
