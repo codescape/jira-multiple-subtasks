@@ -33,6 +33,13 @@ public class EstimateStringServiceTest {
         when(timeTrackingConfiguration.getHoursPerDay()).thenReturn(new BigDecimal("8"));
     }
 
+    /* invalid patterns */
+
+    @Test
+    public void shouldReturn0ForInvalidPattern() {
+        assertThat(estimateStringService.estimateStringToSeconds("invalid"), is(equalTo(0L)));
+    }
+
     /* simple patterns */
 
     @Test
