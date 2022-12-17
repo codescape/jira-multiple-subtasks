@@ -9,5 +9,5 @@ This page describes how to configure Multiple Subtasks for Jira to work in your 
 * Table of Contents
 {:toc}
 
-We are sorry.
-This page is work in progress.
+Multiple Subtask for Jira does not yet have any configuration options and can be used directly after installation.
+If you have any request for configuration options please [let us know](/support) about it.

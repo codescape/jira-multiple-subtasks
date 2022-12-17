@@ -12,7 +12,7 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
-* ...
+* docs: improve documentation for configuration of the plugin
 
 ### [22.12.0] - 2022-12-12
 
