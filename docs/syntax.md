@@ -147,3 +147,15 @@ The estimate can be provided in weeks (`w`), days (`d`), hours (`h`), minutes (`
       estimate: 1w
 
 Please note: The order of the estimate attributes is fixed. A value of `2d 1w` will not be accepted while a value of `1w 2d` is valid and will be accepted.
+
+#### Watcher(s)
+
+By default, newly created subtasks will not have any watchers.
+If you want users to watch the subtask you can do that using their usernames.
+In this example you will create a subtask and make the users with usernames `bob` and `ron` watch it:
+
+    - Bob and Ron should know this subtask
+      watcher: bob
+      watcher: ron
+
+Please note: If the provided username cannot be found it will be ignored.

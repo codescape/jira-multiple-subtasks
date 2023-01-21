@@ -26,8 +26,9 @@ public class Subtask {
         static final String COMPONENT = "component";
         static final String LABEL = "label";
         static final String ESTIMATE = "estimate";
+        static final String WATCHER = "watcher";
 
-        static final List<String> ALL = Arrays.asList(SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL, ESTIMATE);
+        static final List<String> ALL = Arrays.asList(SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL, ESTIMATE, WATCHER);
 
     }
 
@@ -40,6 +41,7 @@ public class Subtask {
     private final List<String> labels;
     private final List<String> components;
     private final String estimate;
+    private final List<String> watchers;
 
     /**
      * Create a subtask with the provided attributes.
@@ -57,6 +59,7 @@ public class Subtask {
         labels = ensureValidLabels(attributes);
         components = attributes.get(Attributes.COMPONENT);
         estimate = ensureValidEstimate(attributes);
+        watchers = attributes.get(Attributes.WATCHER);
     }
 
     /**
@@ -120,6 +123,13 @@ public class Subtask {
      */
     public String getEstimate() {
         return estimate;
+    }
+
+    /**
+     * Return the optional watchers of the subtask.
+     */
+    public List<String> getWatchers() {
+        return watchers;
     }
 
     /* internal helper methods */

@@ -158,6 +158,29 @@ public class SubtaskTest {
         assertThat(subtask.getComponents(), hasItems("backend", "frontend", "design"));
     }
 
+    /* watcher */
+
+    @Test
+    public void shouldAcceptSingleWatcher() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a single watcher");
+        map.put(Subtask.Attributes.WATCHER, "curious");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getWatchers().size(), is(1));
+        assertThat(subtask.getWatchers().get(0), is(equalTo("curious")));
+    }
+
+    @Test
+    public void shouldAcceptMultipleWatchers() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a two watchers");
+        map.put(Subtask.Attributes.WATCHER, "curious");
+        map.put(Subtask.Attributes.WATCHER, "nervous");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getWatchers().size(), is(2));
+        assertThat(subtask.getWatchers(), hasItems("curious", "nervous"));
+    }
+
     /* helper methods */
 
     private String characters(int length) {

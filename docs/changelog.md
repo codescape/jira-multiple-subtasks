@@ -13,6 +13,7 @@ Click on the version in the following list to see all changes since the previous
 ### [Unreleased]
 
 * docs: improve documentation for configuration of the plugin
+* feat: extend syntax and allow to provide watchers for subtasks (#59)
 
 ### [22.12.0] - 2022-12-12
 

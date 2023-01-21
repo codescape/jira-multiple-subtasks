@@ -14,6 +14,7 @@ import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.priority.Priority;
+import com.atlassian.jira.issue.watchers.WatcherManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
@@ -47,6 +48,7 @@ public class SubtasksCreationService {
     private final ProjectComponentManager projectComponentManager;
     private final LabelManager labelManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final WatcherManager watcherManager;
     private final SubtasksSyntaxService subtasksSyntaxService;
     private final EstimateStringService estimateStringService;
 
@@ -61,6 +63,7 @@ public class SubtasksCreationService {
                                    @ComponentImport ProjectComponentManager projectComponentManager,
                                    @ComponentImport LabelManager labelManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
+                                   @ComponentImport WatcherManager watcherManager,
                                    SubtasksSyntaxService subtasksSyntaxService,
                                    EstimateStringService estimateStringService) {
         this.issueService = issueService;
@@ -73,6 +76,7 @@ public class SubtasksCreationService {
         this.projectComponentManager = projectComponentManager;
         this.labelManager = labelManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.watcherManager = watcherManager;
         this.subtasksSyntaxService = subtasksSyntaxService;
         this.estimateStringService = estimateStringService;
     }
@@ -193,6 +197,15 @@ public class SubtasksCreationService {
                 subtasksCreated.add(newSubtask);
             } catch (CreateException e) {
                 throw new RuntimeException(e);
+            }
+
+            // watcher(s)
+            // try to find each watcher as a user by the provided key and ignore users who do not exist
+            if (!subTaskRequest.getWatchers().isEmpty()) {
+                subTaskRequest.getWatchers().stream()
+                    .map(userManager::getUserByName)
+                    .filter(Objects::nonNull)
+                    .forEach(watcher -> watcherManager.startWatching(watcher, newSubtask));
             }
 
             // label(s)
