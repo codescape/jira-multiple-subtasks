@@ -5,7 +5,10 @@ import net.java.ao.schema.AutoIncrement;
 import net.java.ao.schema.NotNull;
 import net.java.ao.schema.PrimaryKey;
 
-public interface EntityWithId extends RawEntity<Long> {
+/**
+ * Base Entity for Active Objects that provides a primary key with a {@link Long} value.
+ */
+public interface BaseEntity extends RawEntity<Long> {
 
     /**
      * The technical unique identifier for a concrete entity extending this interface.

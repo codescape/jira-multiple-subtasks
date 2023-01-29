@@ -1,5 +1,6 @@
 package de.codescape.jira.plugins.multiplesubtasks;
 
+import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -11,7 +12,7 @@ public class MultipleSubtasksDatabaseUpdater implements DatabaseUpdater {
 
     @Override
     public void update(EntityManager entityManager) throws Exception {
-        entityManager.migrate(SubtaskTemplate.class);
+        entityManager.migrate(SubtaskTemplate.class, SubtaskConfig.class);
     }
 
 }

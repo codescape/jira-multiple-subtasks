@@ -54,6 +54,15 @@
         <condition class="de.codescape.jira.plugins.multiplesubtasks.condition.ProjectAdministrationCondition"/>
     </web-item>
 
+    <!-- configuration in app administration sidebar -->
+    <web-section key="multiple-subtasks-configuration" location="admin_plugins_menu" weight="110">
+        <label key="multiplesubtasks.title"/>
+    </web-section>
+    <web-item key="scrum-poker-configuration-item1" section="admin_plugins_menu/multiple-subtasks-configuration" weight="10">
+        <label key="multiplesubtasks.configuration.label"/>
+        <link linkId="multiple-subtasks-configuration-link1">/secure/admin/MultipleSubtasksConfiguration!default.jspa</link>
+    </web-item>
+
     <!-- webworks -->
     <webwork1 key="multiple-subtasks-webwork">
         <actions>
@@ -70,12 +79,20 @@
                     alias="MultipleSubtasksProjectTemplates" roles-required="use">
                 <view name="success">/templates/projectTemplates.vm</view>
             </action>
+            <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubtasksConfigurationAction"
+                    alias="MultipleSubtasksConfiguration" roles-required="admin">
+                <view name="success">/templates/configuration.vm</view>
+            </action>
         </actions>
     </webwork1>
+
+    <!-- rest endpoint -->
+    <rest key="multiple-subtasks-rest" path="/multiple-subtasks" version="1.0"/>
 
     <!-- persistence with active objects -->
     <ao key="multiple-subtasks-active-objects">
         <entity>de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate</entity>
+        <entity>de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig</entity>
     </ao>
 
 </atlassian-plugin>

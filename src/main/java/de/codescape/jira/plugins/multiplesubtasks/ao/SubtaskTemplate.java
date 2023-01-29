@@ -8,7 +8,7 @@ import net.java.ao.schema.StringLength;
 /**
  * A multiple subtasks template.
  */
-public interface SubtaskTemplate extends EntityWithId {
+public interface SubtaskTemplate extends BaseEntity {
 
     @Indexed
     @NotNull

@@ -14,6 +14,7 @@ Click on the version in the following list to see all changes since the previous
 
 * docs: improve documentation for configuration of the plugin
 * feat: extend syntax and allow to provide watchers for subtasks (#59)
+* feat: allow to configure maximum number of templates per user and per project (#55)
 
 ### [22.12.0] - 2022-12-12
 

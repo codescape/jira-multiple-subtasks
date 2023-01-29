@@ -9,6 +9,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
+import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksSyntaxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
-    private static final long MAXIMUM_TEMPLATES_PER_USER = 10;
     private static final long MAXIMUM_TEMPLATE_LENGTH = 64000;
     private static final long MAXIMUM_TEMPLATE_NAME_LENGTH = 80;
 
@@ -52,16 +52,19 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
     private final SubtaskTemplateService subtaskTemplateService;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SubtasksSyntaxService subtasksSyntaxService;
+    private final MultipleSubtasksConfigurationService multipleSubtasksConfigurationService;
 
     private ShowSubtaskTemplate editTemplate;
 
     @Autowired
     public UserSubtaskTemplatesAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                       SubtaskTemplateService subtaskTemplateService,
-                                      SubtasksSyntaxService subtasksSyntaxService) {
+                                      SubtasksSyntaxService subtasksSyntaxService,
+                                      MultipleSubtasksConfigurationService multipleSubtasksConfigurationService) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtaskTemplateService = subtaskTemplateService;
         this.subtasksSyntaxService = subtasksSyntaxService;
+        this.multipleSubtasksConfigurationService = multipleSubtasksConfigurationService;
     }
 
     @Override
@@ -120,7 +123,8 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
      * Returns the maximum number of templates per user.
      */
     public long getMaximumTemplatesPerUser() {
-        return MAXIMUM_TEMPLATES_PER_USER;
+        return Long.parseLong(multipleSubtasksConfigurationService
+            .get(MultipleSubtasksConfigurationService.TEMPLATES_PER_USER).getValue());
     }
 
     /**

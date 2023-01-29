@@ -11,6 +11,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
+import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksSyntaxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 public class ProjectSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private static final long serialVersionUID = 1L;
-    private static final long MAXIMUM_TEMPLATES_PER_PROJECT = 10;
     private static final long MAXIMUM_TEMPLATE_LENGTH = 64000;
     private static final long MAXIMUM_TEMPLATE_NAME_LENGTH = 80;
 
@@ -56,6 +56,7 @@ public class ProjectSubtaskTemplatesAction extends JiraWebActionSupport {
     private final SubtaskTemplateService subtaskTemplateService;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final SubtasksSyntaxService subtasksSyntaxService;
+    private final MultipleSubtasksConfigurationService multipleSubtasksConfigurationService;
 
     private ShowSubtaskTemplate editTemplate;
     private String projectKey;
@@ -64,11 +65,13 @@ public class ProjectSubtaskTemplatesAction extends JiraWebActionSupport {
     public ProjectSubtaskTemplatesAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                          @ComponentImport ProjectManager projectManager,
                                          SubtaskTemplateService subtaskTemplateService,
-                                         SubtasksSyntaxService subtasksSyntaxService) {
+                                         SubtasksSyntaxService subtasksSyntaxService,
+                                         MultipleSubtasksConfigurationService multipleSubtasksConfigurationService) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.projectManager = projectManager;
         this.subtaskTemplateService = subtaskTemplateService;
         this.subtasksSyntaxService = subtasksSyntaxService;
+        this.multipleSubtasksConfigurationService = multipleSubtasksConfigurationService;
     }
 
     @Override
@@ -148,7 +151,8 @@ public class ProjectSubtaskTemplatesAction extends JiraWebActionSupport {
      * Returns the maximum number of templates per project.
      */
     public long getMaximumTemplatesPerProject() {
-        return MAXIMUM_TEMPLATES_PER_PROJECT;
+        return Long.parseLong(multipleSubtasksConfigurationService
+            .get(MultipleSubtasksConfigurationService.TEMPLATES_PER_PROJECT).getValue());
     }
 
     /**

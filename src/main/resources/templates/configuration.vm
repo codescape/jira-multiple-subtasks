@@ -1,0 +1,101 @@
+<html>
+<head>
+    <title>$i18n.getText("multiplesubtasks.title") - $i18n.getText("multiplesubtasks.configuration.label")</title>
+    <meta name="decorator" content="admin" />
+    <meta name="admin.active.section" content="admin_plugins_menu/multiple-subtasks-configuration" />
+    <meta name="admin.active.tab" content="multiple-subtasks-configuration-link1" />
+</head>
+<body class="multiple-subtasks configuration">
+
+<header class="aui-page-header">
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-image">
+            <span class="aui-avatar aui-avatar-large aui-avatar-project">
+                <span class="aui-avatar-inner">
+                    <img alt="$i18n.getText('multiplesubtasks.title')" src="$req.contextPath/download/resources/de.codescape.jira.plugins.multiple-subtasks:multiple-subtasks-resources/images/multiple-subtasks-logo-144.png">
+                </span>
+            </span>
+        </div>
+        <div class="aui-page-header-main">
+            <ol class="aui-nav aui-nav-breadcrumbs">
+                <li>$i18n.getText("multiplesubtasks.title")</li>
+            </ol>
+            <h1>$i18n.getText("multiplesubtasks.configuration.label")</h1>
+        </div>
+        <div class="aui-page-header-actions">
+            <div class="aui-buttons">
+                <a href="https://jira-multiple-subtasks.codescape.de/configuration" target="_blank" class="aui-button"><span class="aui-icon aui-icon-small aui-iconfont-question-filled"></span> $i18n.getText("multiplesubtasks.configuration.documentation")</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<p>$i18n.getText("multiplesubtasks.configuration.description")</p>
+
+<form class="aui long-label">
+
+<!-- Maximum Templates per User -->
+
+    <div class="field-group">
+        <label for="$action.templatesPerUserKey">$i18n.getText("multiplesubtasks.configuration.templatesperuser.label")
+            <span class="aui-icon icon-required">(required)</span></label>
+        <input type="number" step="1" class="text short-field multiple-subtasks-config"
+               id="$action.templatesPerUserKey" name="$action.templatesPerUserKey" required="required">
+        <div class="description">$i18n.getText("multiplesubtasks.configuration.templatesperuser.description")</div>
+    </div>
+
+<!-- Maximum Templates per Project -->
+
+    <div class="field-group">
+        <label for="$action.templatesPerProjectKey">$i18n.getText("multiplesubtasks.configuration.templatesperproject.label")
+            <span class="aui-icon icon-required">(required)</span></label>
+        <input type="number" step="1" class="text short-field multiple-subtasks-config"
+               id="$action.templatesPerProjectKey" name="$action.templatesPerProjectKey" required="required">
+        <div class="description">$i18n.getText("multiplesubtasks.configuration.templatesperproject.description")</div>
+    </div>
+
+</form>
+
+<script>
+    // load the configuration and apply all settings to the respective fields
+    const getConfiguration = async function () {
+        console.log('Loading configuration...');
+        const response = await fetch(AJS.contextPath() + '/rest/multiple-subtasks/1.0/configuration');
+        const configuration = await response.json();
+
+        if (configuration.length > 0) {
+            configuration.forEach(function(config) {
+                console.log(config);
+                AJS.$('#' + config.key ).val(config.value);
+            });
+        }
+    }
+
+    // save the changed configuration and reload all settings
+    const saveConfiguration = async function (key, value) {
+        await fetch(AJS.contextPath() + '/rest/multiple-subtasks/1.0/configuration/' + key, {
+            method: 'POST',
+            body: value,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        await getConfiguration();
+    }
+
+    AJS.$(document).ready(function () {
+        // show all configured settings
+        getConfiguration();
+
+        // register any changes to be send to the server
+        AJS.$(".multiple-subtasks-config").change(function() {
+            const key = $(this).attr('name');
+            const value = $(this).val();
+            console.log('Updating value for ' + key + ' with value ' + value);
+            saveConfiguration(key, value);
+        });
+    });
+</script>
+
+</body>
+</html>
