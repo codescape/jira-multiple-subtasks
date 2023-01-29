@@ -12,6 +12,12 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
+* ...
+
+### [23.01.0] - 2023-01-29
+
+**Multiple Subtasks can now be configured**
+
 * docs: improve documentation for configuration of the plugin
 * feat: extend syntax and allow to provide watchers for subtasks (#59)
 * feat: allow to configure maximum number of templates per user and per project (#55)
@@ -131,7 +137,8 @@ Click on the version in the following list to see all changes since the previous
 * feat: check for valid license in subtask dialog (#6)
 * feat: restrict the maximum length of a template to 4000 characters
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/22.12.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.01.0...HEAD
+[23.01.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.12.0...23.01.0
 [22.12.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.1...22.12.0
 [22.11.1]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.0...22.11.1
 [22.11.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.10.0...22.11.0
