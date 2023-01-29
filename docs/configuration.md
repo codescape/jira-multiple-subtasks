@@ -32,12 +32,14 @@ This chapter describes the configuration options that are available to customize
 #### Templates per User
 
 You can configure the allowed maximum number of templates per user here.
-The default value is 10 templates per user.
+
+Default value: `10 templates per user`
 
 #### Templates per Project
 
 You can configure the allowed maximum number of templates per project here.
-The default value is 10 templates per peroject.
+
+Default value: `10 templates per project`
 
 ### Missing configuration options?
 

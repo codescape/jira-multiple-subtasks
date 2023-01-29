@@ -13,6 +13,7 @@ Click on the version in the following list to see all changes since the previous
 ### [Unreleased]
 
 * feat: ensure compatibility with Jira 9.6.0, 9.4.2 and 8.20.17
+* feat: secure configuration REST endpoint against illegal access (#61)
 
 ### [23.01.0] - 2023-01-29
 
