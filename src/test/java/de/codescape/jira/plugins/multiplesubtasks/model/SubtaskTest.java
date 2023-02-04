@@ -181,6 +181,42 @@ public class SubtaskTest {
         assertThat(subtask.getWatchers(), hasItems("curious", "nervous"));
     }
 
+    /* custom fields */
+
+    @Test(expected = SyntaxFormatException.class)
+    public void shouldRejectIllegalCustomFields() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has an illegal custom field");
+        map.put("customfield_abcde", "value");
+        Subtask subtask = new Subtask(map);
+    }
+
+    @Test
+    public void shouldAcceptMultipleCustomFields() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has an illegal custom field");
+        map.put("customfield_12345", "12345");
+        map.put("customfield_10009", "value");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getCustomFields().size(), is(2));
+        assertThat(subtask.getCustomFields().get("customfield_12345").size(), is(1));
+        assertThat(subtask.getCustomFields().get("customfield_12345").get(0), is(equalTo("12345")));
+        assertThat(subtask.getCustomFields().get("customfield_10009").size(), is(1));
+        assertThat(subtask.getCustomFields().get("customfield_10009").get(0), is(equalTo("value")));
+    }
+
+    @Test
+    public void shouldAcceptMultipleValuesForCustomFields() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has an illegal custom field");
+        map.put("customfield_10000", "first value");
+        map.put("customfield_10000", "second value");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getCustomFields().size(), is(1));
+        assertThat(subtask.getCustomFields().get("customfield_10000").size(), is(2));
+        assertThat(subtask.getCustomFields().get("customfield_10000"), hasItems("first value", "second value"));
+    }
+
     /* helper methods */
 
     private String characters(int length) {

@@ -7,10 +7,11 @@ import com.atlassian.jira.bc.user.search.AssigneeService;
 import com.atlassian.jira.config.PriorityManager;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.exception.CreateException;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.IssueFactory;
-import com.atlassian.jira.issue.IssueManager;
-import com.atlassian.jira.issue.MutableIssue;
+import com.atlassian.jira.issue.*;
+import com.atlassian.jira.issue.customfields.manager.OptionsManager;
+import com.atlassian.jira.issue.customfields.option.Option;
+import com.atlassian.jira.issue.customfields.option.Options;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.priority.Priority;
@@ -20,13 +21,11 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,8 +34,21 @@ import java.util.stream.Collectors;
 @Component
 public class SubtasksCreationService {
 
+    /* markers */
+
     private static final String INHERIT_MARKER = "@inherit";
     private static final String CURRENT_MARKER = "@current";
+
+    /* supported custom fields */
+
+    static final String CUSTOM_FIELD_TYPE_NUMBER = "com.atlassian.jira.plugin.system.customfieldtypes:float";
+    static final String CUSTOM_FIELD_TYPE_TEXT = "com.atlassian.jira.plugin.system.customfieldtypes:textfield";
+    static final String CUSTOM_FIELD_TYPE_TEXTAREA = "com.atlassian.jira.plugin.system.customfieldtypes:textarea";
+    static final String CUSTOM_FIELD_TYPE_RADIO = "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons";
+    static final String CUSTOM_FIELD_TYPE_SELECT = "com.atlassian.jira.plugin.system.customfieldtypes:select";
+    static final String CUSTOM_FIELD_TYPE_MULTISELECT = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect";
+
+    /* dependencies */
 
     private final IssueService issueService;
     private final IssueFactory issueFactory;
@@ -49,6 +61,8 @@ public class SubtasksCreationService {
     private final LabelManager labelManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final WatcherManager watcherManager;
+    private final CustomFieldManager customFieldManager;
+    private final OptionsManager optionsManager;
     private final SubtasksSyntaxService subtasksSyntaxService;
     private final EstimateStringService estimateStringService;
 
@@ -64,6 +78,8 @@ public class SubtasksCreationService {
                                    @ComponentImport LabelManager labelManager,
                                    @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                    @ComponentImport WatcherManager watcherManager,
+                                   @ComponentImport CustomFieldManager customFieldManager,
+                                   @ComponentImport OptionsManager optionsManager,
                                    SubtasksSyntaxService subtasksSyntaxService,
                                    EstimateStringService estimateStringService) {
         this.issueService = issueService;
@@ -77,6 +93,8 @@ public class SubtasksCreationService {
         this.labelManager = labelManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.watcherManager = watcherManager;
+        this.customFieldManager = customFieldManager;
+        this.optionsManager = optionsManager;
         this.subtasksSyntaxService = subtasksSyntaxService;
         this.estimateStringService = estimateStringService;
     }
@@ -222,9 +240,89 @@ public class SubtasksCreationService {
                         labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label, false)
                     );
             }
+
+            // custom field(s)
+            // persist data to optional custom field(s) of the just created subtask and ignore invalid data
+            if (!subTaskRequest.getCustomFields().isEmpty()) {
+                subTaskRequest.getCustomFields().forEach((customFieldId, customFieldValues) ->
+                    applyValuesToCustomField(newSubtask, customFieldId, customFieldValues));
+            }
         });
 
         return subtasksCreated;
+    }
+
+    private void applyValuesToCustomField(MutableIssue newSubtask, String customFieldId, List<String> values) {
+        CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
+        if (customField == null) {
+            // FIXME what do we do for an invalid custom field id?
+            System.out.println("ERROR: " + customFieldId + " not found");
+        } else {
+            String customFieldKey = customField.getCustomFieldType().getKey();
+            switch (customFieldKey) {
+                case CUSTOM_FIELD_TYPE_NUMBER:
+                    try {
+                        values.forEach(value ->
+                                newSubtask.setCustomFieldValue(customField, Double.valueOf(value))
+                            // FIXME handle multiple attributes overriding each other
+                        );
+                        break;
+                    } catch (NumberFormatException numberFormatException) {
+                        // FIXME handle exception!
+                    }
+                case CUSTOM_FIELD_TYPE_TEXT:
+                    values.forEach(value -> {
+                        newSubtask.setCustomFieldValue(customField, value);
+                        // FIXME handle multiple attributes overriding each other
+                    });
+                    break;
+                case CUSTOM_FIELD_TYPE_TEXTAREA:
+                    values.forEach(value -> {
+                        newSubtask.setCustomFieldValue(customField, value.replaceAll("\\{n}", "\n"));
+                        // FIXME handle multiple attributes overriding each other
+                    });
+                    break;
+                case CUSTOM_FIELD_TYPE_SELECT:
+                case CUSTOM_FIELD_TYPE_RADIO:
+                    Options options = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                    values.forEach(value -> {
+                        Option selectedOption = options.getOptionForValue(value, null);
+                        // FIXME handle multiple attributes overriding each other
+                        if (selectedOption == null) {
+                            // FIXME handle option not exists
+                            System.out.println(" ERROR: option with value does not exist: " + value);
+                        } else {
+                            newSubtask.setCustomFieldValue(customField, selectedOption);
+                        }
+                    });
+                    break;
+                case CUSTOM_FIELD_TYPE_MULTISELECT:
+                    Options optionsM = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                    List<Option> selectedOptions = new ArrayList<>();
+                    values.forEach(value -> {
+                        Option selectedOption = optionsM.getOptionForValue(value, null);
+                        if (selectedOption == null) {
+                            // FIXME handle option not exists
+                            System.out.println(" ERROR: option with value does not exist: " + value);
+                        } else {
+                            selectedOptions.add(selectedOption);
+                        }
+                    });
+                    if (!selectedOptions.isEmpty()) {
+                        newSubtask.setCustomFieldValue(customField, selectedOptions);
+                    }
+                    break;
+                default:
+                    // FIXME handle unsupported field types
+                    System.out.println("No support for " + customFieldKey + " implemented");
+            }
+        }
+
+        try {
+            issueManager.updateIssue(jiraAuthenticationContext.getLoggedInUser(), newSubtask, UpdateIssueRequest.builder().build());
+        } catch (RuntimeException e) {
+            // FIXME handle errors during update of custom fields (see e.getMessage())
+        }
     }
 
 }

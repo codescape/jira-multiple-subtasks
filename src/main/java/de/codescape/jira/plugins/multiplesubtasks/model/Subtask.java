@@ -3,9 +3,10 @@ package de.codescape.jira.plugins.multiplesubtasks.model;
 import com.google.common.collect.ArrayListMultimap;
 import de.codescape.jira.plugins.multiplesubtasks.service.EstimateStringService;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This class represents the request to create a new subtask with the given attributes.
@@ -32,6 +33,8 @@ public class Subtask {
 
     }
 
+    private static final Pattern CUSTOM_FIELD_PATTERN = Pattern.compile("customfield_\\d{5}");
+
     private final String summary;
     private final String description;
     private final String assignee;
@@ -42,6 +45,7 @@ public class Subtask {
     private final List<String> components;
     private final String estimate;
     private final List<String> watchers;
+    private final Map<String, List<String>> customFields;
 
     /**
      * Create a subtask with the provided attributes.
@@ -60,6 +64,7 @@ public class Subtask {
         components = attributes.get(Attributes.COMPONENT);
         estimate = ensureValidEstimate(attributes);
         watchers = attributes.get(Attributes.WATCHER);
+        customFields = extractCustomFields(attributes);
     }
 
     /**
@@ -132,6 +137,13 @@ public class Subtask {
         return watchers;
     }
 
+    /**
+     * Return the optional custom fields.
+     */
+    public Map<String, List<String>> getCustomFields() {
+        return customFields;
+    }
+
     /* internal helper methods */
 
     private String ensureSingleValue(ArrayListMultimap<String, String> attributes, String key) {
@@ -167,7 +179,7 @@ public class Subtask {
 
     private void verifyOnlyKnownAttributes(ArrayListMultimap<String, String> attributes) {
         attributes.forEach((key, value) -> {
-            if (!Attributes.ALL.contains(key))
+            if (!Attributes.ALL.contains(key) && !CUSTOM_FIELD_PATTERN.matcher(key).matches())
                 throw new SyntaxFormatException("Unknown attribute " + key + " found.");
         });
     }
@@ -183,6 +195,17 @@ public class Subtask {
             throw new SyntaxFormatException("Summary (" + summary + ") exceeds allowed maximum length of 255 characters.");
         }
         return summary;
+    }
+
+    private Map<String, List<String>> extractCustomFields(ArrayListMultimap<String, String> attributes) {
+        // get all custom field keys
+        List<String> customFieldKeys = attributes.keySet().stream()
+            .filter(s -> CUSTOM_FIELD_PATTERN.matcher(s).matches())
+            .collect(Collectors.toList());
+        // collect all keys and values into a map
+        Map<String, List<String>> customFields = new HashMap<>();
+        customFieldKeys.forEach(s -> customFields.put(s, new ArrayList<>(attributes.get(s))));
+        return customFields;
     }
 
 }
