@@ -299,17 +299,15 @@ public class SubtasksCreationService {
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
                     }
-                    values.forEach(value -> {
-                        newSubtask.setCustomFieldValue(customField, value);
-                    });
+                    values.forEach(value ->
+                        newSubtask.setCustomFieldValue(customField, value));
                     break;
                 case CUSTOM_FIELD_TYPE_TEXTAREA:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
                     }
-                    values.forEach(value -> {
-                        newSubtask.setCustomFieldValue(customField, value.replaceAll("\\{n}", "\n"));
-                    });
+                    values.forEach(value ->
+                        newSubtask.setCustomFieldValue(customField, value.replaceAll("\\{n}", "\n")));
                     break;
                 case CUSTOM_FIELD_TYPE_SELECT:
                 case CUSTOM_FIELD_TYPE_RADIO:

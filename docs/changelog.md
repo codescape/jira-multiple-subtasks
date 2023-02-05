@@ -13,6 +13,7 @@ Click on the version in the following list to see all changes since the previous
 ### [Unreleased]
 
 * feat: warning for invalid subtask priority (#62)
+* refactor: simplify code in subtask creation service
 
 ### [23.02.0] - 2023-02-05
 
