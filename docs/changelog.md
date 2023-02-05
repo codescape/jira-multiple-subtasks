@@ -12,7 +12,7 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
-* ...
+* feat: warning for invalid subtask priority (#62)
 
 ### [23.02.0] - 2023-02-05
 
