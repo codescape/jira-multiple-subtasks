@@ -12,6 +12,12 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
+* ...
+
+### [23.02.0] - 2023-02-05
+
+**Custom fields can now be set on subtasks**
+
 * feat: ensure compatibility with Jira 9.6.0, 9.4.2 and 8.20.17
 * feat: secure configuration REST endpoint against illegal access (#61)
 * feat: extend syntax and allow to fill custom fields with values (#50)
@@ -141,7 +147,8 @@ Click on the version in the following list to see all changes since the previous
 * feat: check for valid license in subtask dialog (#6)
 * feat: restrict the maximum length of a template to 4000 characters
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.01.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.0...HEAD
+[23.02.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.01.0...23.02.0
 [23.01.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.12.0...23.01.0
 [22.12.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.1...22.12.0
 [22.11.1]: https://github.com/codescape/jira-multiple-subtasks/compare/22.11.0...22.11.1
