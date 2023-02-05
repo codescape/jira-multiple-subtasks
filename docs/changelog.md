@@ -15,6 +15,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: ensure compatibility with Jira 9.6.0, 9.4.2 and 8.20.17
 * feat: secure configuration REST endpoint against illegal access (#61)
 * feat: extend syntax and allow to fill custom fields with values (#50)
+* feat: display warnings for each subtask on confirmation screen (#50)
 
 ### [23.01.0] - 2023-01-29
 

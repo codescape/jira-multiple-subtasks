@@ -10,6 +10,7 @@ import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
+import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksLicenseService;
@@ -61,7 +62,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
 
     private String issueKey;
     private String inputString = EMPTY_STRING;
-    private List<Issue> createdSubTasks;
+    private List<CreatedSubtask> createdSubTasks;
 
     @Autowired
     public MultipleSubtasksDialogAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
@@ -86,7 +87,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     /**
      * Returns the list of created subtasks.
      */
-    public List<Issue> getCreatedSubTasks() {
+    public List<CreatedSubtask> getCreatedSubTasks() {
         return createdSubTasks;
     }
 

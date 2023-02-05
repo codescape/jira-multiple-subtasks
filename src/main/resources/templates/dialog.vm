@@ -29,14 +29,11 @@
                 #foreach($subTask in $createdSubTasks)
                 <tr>
                     <td class="stsequence">$counter.</td>
-                    <td class="stsummary"><a href="$baseurl/browse/$subTask.key">$subTask.summary</a></td>
-                    <td class="issuetype"><img src="$subTask.issueType.completeIconUrl"></td>
-                    <td class="status"><span class="aui-lozenge aui-lozenge-subtle jira-issue-status-lozenge-$subTask.status.statusCategory.colorName">$subTask.status.nameTranslation</span></td>
-                    <td class="assignee">
-                        #if($subTask.assignee)
-                            <a href="$baseurl/secure/ViewProfile.jspa?name=$subTask.assignee.name">$subTask.assignee.displayName</a>
-                        #else
-                            <i>$i18n.getText("multiplesubtasks.dialog.issue.notassigned")</i>
+                    <td class="issuetype"><img src="$subTask.issue.issueType.completeIconUrl"></td>
+                    <td class="stsummary"><a href="$baseurl/browse/$subTask.issue.key">$subTask.issue.summary</a></td>
+                    <td class="issue_actions">
+                        #if($subTask.warningsMessage && !$subTask.warningsMessage.isEmpty())
+                            <span class="aui-icon aui-icon-small aui-iconfont-warning subtask-warnings-tooltip tooltip-inner" title="$i18n.getText('multiplesubtasks.dialog.subtask.warnings') $subTask.warningsMessage"></span>
                         #end
                     </td>
                 </tr>
@@ -112,5 +109,8 @@
                $('#subtaskAction').val('close');
                $('#subtaskForm').submit();
         });
+
+        // initialize tooltips
+        AJS.$(".subtask-warnings-tooltip").tooltip({html: true});
     });
 </script>

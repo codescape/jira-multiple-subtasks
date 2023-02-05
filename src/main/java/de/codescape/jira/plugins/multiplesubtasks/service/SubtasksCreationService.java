@@ -21,11 +21,14 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
+import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -106,8 +109,8 @@ public class SubtasksCreationService {
      * @param inputString input string to be used
      * @return list of all created subtasks
      */
-    public List<Issue> subtasksFromString(String issueKey, String inputString) {
-        ArrayList<Issue> subtasksCreated = new ArrayList<>();
+    public List<CreatedSubtask> subtasksFromString(String issueKey, String inputString) {
+        ArrayList<CreatedSubtask> subtasksCreated = new ArrayList<>();
 
         IssueService.IssueResult issueResult = issueService.getIssue(jiraAuthenticationContext.getLoggedInUser(), issueKey);
         MutableIssue parent = issueResult.getIssue();
@@ -126,7 +129,12 @@ public class SubtasksCreationService {
         }
 
         subtasksSyntaxService.parseString(inputString).forEach(subTaskRequest -> {
+            // collect warnings during subtask creation
+            List<String> warnings = new ArrayList<>();
+
+            // create new issue
             MutableIssue newSubtask = issueFactory.getIssue();
+
             // parent issue
             newSubtask.setParentObject(parent);
 
@@ -146,6 +154,7 @@ public class SubtasksCreationService {
             // try to find provided priority otherwise fall back to priority of parent issue
             if (subTaskRequest.getPriority() != null) {
                 // TODO a priority scheme can be configured per project
+                // TODO add warning for invalid priority
                 Priority priority = priorityManager.getPriorities().stream()
                     .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
                     .findFirst()
@@ -161,6 +170,9 @@ public class SubtasksCreationService {
                 IssueType issueType = subTaskTypes.stream()
                     .filter(availableIssueType -> availableIssueType.getName().equals(subTaskRequest.getIssueType()))
                     .findFirst().orElse(null);
+                if (issueType == null) {
+                    warnings.add("Invalid issue type: " + subTaskRequest.getIssueType());
+                }
                 newSubtask.setIssueType(issueType);
             }
             if (newSubtask.getIssueType() == null) {
@@ -177,6 +189,9 @@ public class SubtasksCreationService {
                 } else {
                     newSubtask.setAssignee(assigneeService.findAssignableUsers(subTaskRequest.getAssignee(), projectObject)
                         .stream().findFirst().orElse(null));
+                    if (newSubtask.getAssignee() == null) {
+                        warnings.add("Invalid assignee: " + subTaskRequest.getAssignee());
+                    }
                 }
             }
 
@@ -185,11 +200,15 @@ public class SubtasksCreationService {
             ApplicationUser reporter = null;
             if (subTaskRequest.getReporter() != null) {
                 reporter = userManager.getUserByName(subTaskRequest.getReporter());
+                if (reporter == null) {
+                    warnings.add("Invalid reporter: " + subTaskRequest.getReporter());
+                }
             }
             newSubtask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());
 
             // component(s)
             // add optional components to the subtask and ignore components that do not exist
+            // TODO add warnings for ignored components
             if (!subTaskRequest.getComponents().isEmpty()) {
                 Set<ProjectComponent> components = subTaskRequest.getComponents().stream()
                     .filter(component -> !INHERIT_MARKER.equals(component))
@@ -212,13 +231,14 @@ public class SubtasksCreationService {
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubtask);
                 subTaskManager.createSubTaskIssueLink(parent, newSubtask, jiraAuthenticationContext.getLoggedInUser());
-                subtasksCreated.add(newSubtask);
+                subtasksCreated.add(new CreatedSubtask(newSubtask, warnings));
             } catch (CreateException e) {
                 throw new RuntimeException(e);
             }
 
             // watcher(s)
             // try to find each watcher as a user by the provided key and ignore users who do not exist
+            // TODO add warnings for ignored watchers
             if (!subTaskRequest.getWatchers().isEmpty()) {
                 subTaskRequest.getWatchers().stream()
                     .map(userManager::getUserByName)
@@ -245,52 +265,58 @@ public class SubtasksCreationService {
             // persist data to optional custom field(s) of the just created subtask and ignore invalid data
             if (!subTaskRequest.getCustomFields().isEmpty()) {
                 subTaskRequest.getCustomFields().forEach((customFieldId, customFieldValues) ->
-                    applyValuesToCustomField(newSubtask, customFieldId, customFieldValues));
+                    applyValuesToCustomField(newSubtask, warnings, customFieldId, customFieldValues));
             }
         });
 
         return subtasksCreated;
     }
 
-    private void applyValuesToCustomField(MutableIssue newSubtask, String customFieldId, List<String> values) {
+    private void applyValuesToCustomField(MutableIssue newSubtask, List<String> warnings, String customFieldId, List<String> values) {
         CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
         if (customField == null) {
-            // FIXME what do we do for an invalid custom field id?
-            System.out.println("ERROR: " + customFieldId + " not found");
+            warnings.add("Invalid custom field: " + customFieldId);
         } else {
             String customFieldKey = customField.getCustomFieldType().getKey();
             switch (customFieldKey) {
                 case CUSTOM_FIELD_TYPE_NUMBER:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    }
                     try {
                         values.forEach(value ->
-                                newSubtask.setCustomFieldValue(customField, Double.valueOf(value))
-                            // FIXME handle multiple attributes overriding each other
+                            newSubtask.setCustomFieldValue(customField, Double.valueOf(value))
                         );
-                        break;
                     } catch (NumberFormatException numberFormatException) {
-                        // FIXME handle exception!
+                        warnings.add("Invalid numeric value for custom field: " + customFieldId);
                     }
+                    break;
                 case CUSTOM_FIELD_TYPE_TEXT:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    }
                     values.forEach(value -> {
                         newSubtask.setCustomFieldValue(customField, value);
-                        // FIXME handle multiple attributes overriding each other
                     });
                     break;
                 case CUSTOM_FIELD_TYPE_TEXTAREA:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    }
                     values.forEach(value -> {
                         newSubtask.setCustomFieldValue(customField, value.replaceAll("\\{n}", "\n"));
-                        // FIXME handle multiple attributes overriding each other
                     });
                     break;
                 case CUSTOM_FIELD_TYPE_SELECT:
                 case CUSTOM_FIELD_TYPE_RADIO:
                     Options options = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    }
                     values.forEach(value -> {
                         Option selectedOption = options.getOptionForValue(value, null);
-                        // FIXME handle multiple attributes overriding each other
                         if (selectedOption == null) {
-                            // FIXME handle option not exists
-                            System.out.println(" ERROR: option with value does not exist: " + value);
+                            warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
                         } else {
                             newSubtask.setCustomFieldValue(customField, selectedOption);
                         }
@@ -302,8 +328,7 @@ public class SubtasksCreationService {
                     values.forEach(value -> {
                         Option selectedOption = optionsM.getOptionForValue(value, null);
                         if (selectedOption == null) {
-                            // FIXME handle option not exists
-                            System.out.println(" ERROR: option with value does not exist: " + value);
+                            warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
                         } else {
                             selectedOptions.add(selectedOption);
                         }
@@ -313,15 +338,14 @@ public class SubtasksCreationService {
                     }
                     break;
                 default:
-                    // FIXME handle unsupported field types
-                    System.out.println("No support for " + customFieldKey + " implemented");
+                    warnings.add("Unsupported custom field type: " + customFieldKey);
             }
         }
 
         try {
             issueManager.updateIssue(jiraAuthenticationContext.getLoggedInUser(), newSubtask, UpdateIssueRequest.builder().build());
         } catch (RuntimeException e) {
-            // FIXME handle errors during update of custom fields (see e.getMessage())
+            warnings.add("Unexpected error applying custom field values: " + e.getMessage());
         }
     }
 
