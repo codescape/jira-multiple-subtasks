@@ -159,3 +159,29 @@ In this example you will create a subtask and make the users with usernames `bob
       watcher: ron
 
 Please note: If the provided username cannot be found it will be ignored.
+
+#### Custom Field(s)
+
+Custom fields can be set in the same way other fields are provided with values.
+The custom field must be referenced by its ID which has the format `customfield_xxxxx` where `xxxxx` is a 5-digit number.
+Atlassian provides a documentation that explains how to find any custom field's id:
+https://confluence.atlassian.com/jirakb/how-to-find-any-custom-field-s-ids-744522503.html
+
+Here is an example with a subtask called `This subtask has custom fields` that applies the numeric value `42` to the first custom field, chooses the option `female` in the second custom field and applies the multi-line text to the third custom field:
+
+    - This subtask has custom fields
+      customfield_10001: 42
+      customfield_10099: female
+      customfield_10007: this is{n}a multi-line{n}text
+
+Since custom fields can have many data types not all custom field types are yet supported.
+The following custom field types can be used:
+
+* Number field
+* Text field (single-line)
+* Text field (multi-line)
+* Radio Buttons
+* Select List (single-select)
+* Select List (multi-select)
+
+If you need support for any other custom field type please [let us know](/support) about it.

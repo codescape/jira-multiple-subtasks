@@ -16,6 +16,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: secure configuration REST endpoint against illegal access (#61)
 * feat: extend syntax and allow to fill custom fields with values (#50)
 * feat: display warnings for each subtask on confirmation screen (#50)
+* feat: add documentation for custom field support (#50)
 
 ### [23.01.0] - 2023-01-29
 
