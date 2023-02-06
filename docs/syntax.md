@@ -164,8 +164,8 @@ Please note: If the provided username cannot be found it will be ignored.
 
 Custom fields can be set in the same way other fields are provided with values.
 The custom field must be referenced by its ID which has the format `customfield_xxxxx` where `xxxxx` is a 5-digit number.
-Atlassian provides a documentation that explains how to find any custom field's id:
-https://confluence.atlassian.com/jirakb/how-to-find-any-custom-field-s-ids-744522503.html
+Atlassian provides a documentation that helps to find out the custom field's IDs in their Jira knowledge base:
+[How to find any custom field's IDs](https://confluence.atlassian.com/jirakb/how-to-find-any-custom-field-s-ids-744522503.html)
 
 Here is an example with a subtask called `This subtask has custom fields` that applies the numeric value `42` to the first custom field, chooses the option `female` in the second custom field and applies the multi-line text to the third custom field:
 
