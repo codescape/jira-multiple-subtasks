@@ -101,7 +101,7 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.LABEL, characters(118));
         map.put(Subtask.Attributes.LABEL, characters(255));
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getLabels().size(), is(2));
+        assertThat(subtask.getLabels(), hasSize(2));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.LABEL, "first-label");
         map.put(Subtask.Attributes.LABEL, "second-label");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getLabels().size(), is(2));
+        assertThat(subtask.getLabels(), hasSize(2));
         assertThat(subtask.getLabels(), hasItems("first-label", "second-label"));
     }
 
@@ -142,8 +142,8 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.SUMMARY, "This task has a single component");
         map.put(Subtask.Attributes.COMPONENT, "backend");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getComponents().size(), is(1));
-        assertThat(subtask.getComponents().get(0), is(equalTo("backend")));
+        assertThat(subtask.getComponents(), hasSize(1));
+        assertThat(subtask.getComponents(), hasItem("backend"));
     }
 
     @Test
@@ -154,7 +154,7 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.COMPONENT, "frontend");
         map.put(Subtask.Attributes.COMPONENT, "design");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getComponents().size(), is(3));
+        assertThat(subtask.getComponents(), hasSize(3));
         assertThat(subtask.getComponents(), hasItems("backend", "frontend", "design"));
     }
 
@@ -166,8 +166,8 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.SUMMARY, "This task has a single watcher");
         map.put(Subtask.Attributes.WATCHER, "curious");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getWatchers().size(), is(1));
-        assertThat(subtask.getWatchers().get(0), is(equalTo("curious")));
+        assertThat(subtask.getWatchers(), hasSize(1));
+        assertThat(subtask.getWatchers(), hasItem("curious"));
     }
 
     @Test
@@ -177,8 +177,54 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.WATCHER, "curious");
         map.put(Subtask.Attributes.WATCHER, "nervous");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getWatchers().size(), is(2));
+        assertThat(subtask.getWatchers(), hasSize(2));
         assertThat(subtask.getWatchers(), hasItems("curious", "nervous"));
+    }
+
+    /* affectedVersion */
+
+    @Test
+    public void shouldAcceptSingleAffectedVersion() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a single affectedVersion");
+        map.put(Subtask.Attributes.AFFECTED_VERSION, "1.0");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getAffectedVersions(), hasSize(1));
+        assertThat(subtask.getAffectedVersions(), hasItem("1.0"));
+    }
+
+    @Test
+    public void shouldAcceptMultipleAffectedVersions() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a multiple affectedVersions");
+        map.put(Subtask.Attributes.AFFECTED_VERSION, "1.0");
+        map.put(Subtask.Attributes.AFFECTED_VERSION, "2.0");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getAffectedVersions(), hasSize(2));
+        assertThat(subtask.getAffectedVersions(), hasItems("1.0", "2.0"));
+    }
+
+    /* fixVersion */
+
+    @Test
+    public void shouldAcceptSingleFixVersion() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a single fixVersion");
+        map.put(Subtask.Attributes.FIX_VERSION, "1.1");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getFixVersions(), hasSize(1));
+        assertThat(subtask.getFixVersions(), hasItem("1.1"));
+    }
+
+    @Test
+    public void shouldAcceptMultipleFixVersions() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a multiple fixVersions");
+        map.put(Subtask.Attributes.FIX_VERSION, "1.1");
+        map.put(Subtask.Attributes.FIX_VERSION, "2.1");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getFixVersions(), hasSize(2));
+        assertThat(subtask.getFixVersions(), hasItems("1.1", "2.1"));
     }
 
     /* custom fields */
@@ -198,11 +244,11 @@ public class SubtaskTest {
         map.put("customfield_12345", "12345");
         map.put("customfield_10009", "value");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getCustomFields().size(), is(2));
-        assertThat(subtask.getCustomFields().get("customfield_12345").size(), is(1));
-        assertThat(subtask.getCustomFields().get("customfield_12345").get(0), is(equalTo("12345")));
-        assertThat(subtask.getCustomFields().get("customfield_10009").size(), is(1));
-        assertThat(subtask.getCustomFields().get("customfield_10009").get(0), is(equalTo("value")));
+        assertThat(subtask.getCustomFields().keySet(), hasSize(2));
+        assertThat(subtask.getCustomFields().get("customfield_12345"), hasSize(1));
+        assertThat(subtask.getCustomFields().get("customfield_12345"), hasItem("12345"));
+        assertThat(subtask.getCustomFields().get("customfield_10009"), hasSize(1));
+        assertThat(subtask.getCustomFields().get("customfield_10009"), hasItem("value"));
     }
 
     @Test
@@ -212,8 +258,8 @@ public class SubtaskTest {
         map.put("customfield_10000", "first value");
         map.put("customfield_10000", "second value");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getCustomFields().size(), is(1));
-        assertThat(subtask.getCustomFields().get("customfield_10000").size(), is(2));
+        assertThat(subtask.getCustomFields().keySet(), hasSize(1));
+        assertThat(subtask.getCustomFields().get("customfield_10000"), hasSize(2));
         assertThat(subtask.getCustomFields().get("customfield_10000"), hasItems("first value", "second value"));
     }
 

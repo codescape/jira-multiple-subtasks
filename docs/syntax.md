@@ -148,6 +148,29 @@ The estimate can be provided in weeks (`w`), days (`d`), hours (`h`), minutes (`
 
 Please note: The order of the estimate attributes is fixed. A value of `2d 1w` will not be accepted while a value of `1w 2d` is valid and will be accepted.
 
+#### Affected Versions(s)
+
+By default, newly created subtasks with not have any affected versions.
+If you want to provide affected versions you can do that by providing the version names.
+In this example you will create a subtask with two affected versions `1.0` and `1.1`:
+
+    - This bug affected two versions
+      affectedVersion: 1.0
+      affectedVersion: 1.1
+
+Please note: If a provided affected version does not exist it will be ignored. 
+
+#### Fix Versions(s)
+
+By default, newly created subtasks with not have any fix versions.
+If you want to provide fix versions you can do that by providing the version names.
+In this example you will create a subtask with one fix version `2.0`:
+
+    - This bug will be solved by the next major version
+      fixVersion: 2.0
+
+Please note: If a provided fix version does not exist it will be ignored.
+
 #### Watcher(s)
 
 By default, newly created subtasks will not have any watchers.

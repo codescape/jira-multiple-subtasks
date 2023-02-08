@@ -28,8 +28,13 @@ public class Subtask {
         static final String LABEL = "label";
         static final String ESTIMATE = "estimate";
         static final String WATCHER = "watcher";
+        static final String FIX_VERSION = "fixVersion";
+        static final String AFFECTED_VERSION = "affectedVersion";
 
-        static final List<String> ALL = Arrays.asList(SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL, ESTIMATE, WATCHER);
+        static final List<String> ALL = Arrays.asList(
+            SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL, ESTIMATE, WATCHER,
+            FIX_VERSION, AFFECTED_VERSION
+        );
 
     }
 
@@ -45,6 +50,8 @@ public class Subtask {
     private final List<String> components;
     private final String estimate;
     private final List<String> watchers;
+    private final List<String> fixVersions;
+    private final List<String> affectedVersions;
     private final Map<String, List<String>> customFields;
 
     /**
@@ -64,6 +71,8 @@ public class Subtask {
         components = attributes.get(Attributes.COMPONENT);
         estimate = ensureValidEstimate(attributes);
         watchers = attributes.get(Attributes.WATCHER);
+        fixVersions = attributes.get(Attributes.FIX_VERSION);
+        affectedVersions = attributes.get(Attributes.AFFECTED_VERSION);
         customFields = extractCustomFields(attributes);
     }
 
@@ -135,6 +144,20 @@ public class Subtask {
      */
     public List<String> getWatchers() {
         return watchers;
+    }
+
+    /**
+     * Return the optional fixVersions of the subtask.
+     */
+    public List<String> getFixVersions() {
+        return fixVersions;
+    }
+
+    /**
+     * Return the optional affectedVersions of the subtask.
+     */
+    public List<String> getAffectedVersions() {
+        return affectedVersions;
     }
 
     /**

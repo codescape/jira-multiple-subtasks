@@ -17,6 +17,8 @@ import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.watchers.WatcherManager;
 import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.version.Version;
+import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
@@ -66,6 +68,7 @@ public class SubtasksCreationService {
     private final WatcherManager watcherManager;
     private final CustomFieldManager customFieldManager;
     private final OptionsManager optionsManager;
+    private final VersionManager versionManager;
     private final SubtasksSyntaxService subtasksSyntaxService;
     private final EstimateStringService estimateStringService;
 
@@ -83,6 +86,7 @@ public class SubtasksCreationService {
                                    @ComponentImport WatcherManager watcherManager,
                                    @ComponentImport CustomFieldManager customFieldManager,
                                    @ComponentImport OptionsManager optionsManager,
+                                   @ComponentImport VersionManager versionManager,
                                    SubtasksSyntaxService subtasksSyntaxService,
                                    EstimateStringService estimateStringService) {
         this.issueService = issueService;
@@ -98,6 +102,7 @@ public class SubtasksCreationService {
         this.watcherManager = watcherManager;
         this.customFieldManager = customFieldManager;
         this.optionsManager = optionsManager;
+        this.versionManager = versionManager;
         this.subtasksSyntaxService = subtasksSyntaxService;
         this.estimateStringService = estimateStringService;
     }
@@ -196,6 +201,48 @@ public class SubtasksCreationService {
                     if (newSubtask.getAssignee() == null) {
                         warnings.add("Invalid assignee: " + subTaskRequest.getAssignee());
                     }
+                }
+            }
+
+            // fixVersion(s)
+            // add provided fix versions if they exist in the project and ignore non-existing versions with a warning
+            if (!subTaskRequest.getFixVersions().isEmpty()) {
+                List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
+                List<Version> fixVersions = new ArrayList<>();
+                subTaskRequest.getFixVersions().forEach(requestedVersion -> {
+                    Version foundVersion = availableVersions.stream()
+                        .filter(version -> version.getName().equals(requestedVersion))
+                        .findFirst()
+                        .orElse(null);
+                    if (foundVersion == null) {
+                        warnings.add("Invalid fixVersion: " + requestedVersion);
+                    } else {
+                        fixVersions.add(foundVersion);
+                    }
+                });
+                if (!fixVersions.isEmpty()) {
+                    newSubtask.setFixVersions(fixVersions);
+                }
+            }
+
+            // affectedVersion(s)
+            // add provided affected versions if they exist in the project and ignore non-existing versions with a warning
+            if (!subTaskRequest.getAffectedVersions().isEmpty()) {
+                List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
+                List<Version> affectedVersions = new ArrayList<>();
+                subTaskRequest.getAffectedVersions().forEach(requestedVersion -> {
+                    Version affectedVersion = availableVersions.stream()
+                        .filter(version -> version.getName().equals(requestedVersion))
+                        .findFirst()
+                        .orElse(null);
+                    if (affectedVersion == null) {
+                        warnings.add("Invalid affectedVersion: " + requestedVersion);
+                    } else {
+                        affectedVersions.add(affectedVersion);
+                    }
+                });
+                if (!affectedVersions.isEmpty()) {
+                    newSubtask.setAffectedVersions(affectedVersions);
                 }
             }
 
