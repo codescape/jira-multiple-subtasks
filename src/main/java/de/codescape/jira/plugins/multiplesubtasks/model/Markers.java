@@ -5,7 +5,14 @@ package de.codescape.jira.plugins.multiplesubtasks.model;
  */
 public class Markers {
 
+    /**
+     * Inherit the value(s) of the parent task.
+     */
     public static final String INHERIT_MARKER = "@inherit";
+
+    /**
+     * Use the current user for this attribute.
+     */
     public static final String CURRENT_MARKER = "@current";
 
 }
