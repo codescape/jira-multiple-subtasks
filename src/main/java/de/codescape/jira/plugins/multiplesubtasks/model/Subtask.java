@@ -1,12 +1,15 @@
 package de.codescape.jira.plugins.multiplesubtasks.model;
 
 import com.google.common.collect.ArrayListMultimap;
+import de.codescape.jira.plugins.multiplesubtasks.service.DueDateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.EstimateStringService;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
 
 /**
  * This class represents the request to create a new subtask with the given attributes.
@@ -30,10 +33,11 @@ public class Subtask {
         static final String WATCHER = "watcher";
         static final String FIX_VERSION = "fixVersion";
         static final String AFFECTED_VERSION = "affectedVersion";
+        static final String DUE_DATE = "dueDate";
 
         static final List<String> ALL = Arrays.asList(
             SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL, ESTIMATE, WATCHER,
-            FIX_VERSION, AFFECTED_VERSION
+            FIX_VERSION, AFFECTED_VERSION, DUE_DATE
         );
 
     }
@@ -52,6 +56,7 @@ public class Subtask {
     private final List<String> watchers;
     private final List<String> fixVersions;
     private final List<String> affectedVersions;
+    private final String dueDate;
     private final Map<String, List<String>> customFields;
 
     /**
@@ -73,6 +78,7 @@ public class Subtask {
         watchers = attributes.get(Attributes.WATCHER);
         fixVersions = attributes.get(Attributes.FIX_VERSION);
         affectedVersions = attributes.get(Attributes.AFFECTED_VERSION);
+        dueDate = ensureValidDueDate(attributes);
         customFields = extractCustomFields(attributes);
     }
 
@@ -161,6 +167,13 @@ public class Subtask {
     }
 
     /**
+     * Return the optional dueDate of the subtask.
+     */
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    /**
      * Return the optional custom fields.
      */
     public Map<String, List<String>> getCustomFields() {
@@ -218,6 +231,21 @@ public class Subtask {
             throw new SyntaxFormatException("Summary (" + summary + ") exceeds allowed maximum length of 255 characters.");
         }
         return summary;
+    }
+
+    private String ensureValidDueDate(ArrayListMultimap<String, String> attributes) {
+        String dueDate = ensureSingleValue(attributes, Attributes.DUE_DATE);
+        if (dueDate == null) {
+            return null;
+        }
+        if (INHERIT_MARKER.equals(dueDate)) {
+            return dueDate;
+        }
+        Matcher matcher = DueDateStringService.PATTERN.matcher(dueDate);
+        if (!matcher.matches()) {
+            throw new SyntaxFormatException("Invalid pattern for dueDate: " + dueDate);
+        }
+        return dueDate;
     }
 
     private Map<String, List<String>> extractCustomFields(ArrayListMultimap<String, String> attributes) {

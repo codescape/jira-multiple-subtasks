@@ -27,22 +27,21 @@ import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
+import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
+
 /**
  * Service to create multiple subtasks from the results of the {@link SubtasksSyntaxService} for a given issue.
  */
 @Component
 public class SubtasksCreationService {
-
-    /* markers */
-
-    private static final String INHERIT_MARKER = "@inherit";
-    private static final String CURRENT_MARKER = "@current";
 
     /* supported custom fields */
 
@@ -71,6 +70,7 @@ public class SubtasksCreationService {
     private final VersionManager versionManager;
     private final SubtasksSyntaxService subtasksSyntaxService;
     private final EstimateStringService estimateStringService;
+    private final DueDateStringService dueDateStringService;
 
     @Autowired
     public SubtasksCreationService(@ComponentImport IssueService issueService,
@@ -88,7 +88,8 @@ public class SubtasksCreationService {
                                    @ComponentImport OptionsManager optionsManager,
                                    @ComponentImport VersionManager versionManager,
                                    SubtasksSyntaxService subtasksSyntaxService,
-                                   EstimateStringService estimateStringService) {
+                                   EstimateStringService estimateStringService,
+                                   DueDateStringService dueDateStringService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
@@ -105,6 +106,7 @@ public class SubtasksCreationService {
         this.versionManager = versionManager;
         this.subtasksSyntaxService = subtasksSyntaxService;
         this.estimateStringService = estimateStringService;
+        this.dueDateStringService = dueDateStringService;
     }
 
     /**
@@ -251,6 +253,23 @@ public class SubtasksCreationService {
                 });
                 if (!affectedVersions.isEmpty()) {
                     newSubtask.setAffectedVersions(affectedVersions);
+                }
+            }
+
+            // dueDate
+            // optional dueDate can be set if it exists
+            if (subTaskRequest.getDueDate() != null) {
+                if (INHERIT_MARKER.equals(subTaskRequest.getDueDate())) {
+                    if (parent.getDueDate() != null) {
+                        newSubtask.setDueDate(parent.getDueDate());
+                    }
+                } else {
+                    Timestamp timestamp = dueDateStringService.dueDateStringToTimestamp(subTaskRequest.getDueDate());
+                    if (timestamp != null) {
+                        newSubtask.setDueDate(timestamp);
+                    } else {
+                        warnings.add("Invalid dueDate: " + subTaskRequest.getDueDate());
+                    }
                 }
             }
 

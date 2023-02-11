@@ -26,6 +26,8 @@ public class SubtaskTest {
         Subtask.Attributes.ALL.forEach(key -> map.put(key, "value"));
         map.removeAll(Subtask.Attributes.ESTIMATE);
         map.put(Subtask.Attributes.ESTIMATE, "4d");
+        map.removeAll(Subtask.Attributes.DUE_DATE);
+        map.put(Subtask.Attributes.DUE_DATE, "2023-02-11");
         Subtask subTask = new Subtask(map);
         assertThat(subTask.getSummary(), is(equalTo("value")));
     }

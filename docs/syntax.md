@@ -150,7 +150,7 @@ Please note: The order of the estimate attributes is fixed. A value of `2d 1w` w
 
 #### Affected Version(s)
 
-By default, newly created subtasks with not have any affected versions.
+By default, newly created subtasks will not have any affected versions.
 If you want to provide affected versions you can do that by providing the version names.
 This example will create a subtask with two affected versions `1.0` and `2.0`:
 
@@ -168,7 +168,7 @@ This example will create a subtask with the affected version(s) that are already
 
 #### Fix Version(s)
 
-By default, newly created subtasks with not have any fix versions.
+By default, newly created subtasks will not have any fix versions.
 If you want to provide fix versions you can do that by providing the version names.
 This example will create a subtask with one fix version `2.1`:
 
@@ -182,6 +182,21 @@ This example will create a subtask with the fix version(s) that are already set 
 
     - This task inherits the fix version
       fixVersion: @inherit
+
+#### Due Date
+
+By default, newly created subtasks will not have a due date.
+If you want to define a due date on your subtasks you can do that in two ways - either inherit the due date of the parent issue or define an absolut date.
+
+    - Task with the due date from the parent issue
+      dueDate: @inherit
+    - Task with an absolute due date
+      dueDate: 2023-02-11
+
+Please note: 
+The absolute date needs to follow in the correct format to be used. 
+The required format is `yyyy-mm-dd`.
+For single-digit months and days, you can omit the leading zero.
 
 #### Watcher(s)
 
