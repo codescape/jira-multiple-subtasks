@@ -193,9 +193,8 @@ If you want to define a due date on your subtasks you can do that in two ways - 
     - Task with an absolute due date
       dueDate: 2023-02-11
 
-Please note: 
-The absolute date needs to follow in the correct format to be used. 
-The required format is `yyyy-mm-dd`.
+Please note:
+The required format for absolute dates is `yyyy-mm-dd`.
 For single-digit months and days, you can omit the leading zero.
 
 #### Watcher(s)
