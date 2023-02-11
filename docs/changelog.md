@@ -16,6 +16,7 @@ Click on the version in the following list to see all changes since the previous
 * refactor: simplify code in subtask creation service
 * docs: improve documentation for custom fields
 * feat: extend syntax and allow to set fix version and affected version (#56)
+* feat: allow to use @inherit on fixVersion and affectedVersion (#72)
 
 ### [23.02.0] - 2023-02-05
 

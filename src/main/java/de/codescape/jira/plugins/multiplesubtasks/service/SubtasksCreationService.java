@@ -210,14 +210,18 @@ public class SubtasksCreationService {
                 List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
                 List<Version> fixVersions = new ArrayList<>();
                 subTaskRequest.getFixVersions().forEach(requestedVersion -> {
-                    Version foundVersion = availableVersions.stream()
-                        .filter(version -> version.getName().equals(requestedVersion))
-                        .findFirst()
-                        .orElse(null);
-                    if (foundVersion == null) {
-                        warnings.add("Invalid fixVersion: " + requestedVersion);
+                    if (INHERIT_MARKER.equals(requestedVersion) && !parent.getFixVersions().isEmpty()) {
+                        fixVersions.addAll(parent.getFixVersions());
                     } else {
-                        fixVersions.add(foundVersion);
+                        Version foundVersion = availableVersions.stream()
+                            .filter(version -> version.getName().equals(requestedVersion))
+                            .findFirst()
+                            .orElse(null);
+                        if (foundVersion == null) {
+                            warnings.add("Invalid fixVersion: " + requestedVersion);
+                        } else {
+                            fixVersions.add(foundVersion);
+                        }
                     }
                 });
                 if (!fixVersions.isEmpty()) {
@@ -231,14 +235,18 @@ public class SubtasksCreationService {
                 List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
                 List<Version> affectedVersions = new ArrayList<>();
                 subTaskRequest.getAffectedVersions().forEach(requestedVersion -> {
-                    Version affectedVersion = availableVersions.stream()
-                        .filter(version -> version.getName().equals(requestedVersion))
-                        .findFirst()
-                        .orElse(null);
-                    if (affectedVersion == null) {
-                        warnings.add("Invalid affectedVersion: " + requestedVersion);
+                    if (INHERIT_MARKER.equals(requestedVersion) && !parent.getAffectedVersions().isEmpty()) {
+                        affectedVersions.addAll(parent.getAffectedVersions());
                     } else {
-                        affectedVersions.add(affectedVersion);
+                        Version affectedVersion = availableVersions.stream()
+                            .filter(version -> version.getName().equals(requestedVersion))
+                            .findFirst()
+                            .orElse(null);
+                        if (affectedVersion == null) {
+                            warnings.add("Invalid affectedVersion: " + requestedVersion);
+                        } else {
+                            affectedVersions.add(affectedVersion);
+                        }
                     }
                 });
                 if (!affectedVersions.isEmpty()) {

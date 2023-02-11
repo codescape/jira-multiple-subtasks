@@ -158,7 +158,13 @@ This example will create a subtask with two affected versions `1.0` and `2.0`:
       affectedVersion: 1.0
       affectedVersion: 2.0
 
-Please note: If a provided affected version does not exist it will be ignored. 
+Please note: If a provided affected version does not exist it will be ignored.
+
+You can also inherit the affected version(s) from the parent issue.
+This example will create a subtask with the affected version(s) that are already set on the parent issue:
+
+    - This task inherits the affected version
+      affectedVersion: @inherit
 
 #### Fix Version(s)
 
@@ -170,6 +176,12 @@ This example will create a subtask with one fix version `2.1`:
       fixVersion: 2.1
 
 Please note: If a provided fix version does not exist it will be ignored.
+
+You can also inherit the fix version(s) from the parent issue.
+This example will create a subtask with the fix version(s) that are already set on the parent issue:
+
+    - This task inherits the fix version
+      fixVersion: @inherit
 
 #### Watcher(s)
 
