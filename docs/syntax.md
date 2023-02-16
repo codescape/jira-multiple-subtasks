@@ -43,6 +43,17 @@ The result will look like this:
     - and another list item
     and a new paragraph
 
+The multi-line functionality can be also used for tables in combination with the Jira markup for tables: 
+
+    - Create a subtask with a table
+      description: || first heading || second heading ||{n}| first content | second content |
+
+This will render a table like this in the description of your subtask:
+
+| first heading | second heading |
+|---------------|----------------|
+| first content | second content |
+
 #### Priority
 
 By default, the priority of the parent issue will be used for the new subtask.

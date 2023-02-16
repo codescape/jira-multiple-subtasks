@@ -19,6 +19,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: allow to use @inherit on fixVersion and affectedVersion (#72)
 * feat: extend syntax and allow to set due date (#53)
 * docs: improve java documentation for new classes
+* docs: add documentation to create tables in description field
 
 ### [23.02.0] - 2023-02-05
 
