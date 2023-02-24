@@ -19,6 +19,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: improve documentation for template import (#74)
 * refactor: ensure null safety for warnings of created subtasks
 * test: add tests for project administration condition
+* test: add tests for dueDate syntax usage (#53)
 
 ### [23.02.1] - 2023-02-19
 

@@ -133,7 +133,7 @@ public class SubtaskTest {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
         map.put(Subtask.Attributes.SUMMARY, "This task has an invalid estimate!");
         map.put(Subtask.Attributes.ESTIMATE, "9p");
-        Subtask subtask = new Subtask(map);
+        new Subtask(map);
     }
 
     /* component */
@@ -229,6 +229,34 @@ public class SubtaskTest {
         assertThat(subtask.getFixVersions(), hasItems("1.1", "2.1"));
     }
 
+    /* dueDate */
+
+    @Test
+    public void shouldAcceptSingleValidDueDate() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a due date.");
+        map.put(Subtask.Attributes.DUE_DATE, "2022-08-01");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getDueDate(), is(equalTo("2022-08-01")));
+    }
+
+    @Test
+    public void shouldAcceptDueDateToBeInherited() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a due date from parent.");
+        map.put(Subtask.Attributes.DUE_DATE, "@inherit");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getDueDate(), is(equalTo("@inherit")));
+    }
+
+    @Test(expected = SyntaxFormatException.class)
+    public void shouldRejectInvalidDueDate() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has an invalid due date.");
+        map.put(Subtask.Attributes.DUE_DATE, "22/08/01");
+        new Subtask(map);
+    }
+
     /* custom fields */
 
     @Test(expected = SyntaxFormatException.class)
@@ -236,7 +264,7 @@ public class SubtaskTest {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
         map.put(Subtask.Attributes.SUMMARY, "This task has an illegal custom field");
         map.put("customfield_abcde", "value");
-        Subtask subtask = new Subtask(map);
+        new Subtask(map);
     }
 
     @Test
