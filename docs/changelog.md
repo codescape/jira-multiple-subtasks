@@ -12,7 +12,7 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
-* ...
+* docs: add Java documentation to model classes
 
 ### [23.02.1] - 2023-02-19
 
