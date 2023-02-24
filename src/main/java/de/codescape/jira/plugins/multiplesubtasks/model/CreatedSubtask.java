@@ -43,7 +43,7 @@ public class CreatedSubtask {
      * Return all warnings that occurred during creation in HTML format.
      */
     public String getWarningsMessage() {
-        return warnings.isEmpty() ? null : warnings.stream()
+        return warnings == null || warnings.isEmpty() ? null : warnings.stream()
             .collect(Collectors.joining("</li><li>", "<ul><li>", "</li></ul>"));
     }
 

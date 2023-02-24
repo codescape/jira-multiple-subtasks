@@ -17,6 +17,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: fix table of contents for template import documentation (#74)
 * docs: fix typo in syntax documentation (#75)
 * docs: improve documentation for template import (#74)
+* refactor: ensure null safety for warnings of created subtasks
 
 ### [23.02.1] - 2023-02-19
 
