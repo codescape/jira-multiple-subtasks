@@ -14,6 +14,7 @@ Click on the version in the following list to see all changes since the previous
 
 * docs: add Java documentation to model classes
 * feat: import templates from Quick Subtasks for Jira (#74)
+* docs: fix table of contents for template import documentation
 
 ### [23.02.1] - 2023-02-19
 

@@ -7,7 +7,7 @@ category: Administration
 This page describes how to import subtask templates from other plugins to make them available for users and projects in Multiple Subtasks for Jira.
 
 * Table of Contents
-  {:toc}
+{:toc}
 
 ### General information
 
