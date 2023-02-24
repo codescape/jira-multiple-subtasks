@@ -1,0 +1,241 @@
+package de.codescape.jira.plugins.multiplesubtasks.action;
+
+import com.atlassian.jira.bc.user.search.UserSearchParams;
+import com.atlassian.jira.bc.user.search.UserSearchService;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
+import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.security.request.RequestMethod;
+import com.atlassian.jira.security.request.SupportedMethods;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.web.action.JiraWebActionSupport;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
+import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
+import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+/**
+ * This action allows to run template imports for Multiple Subtasks for Jira.
+ */
+public class SubtaskTemplateImportAction extends JiraWebActionSupport {
+
+    private static final String QUICK_SUBTASKS_PROJECT_TEMPLATES = "com.hascode.plugin.jira:subtask-templates";
+    private static final String QUICK_SUBTASKS_USER_TEMPLATES_PREFIX = "subtasks-user-";
+    private static final Pattern QUICK_SUBTASKS_TASK_PATTERN = Pattern.compile("^- *([^/]+)( / .+)*$");
+
+    private final UserSearchService userSearchService;
+    private final PluginSettingsFactory pluginSettingsFactory;
+    private final ProjectManager projectManager;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
+    private final SubtaskTemplateService subtaskTemplateService;
+
+    private final StringWriter output = new StringWriter();
+    private boolean quickSubtasksCanImport;
+
+    @Autowired
+    public SubtaskTemplateImportAction(@ComponentImport UserSearchService userSearchService,
+                                       @ComponentImport PluginSettingsFactory pluginSettingsFactory,
+                                       @ComponentImport ProjectManager projectManager,
+                                       @ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
+                                       SubtaskTemplateService subtaskTemplateService) {
+        this.userSearchService = userSearchService;
+        this.pluginSettingsFactory = pluginSettingsFactory;
+        this.projectManager = projectManager;
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.subtaskTemplateService = subtaskTemplateService;
+    }
+
+    /**
+     * Display the overview page.
+     */
+    @Override
+    @SupportedMethods({RequestMethod.GET})
+    public String doDefault() {
+        return SUCCESS;
+    }
+
+    /**
+     * Perform a precheck for template import from Quick Subtasks for Jira.
+     */
+    @SupportedMethods({RequestMethod.GET})
+    public String doQuickSubtasksPrecheck() {
+        output.append("Scanning users...").append("\n");
+        List<ApplicationUser> usersWithTemplates = getUsersWithQuickSubtasksTemplates();
+        output.append("Users with Quick Subtasks for Jira templates: ").append(Integer.toString(usersWithTemplates.size())).append("\n");
+
+        output.append("Scanning projects...").append("\n");
+        List<Project> projectsWithTemplates = getProjectsWithQuickSubtasksTemplates();
+        output.append("Projects with Quick Subtasks for Jira templates: ").append(Integer.toString(projectsWithTemplates.size())).append("\n");
+
+        quickSubtasksCanImport = !projectsWithTemplates.isEmpty() || !usersWithTemplates.isEmpty();
+        if (quickSubtasksCanImport) {
+            output.append("Migration can be started now!");
+        }
+        return SUCCESS;
+    }
+
+    /**
+     * Perform template import from Quick Subtasks for Jira.
+     */
+    @SupportedMethods({RequestMethod.GET})
+    public String doQuickSubtasksImport() {
+        output.append("Migration started.").append("\n");
+        output.append("Migrating user templates...").append("\n");
+        PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
+        getUsersWithQuickSubtasksTemplates().forEach(applicationUser -> {
+            String templatesForUser = (String) settings.get(QUICK_SUBTASKS_USER_TEMPLATES_PREFIX + applicationUser.getUsername());
+            if (templatesForUser != null) {
+                importQuickSubtasksTemplatesForUser(applicationUser, templatesForUser);
+            }
+        });
+        output.append("Migrating project templates...").append("\n");
+        getProjectsWithQuickSubtasksTemplates().forEach(project -> {
+            PluginSettings settingsForProject = pluginSettingsFactory.createSettingsForKey(project.getKey());
+            String templatesForProject = (String) settingsForProject.get(QUICK_SUBTASKS_PROJECT_TEMPLATES);
+            if (templatesForProject != null) {
+                importQuickSubtasksTemplatesForProject(project, templatesForProject);
+            }
+        });
+        output.append("Migration finished.").append("\n");
+        return SUCCESS;
+    }
+
+    /**
+     * Return the results for Quick Subtasks related actions.
+     */
+    public String getQuickSubtasksResults() {
+        return output.toString();
+    }
+
+    /**
+     * Return whether import can be started.
+     */
+    public boolean isQuickSubtasksCanImport() {
+        return quickSubtasksCanImport;
+    }
+
+    /**
+     * Return a list of all projects with templates for Quick Subtasks for Jira.
+     */
+    private List<Project> getProjectsWithQuickSubtasksTemplates() {
+        List<Project> projectsWithTemplates = new ArrayList<>();
+        projectManager.getProjectObjects().forEach(project -> {
+            PluginSettings settingsForProject = pluginSettingsFactory.createSettingsForKey(project.getKey());
+            String templatesForProject = (String) settingsForProject.get(QUICK_SUBTASKS_PROJECT_TEMPLATES);
+            if (templatesForProject != null) {
+                projectsWithTemplates.add(project);
+            }
+        });
+        return projectsWithTemplates;
+    }
+
+    /**
+     * Return a list of all users with templates for Quick Subtasks for Jira.
+     */
+    private List<ApplicationUser> getUsersWithQuickSubtasksTemplates() {
+        PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
+        List<ApplicationUser> usersWithTemplates = new ArrayList<>();
+        userSearchService.findUsers("", new UserSearchParams.Builder(50000).allowEmptyQuery(true).includeActive(true).includeInactive(false).build())
+            .forEach(applicationUser -> {
+                String templatesForUser = (String) settings.get(QUICK_SUBTASKS_USER_TEMPLATES_PREFIX + applicationUser.getUsername());
+                if (templatesForUser != null) {
+                    usersWithTemplates.add(applicationUser);
+                }
+            });
+        return usersWithTemplates;
+    }
+
+    /**
+     * Imports all Quick Subtasks templates for projects.
+     */
+    private void importQuickSubtasksTemplatesForProject(Project project, String templatesForProject) {
+        List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForProject, true);
+        List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getProjectTemplates(project.getId());
+        templates.forEach(template -> {
+            if (existingTemplates.stream().filter(existingTemplate ->
+                existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
+            ).findFirst().orElse(null) == null) {
+                subtaskTemplateService.saveProjectTemplate(project.getId(), jiraAuthenticationContext.getLoggedInUser().getId(), null, template.getName(), template.getTemplate());
+            }
+        });
+    }
+
+    /**
+     * Imports all Quick Subtasks templates for users.
+     */
+    private void importQuickSubtasksTemplatesForUser(ApplicationUser applicationUser, String templatesForUser) {
+        List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForUser, false);
+        List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getUserTemplates(applicationUser.getId());
+        templates.forEach(template -> {
+                if (existingTemplates.stream().filter(existingTemplate ->
+                    existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
+                ).findFirst().orElse(null) == null) {
+                    subtaskTemplateService.saveUserTemplate(applicationUser.getId(), null, template.getName(), template.getTemplate());
+                }
+            }
+        );
+    }
+
+    /**
+     * Returns {@link ShowSubtaskTemplate} objects from the given XML.
+     */
+    private List<ShowSubtaskTemplate> extractQuickSubtasksTemplatesFromXml(String templatesXml, boolean isProjectTemplate) {
+        List<ShowSubtaskTemplate> templates = new ArrayList<>();
+        try {
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = builder.parse(new ByteArrayInputStream(templatesXml.getBytes()));
+            doc.getDocumentElement().normalize();
+
+            // templates for users and projects are saved with different element names
+            NodeList templateNodes = isProjectTemplate ?
+                doc.getElementsByTagName("subtaskTemplate") :
+                doc.getElementsByTagName("com.hascode.plugin.quick__subtasks.dto.IdDecoratingSubtaskTemplate");
+            log.info("Templates found: " + templateNodes.getLength());
+
+            for (int i = 0; i < templateNodes.getLength(); i++) {
+                Node template = templateNodes.item(i);
+                NodeList attributes = template.getChildNodes();
+
+                String title = null;
+                String text = null;
+
+                for (int j = 0; j < attributes.getLength(); j++) {
+                    Node item = attributes.item(j);
+                    if (item.getNodeName().equals("text")) {
+                        text = item.getTextContent();
+                    }
+                    if (item.getNodeName().equals("title")) {
+                        title = item.getTextContent();
+                    }
+                }
+
+                if (title != null && text != null) {
+                    log.info("Importing template: " + title);
+                    // TODO transform Quick Subtask syntax into Multiple Subtasks syntax
+                    templates.add(new ShowSubtaskTemplate(title, text));
+                }
+            }
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            log.error("Error parsing template with xml " + templatesXml, e);
+        }
+        return templates;
+    }
+
+}

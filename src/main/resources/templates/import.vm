@@ -1,0 +1,49 @@
+<html>
+<head>
+    <title>$i18n.getText("multiplesubtasks.title") - $i18n.getText("multiplesubtasks.import.label")</title>
+    <meta name="decorator" content="admin" />
+    <meta name="admin.active.section" content="admin_plugins_menu/multiple-subtasks-configuration" />
+    <meta name="admin.active.tab" content="multiple-subtasks-configuration-link2" />
+</head>
+<body class="multiple-subtasks configuration">
+
+<header class="aui-page-header">
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-image">
+            <span class="aui-avatar aui-avatar-large aui-avatar-project">
+                <span class="aui-avatar-inner">
+                    <img alt="$i18n.getText('multiplesubtasks.title')" src="$req.contextPath/download/resources/de.codescape.jira.plugins.multiple-subtasks:multiple-subtasks-resources/images/multiple-subtasks-logo-144.png">
+                </span>
+            </span>
+        </div>
+        <div class="aui-page-header-main">
+            <ol class="aui-nav aui-nav-breadcrumbs">
+                <li>$i18n.getText("multiplesubtasks.title")</li>
+            </ol>
+            <h1>$i18n.getText("multiplesubtasks.import.label")</h1>
+        </div>
+        <div class="aui-page-header-actions">
+            <div class="aui-buttons">
+                <a href="https://jira-multiple-subtasks.codescape.de/template-import" target="_blank" class="aui-button"><span class="aui-icon aui-icon-small aui-iconfont-question-filled"></span> $i18n.getText("multiplesubtasks.import.documentation")</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<p>$i18n.getText("multiplesubtasks.import.description")</p>
+
+<h2>$i18n.getText("multiplesubtasks.import.quicksubtasks")</h2>
+
+<div class="aui-buttons">
+    <a href="MultipleSubtasksTemplateImport!quickSubtasksPrecheck.jspa" class="aui-button aui-button"><span class="aui-icon aui-icon-small aui-iconfont-search"></span> $i18n.getText('multiplesubtasks.import.buttons.precheck')</a>
+    #if ($quickSubtasksCanImport)
+    <a href="MultipleSubtasksTemplateImport!quickSubtasksImport.jspa" class="aui-button aui-button-primary"><span class="aui-icon aui-icon-small aui-iconfont-send"></span> $i18n.getText('multiplesubtasks.import.buttons.start')</a>
+    #end
+</div>
+
+#if ($quickSubtasksResults && !$quickSubtasksResults.isEmpty())
+    <pre><code>$quickSubtasksResults</code></pre>
+#end
+
+</body>
+</html>
