@@ -26,10 +26,10 @@ Please note: Not all templates will be fully functional and might need some addi
 This can have multiple reasons: 
 Templates can already be invalid in `Quick Subtasks for Jira` or use advanced features from the plugin that are not available in Multiple Subtasks for Jira.    
 
-The migration can be performed by any user with access to the Jira administration pages in two steps:
+The import can be performed in two steps:
 
 1. `Precheck import` - This button allows you to scan for user and project templates in your Jira database.
-2. `Start import` - If a minimum of one template is found you can new start the migration.
+2. `Start import` - If a minimum of one template is found you can start the import.
 
 All results are displayed on this page after any operation was performed.
-If the migration fails please consult the logs and [let us know](/support) about it so that we can help you.
+If the import fails please consult the logs and [let us know](/support) about it so that we can help you.
