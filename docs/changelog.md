@@ -22,6 +22,7 @@ Click on the version in the following list to see all changes since the previous
 * test: add tests for dueDate syntax usage (#53)
 * test: add tests for constant values
 * refactor: ignore unchecked conversion for database updater
+* refactor: move syntax related services into separate package
 
 ### [23.02.1] - 2023-02-19
 

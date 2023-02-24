@@ -1,4 +1,4 @@
-package de.codescape.jira.plugins.multiplesubtasks.service;
+package de.codescape.jira.plugins.multiplesubtasks.service.syntax;
 
 import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;

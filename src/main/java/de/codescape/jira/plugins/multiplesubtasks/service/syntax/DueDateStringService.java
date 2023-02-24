@@ -1,4 +1,4 @@
-package de.codescape.jira.plugins.multiplesubtasks.service;
+package de.codescape.jira.plugins.multiplesubtasks.service.syntax;
 
 import org.springframework.stereotype.Component;
 

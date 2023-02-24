@@ -24,6 +24,9 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DueDateStringService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

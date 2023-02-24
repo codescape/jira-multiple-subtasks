@@ -1,4 +1,4 @@
-package de.codescape.jira.plugins.multiplesubtasks.service;
+package de.codescape.jira.plugins.multiplesubtasks.service.syntax;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;

@@ -11,7 +11,7 @@ import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
-import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksSyntaxService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package de.codescape.jira.plugins.multiplesubtasks.service;
+package de.codescape.jira.plugins.multiplesubtasks.service.syntax;
 
 import com.atlassian.jira.bc.issue.worklog.TimeTrackingConfiguration;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;

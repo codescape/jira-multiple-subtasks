@@ -1,8 +1,8 @@
 package de.codescape.jira.plugins.multiplesubtasks.model;
 
 import com.google.common.collect.ArrayListMultimap;
-import de.codescape.jira.plugins.multiplesubtasks.service.DueDateStringService;
-import de.codescape.jira.plugins.multiplesubtasks.service.EstimateStringService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DueDateStringService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 
 import java.util.*;
 import java.util.regex.Matcher;
