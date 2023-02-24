@@ -11,6 +11,7 @@ import net.java.ao.test.jdbc.DatabaseUpdater;
 public class MultipleSubtasksDatabaseUpdater implements DatabaseUpdater {
 
     @Override
+    @SuppressWarnings("unchecked")
     public void update(EntityManager entityManager) throws Exception {
         entityManager.migrate(SubtaskTemplate.class, SubtaskConfig.class);
     }
