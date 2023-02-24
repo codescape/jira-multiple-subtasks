@@ -197,7 +197,7 @@ This example will create a subtask with the fix version(s) that are already set 
 #### Due Date
 
 By default, newly created subtasks will not have a due date.
-If you want to define a due date on your subtasks you can do that in two ways - either inherit the due date of the parent issue or define an absolut date.
+If you want to define a due date on your subtasks you can do that in two ways - either inherit the due date of the parent issue or define an absolute date.
 
     - Task with the due date from the parent issue
       dueDate: @inherit
