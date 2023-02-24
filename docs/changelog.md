@@ -20,6 +20,7 @@ Click on the version in the following list to see all changes since the previous
 * refactor: ensure null safety for warnings of created subtasks
 * test: add tests for project administration condition
 * test: add tests for dueDate syntax usage (#53)
+* test: add tests for constant values
 
 ### [23.02.1] - 2023-02-19
 
