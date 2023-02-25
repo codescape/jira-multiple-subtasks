@@ -230,7 +230,10 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
 
                 if (title != null && text != null) {
                     log.info("Importing template: " + title);
-                    templates.add(new ShowSubtaskTemplate(title, transformQuickSubtasksTemplate(text)));
+                    String newTemplate = transformQuickSubtasksTemplate(text);
+                    if (newTemplate != null && !newTemplate.isEmpty()) {
+                        templates.add(new ShowSubtaskTemplate(title, newTemplate));
+                    }
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
