@@ -23,7 +23,8 @@ Click on the version in the following list to see all changes since the previous
 * test: add tests for constant values
 * refactor: ignore unchecked conversion for database updater
 * refactor: move syntax related services into separate package
-* feat: fix typo on German template import page 
+* feat: fix typo on German template import page
+* feat: transform syntax for imported templates (#74)
 
 ### [23.02.1] - 2023-02-19
 

@@ -20,14 +20,12 @@ Navigate to the page `Template Import`.
 
 ### Quick Subtasks for Jira
 
-The import will be performed for all user and project specific subtask templates from `Quick Subtasks for Jira`.
+The import will be performed for all user and project subtask templates from `Quick Subtasks for Jira`.
 
-Please note: Not all templates will be fully functional and might need some additional tuning later.
-This can have multiple reasons: 
-Templates can already be invalid in `Quick Subtasks for Jira` or use advanced features from the plugin that are not available in Multiple Subtasks for Jira.    
+Please note: `Quick Subtask for Jira` supports issue links (syntax: `link: ...`) and custom fields (syntax: `cfield: ...`) with a completely different syntax.
+This information cannot be migrated and will be lost on the imported templates.
 
 The import can be performed in two steps:
-
 1. `Precheck import` - This button allows you to scan for user and project templates in your Jira database.
 2. `Start import` - If a minimum of one template is found you can start the import.
 

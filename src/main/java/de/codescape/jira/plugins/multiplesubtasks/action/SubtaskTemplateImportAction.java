@@ -28,7 +28,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -38,7 +40,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
 
     private static final String QUICK_SUBTASKS_PROJECT_TEMPLATES = "com.hascode.plugin.jira:subtask-templates";
     private static final String QUICK_SUBTASKS_USER_TEMPLATES_PREFIX = "subtasks-user-";
-    private static final Pattern QUICK_SUBTASKS_TASK_PATTERN = Pattern.compile("^- *([^/]+)( / .+)*$");
+    private static final Pattern QUICK_SUBTASKS_TASK_PATTERN = Pattern.compile("^- *([^(?:/)]+)(?:/)?(?:(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)(?: ([^:]+):\"([^\"]+)\")?(?:\\s*)|(?:[^\\r\\n]*))$");
 
     private final UserSearchService userSearchService;
     private final PluginSettingsFactory pluginSettingsFactory;
@@ -228,14 +230,84 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
 
                 if (title != null && text != null) {
                     log.info("Importing template: " + title);
-                    // TODO transform Quick Subtask syntax into Multiple Subtasks syntax
-                    templates.add(new ShowSubtaskTemplate(title, text));
+                    templates.add(new ShowSubtaskTemplate(title, transformQuickSubtasksTemplate(text)));
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             log.error("Error parsing template with xml " + templatesXml, e);
         }
         return templates;
+    }
+
+    String transformQuickSubtasksTemplate(String templateString) {
+        StringWriter output = new StringWriter();
+        Arrays.stream(templateString.split("\n")).forEach(line -> {
+            Matcher matcher = QUICK_SUBTASKS_TASK_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                String key = "";
+                String value;
+                for (int i = 1; i < matcher.groupCount(); i++) {
+                    if (matcher.group(i) != null) {
+                        if (i > 1) {
+                            if (i % 2 == 0) {
+                                key = matcher.group(i);
+                            } else {
+                                value = matcher.group(i);
+                                switch (key) {
+                                    // same keyword and value format
+                                    case "priority":
+                                    case "description":
+                                    case "estimate":
+                                    case "assignee":
+                                    case "dueDate":
+                                    case "reporter":
+                                    case "issueType":
+                                        output.append("  ").append(key).append(": ").append(value).append("\n");
+                                        break;
+                                    // different keyword same value
+                                    case "fixversion":
+                                        output.append("  ").append("fixVersion").append(": ").append(value).append("\n");
+                                        break;
+                                    case "affectedversion":
+                                        output.append("  ").append("affectedVersion").append(": ").append(value).append("\n");
+                                        break;
+                                    // component (split values)
+                                    case "component":
+                                        String[] components = value.split(", *");
+                                        Arrays.stream(components).forEach(component ->
+                                            output.append("  ").append("component").append(": ").append(component).append("\n")
+                                        );
+                                        break;
+                                    // labels (split values)
+                                    case "labels":
+                                        String[] labels = value.split(", *");
+                                        Arrays.stream(labels).forEach(label ->
+                                            output.append("  ").append("label").append(": ").append(label).append("\n")
+                                        );
+                                        break;
+                                    // watcher (split values)
+                                    case "watcher":
+                                        String[] watchers = value.split(", *");
+                                        Arrays.stream(watchers).forEach(watcher ->
+                                            output.append("  ").append("watcher").append(": ").append(watcher).append("\n")
+                                        );
+                                        break;
+                                    // not supported (will be ignored)
+                                    default:
+                                        log.info("Ignoring unknown attribute '" + key + "' with value: '" + value + "'");
+                                }
+                            }
+                        } else {
+                            // summary
+                            output.append("- ").append(matcher.group(i).trim()).append("\n");
+                        }
+                    }
+                }
+            } else {
+                log.info("Ignoring invalid line: " + line);
+            }
+        });
+        return output.toString();
     }
 
 }
