@@ -12,6 +12,12 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
+* ...
+
+### [23.02.2] - 2023-02-26
+
+**Import project and user templates**
+
 * docs: add Java documentation to model classes
 * feat: import templates from Quick Subtasks for Jira (#74)
 * docs: fix table of contents for template import documentation (#74)
@@ -172,7 +178,8 @@ Click on the version in the following list to see all changes since the previous
 * feat: check for valid license in subtask dialog (#6)
 * feat: restrict the maximum length of a template to 4000 characters
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.1...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.2...HEAD
+[23.02.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.1...23.02.2
 [23.02.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.0...23.02.1
 [23.02.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.01.0...23.02.0
 [23.01.0]: https://github.com/codescape/jira-multiple-subtasks/compare/22.12.0...23.01.0
