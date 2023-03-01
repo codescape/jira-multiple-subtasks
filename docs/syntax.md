@@ -220,6 +220,20 @@ In this example you will create a subtask and make the users with usernames `bob
 
 Please note: If the provided username cannot be found it will be ignored.
 
+You can also inherit the watcher(s) from the parent issue.
+This example will create a subtask with the watchers(s) that are already set on the parent issue:
+
+    - This task inherits the watchers
+      watcher: @inherit
+
+Alternatively you can explicitly add yourself (the current user) as a watcher of the new subtask:
+
+    - I am watching this issue
+      watcher: @current
+
+Please note: In the user profile of every Jira user they can choose whether they automatically watch newly created or commented issues.
+So in most cases it is not necessary to add the current user as a watcher.
+
 #### Custom Field(s)
 
 Custom fields can be set in the same way other fields are provided with values.

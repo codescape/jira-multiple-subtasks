@@ -12,7 +12,8 @@ Click on the version in the following list to see all changes since the previous
 
 ### [Unreleased]
 
-* ...
+* feat: add support for @inherit and @current on watcher (#71)
+* feat: add warning for invalid user provided as subtask watcher (#64)
 
 ### [23.02.2] - 2023-02-26
 

@@ -48,6 +48,7 @@
         <hsqldb.version>2.5.0</hsqldb.version>
         <jsr311.version>1.1.1</jsr311.version>
         <junit.version>4.13.1</junit.version>
+        <lucene.version>7.3.1</lucene.version>
         <mockito.version>3.1.0</mockito.version>
         <profiling.version>4.8.1</profiling.version>
         <quick.reload.version>3.2.0</quick.reload.version>
@@ -181,6 +182,14 @@
             <groupId>com.atlassian.profiling</groupId>
             <artifactId>atlassian-profiling-api</artifactId>
             <version>${profiling.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Test dependencies required by Mockito -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

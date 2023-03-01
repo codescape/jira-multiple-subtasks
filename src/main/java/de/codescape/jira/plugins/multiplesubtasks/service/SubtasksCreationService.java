@@ -319,12 +319,25 @@ public class SubtasksCreationService {
 
             // watcher(s)
             // try to find each watcher as a user by the provided key and ignore users who do not exist
-            // TODO add warnings for ignored watchers
             if (!subTaskRequest.getWatchers().isEmpty()) {
+                if (subTaskRequest.getWatchers().contains(CURRENT_MARKER)) {
+                    watcherManager.startWatching(jiraAuthenticationContext.getLoggedInUser(), newSubtask);
+                } else if (subTaskRequest.getWatchers().contains(INHERIT_MARKER)) {
+                    watcherManager.getWatchersUnsorted(parent).forEach(user ->
+                        watcherManager.startWatching(user, newSubtask)
+                    );
+                }
                 subTaskRequest.getWatchers().stream()
-                    .map(userManager::getUserByName)
-                    .filter(Objects::nonNull)
-                    .forEach(watcher -> watcherManager.startWatching(watcher, newSubtask));
+                    .filter(watcher -> !INHERIT_MARKER.equals(watcher))
+                    .filter(watcher -> !CURRENT_MARKER.equals(watcher))
+                    .forEach(watcher -> {
+                        ApplicationUser userByName = userManager.getUserByName(watcher);
+                        if (userByName != null) {
+                            watcherManager.startWatching(userByName, newSubtask);
+                        } else {
+                            warnings.add("Invalid watcher: " + watcher);
+                        }
+                    });
             }
 
             // label(s)
