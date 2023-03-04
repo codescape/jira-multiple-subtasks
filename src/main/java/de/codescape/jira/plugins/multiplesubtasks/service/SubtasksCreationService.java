@@ -37,7 +37,6 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
@@ -298,17 +297,24 @@ public class SubtasksCreationService {
 
             // component(s)
             // add optional components to the subtask and ignore components that do not exist
-            // TODO add warnings for ignored components
             if (!subTaskRequest.getComponents().isEmpty()) {
-                Set<ProjectComponent> components = subTaskRequest.getComponents().stream()
-                    .filter(component -> !INHERIT_MARKER.equals(component))
-                    .map(component -> projectComponentManager.findByComponentName(projectObject.getId(), component))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
+                Set<ProjectComponent> components = new HashSet<>();
+                subTaskRequest.getComponents().forEach(component -> {
+                    if (!INHERIT_MARKER.equals(component)) {
+                        ProjectComponent foundComponent = projectComponentManager.findByComponentName(projectObject.getId(), component);
+                        if (foundComponent == null) {
+                            warnings.add("Invalid component: " + component);
+                        } else {
+                            components.add(foundComponent);
+                        }
+                    }
+                });
                 if (subTaskRequest.getComponents().contains(INHERIT_MARKER)) {
                     components.addAll(parent.getComponents());
                 }
-                newSubtask.setComponent(components);
+                if (!components.isEmpty()) {
+                    newSubtask.setComponent(components);
+                }
             }
 
             // estimate

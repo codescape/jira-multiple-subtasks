@@ -22,6 +22,7 @@ Click on the version in the following list to see all changes since the previous
 * docs: fix documentation for select list cascading format (#77)
 * feat: add support for custom fields of type date and time (#67)
 * feat: add support for custom fields of type labels (#76)
+* feat: add warning for invalid value provided as subtask component (#63)
 
 ### [23.02.2] - 2023-02-26
 
