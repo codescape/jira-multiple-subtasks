@@ -253,12 +253,12 @@ The following custom field types can be assigned with values during subtask crea
 
 | Custom Field Type              | Sample Data                                                                               | Accepts Multiple Values |
 |--------------------------------|-------------------------------------------------------------------------------------------|-------------------------|
-| Checkboxes                     | `checkbox-value`                                                                          | yes                     |
+| Checkboxes                     | `checkboxValue`                                                                           | yes                     |
 | Date Picker                    | `2023-12-24`<br/>`2001-7-1` (short form)                                                  | no                      |
 | Date Time Picker               | `2023-12-24` (date only)<br/>`customfield_10003: 2023-12-24 17:45` (date and time)        | no                      |
 | Labels                         | `labelName`                                                                               | yes                     |
 | Number Field                   | `42`                                                                                      | no                      |
-| Radio Buttons                  | `radio-value`                                                                             | no                      |
+| Radio Buttons                  | `radioValue`                                                                              | no                      |
 | Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy) | no                      |
 | Select List (multiple choices) | `choiceValue`                                                                             | yes                     |
 | Select List (single choice)    | `choiceValue`                                                                             | no                      |
@@ -267,4 +267,10 @@ The following custom field types can be assigned with values during subtask crea
 | URL Field                      | `https://www.codescape.de` (leading protocol information is required)                     | no                      |
 | User Picker (single user)      | `username`                                                                                | no                      |
 
-If you need support for any other custom field type please [let us know](/support) about it.
+Please note: If a custom field type `accepts multiple values` remember to provide one value per attribute. The following example applies two values `important` and `knowledge` as labels to a labels custom field:
+
+    - This task has two values for the same custom field
+      customfield_10987: important
+      customfield_10987: knowledge
+
+If you are missing support for any other custom field type please [let us know](/support) about it and raise a feature request.
