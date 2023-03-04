@@ -34,10 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
@@ -56,6 +53,7 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_TEXTAREA = "com.atlassian.jira.plugin.system.customfieldtypes:textarea";
     static final String CUSTOM_FIELD_TYPE_RADIO = "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons";
     static final String CUSTOM_FIELD_TYPE_SELECT = "com.atlassian.jira.plugin.system.customfieldtypes:select";
+    static final String CUSTOM_FIELD_TYPE_CASCADING_SELECT = "com.atlassian.jira.plugin.system.customfieldtypes:cascadingselect";
     static final String CUSTOM_FIELD_TYPE_MULTISELECT = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect";
     static final String CUSTOM_FIELD_TYPE_CHECKBOXES = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes";
     static final String CUSTOM_FIELD_TYPE_URL = "com.atlassian.jira.plugin.system.customfieldtypes:url";
@@ -429,6 +427,41 @@ public class SubtasksCreationService {
                             warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
                         } else {
                             newSubtask.setCustomFieldValue(customField, selectedOption);
+                        }
+                    });
+                    break;
+                case CUSTOM_FIELD_TYPE_CASCADING_SELECT:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    }
+                    values.forEach(value -> {
+                        Map<String, Option> newOptions = new HashMap<>();
+                        String[] strings = value.split(" > ");
+                        List<Option> allowedOptions = null;
+                        boolean applyNewOptions = true;
+                        for (int i = 0; i < strings.length; i++) {
+                            // get allowed options for the first level
+                            if (i == 0) {
+                                allowedOptions = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                            }
+                            int finalI = i;
+                            Option foundOption = allowedOptions.stream()
+                                .filter(option -> option.getValue().equals(strings[finalI].trim()))
+                                .findFirst()
+                                .orElse(null);
+                            if (foundOption == null) {
+                                warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                                applyNewOptions = false;
+                                break;
+                            } else {
+                                // add the option to the map (key for first level = null; key for any other level = level)
+                                newOptions.put(newOptions.isEmpty() ? null : "" + i, foundOption);
+                                // update allowed options for the next level
+                                allowedOptions = foundOption.getChildOptions();
+                            }
+                        }
+                        if (applyNewOptions && !newOptions.isEmpty()) {
+                            newSubtask.setCustomFieldValue(customField, newOptions);
                         }
                     });
                     break;

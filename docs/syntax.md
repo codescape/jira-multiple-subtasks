@@ -254,6 +254,7 @@ The following custom field types can be used:
 * Checkboxes
 * Number Field
 * Radio Buttons
+* Select List (cascading)
 * Select List (multiple choices)
 * Select List (single choice)
 * Text Field (multi-line)
@@ -261,6 +262,8 @@ The following custom field types can be used:
 * URL Field
 * User Picker (single user)
 
-Please note: URL field requires valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
+Please note: `URL Field` only accepts valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
+
+Please note: `Select List (cascading)` accepts values in the following format: `parent-value -> child-value`
 
 If you need support for any other custom field type please [let us know](/support) about it.
