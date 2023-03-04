@@ -18,6 +18,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: add support for custom fields of type url (#68)
 * feat: add support for custom fields of type user (#66)
 * feat: add support for custom fields of type select list cascading (#77)
+* feat: add support for custom fields of type date (#65)
 
 ### [23.02.2] - 2023-02-26
 

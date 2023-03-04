@@ -24,7 +24,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
-import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DueDateStringService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +58,7 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_CHECKBOXES = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes";
     static final String CUSTOM_FIELD_TYPE_URL = "com.atlassian.jira.plugin.system.customfieldtypes:url";
     static final String CUSTOM_FIELD_TYPE_USER = "com.atlassian.jira.plugin.system.customfieldtypes:userpicker";
+    static final String CUSTOM_FIELD_DATE = "com.atlassian.jira.plugin.system.customfieldtypes:datepicker";
 
     /* dependencies */
 
@@ -77,7 +78,7 @@ public class SubtasksCreationService {
     private final VersionManager versionManager;
     private final SubtasksSyntaxService subtasksSyntaxService;
     private final EstimateStringService estimateStringService;
-    private final DueDateStringService dueDateStringService;
+    private final DateStringService dateStringService;
 
     @Autowired
     public SubtasksCreationService(@ComponentImport IssueService issueService,
@@ -96,7 +97,7 @@ public class SubtasksCreationService {
                                    @ComponentImport VersionManager versionManager,
                                    SubtasksSyntaxService subtasksSyntaxService,
                                    EstimateStringService estimateStringService,
-                                   DueDateStringService dueDateStringService) {
+                                   DateStringService dateStringService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
@@ -113,7 +114,7 @@ public class SubtasksCreationService {
         this.versionManager = versionManager;
         this.subtasksSyntaxService = subtasksSyntaxService;
         this.estimateStringService = estimateStringService;
-        this.dueDateStringService = dueDateStringService;
+        this.dateStringService = dateStringService;
     }
 
     /**
@@ -271,7 +272,7 @@ public class SubtasksCreationService {
                         newSubtask.setDueDate(parent.getDueDate());
                     }
                 } else {
-                    Timestamp timestamp = dueDateStringService.dueDateStringToTimestamp(subTaskRequest.getDueDate());
+                    Timestamp timestamp = dateStringService.dateStringToTimestamp(subTaskRequest.getDueDate());
                     if (timestamp != null) {
                         newSubtask.setDueDate(timestamp);
                     } else {
@@ -380,90 +381,96 @@ public class SubtasksCreationService {
                 case CUSTOM_FIELD_TYPE_NUMBER:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
-                    }
-                    try {
-                        values.forEach(value ->
-                            newSubtask.setCustomFieldValue(customField, Double.valueOf(value))
-                        );
-                    } catch (NumberFormatException numberFormatException) {
-                        warnings.add("Invalid numeric value for custom field: " + customFieldId);
+                    } else {
+                        try {
+                            values.forEach(value ->
+                                newSubtask.setCustomFieldValue(customField, Double.valueOf(value))
+                            );
+                        } catch (NumberFormatException numberFormatException) {
+                            warnings.add("Invalid numeric value for custom field: " + customFieldId);
+                        }
                     }
                     break;
                 case CUSTOM_FIELD_TYPE_TEXT:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value ->
+                            newSubtask.setCustomFieldValue(customField, value));
                     }
-                    values.forEach(value ->
-                        newSubtask.setCustomFieldValue(customField, value));
                     break;
                 case CUSTOM_FIELD_TYPE_URL:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value -> {
+                            if (isValidURL(value)) {
+                                newSubtask.setCustomFieldValue(customField, value);
+                            } else {
+                                warnings.add("Invalid url value for custom field: " + customFieldId);
+                            }
+                        });
                     }
-                    values.forEach(value -> {
-                        if (isValidURL(value)) {
-                            newSubtask.setCustomFieldValue(customField, value);
-                        } else {
-                            warnings.add("Invalid url value for custom field: " + customFieldId);
-                        }
-                    });
                     break;
                 case CUSTOM_FIELD_TYPE_TEXTAREA:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value ->
+                            newSubtask.setCustomFieldValue(customField, value.replaceAll("\\{n}", "\n")));
                     }
-                    values.forEach(value ->
-                        newSubtask.setCustomFieldValue(customField, value.replaceAll("\\{n}", "\n")));
                     break;
                 case CUSTOM_FIELD_TYPE_SELECT:
                 case CUSTOM_FIELD_TYPE_RADIO:
                     Options options = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value -> {
+                            Option selectedOption = options.getOptionForValue(value, null);
+                            if (selectedOption == null) {
+                                warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                            } else {
+                                newSubtask.setCustomFieldValue(customField, selectedOption);
+                            }
+                        });
                     }
-                    values.forEach(value -> {
-                        Option selectedOption = options.getOptionForValue(value, null);
-                        if (selectedOption == null) {
-                            warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
-                        } else {
-                            newSubtask.setCustomFieldValue(customField, selectedOption);
-                        }
-                    });
                     break;
                 case CUSTOM_FIELD_TYPE_CASCADING_SELECT:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value -> {
+                            Map<String, Option> newOptions = new HashMap<>();
+                            String[] strings = value.split(" > ");
+                            List<Option> allowedOptions = null;
+                            boolean applyNewOptions = true;
+                            for (int i = 0; i < strings.length; i++) {
+                                // get allowed options for the first level
+                                if (i == 0) {
+                                    allowedOptions = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                                }
+                                int finalI = i;
+                                Option foundOption = allowedOptions.stream()
+                                    .filter(option -> option.getValue().equals(strings[finalI].trim()))
+                                    .findFirst()
+                                    .orElse(null);
+                                if (foundOption == null) {
+                                    warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                                    applyNewOptions = false;
+                                    break;
+                                } else {
+                                    // add the option to the map (key for first level = null; key for any other level = level)
+                                    newOptions.put(newOptions.isEmpty() ? null : "" + i, foundOption);
+                                    // update allowed options for the next level
+                                    allowedOptions = foundOption.getChildOptions();
+                                }
+                            }
+                            if (applyNewOptions && !newOptions.isEmpty()) {
+                                newSubtask.setCustomFieldValue(customField, newOptions);
+                            }
+                        });
                     }
-                    values.forEach(value -> {
-                        Map<String, Option> newOptions = new HashMap<>();
-                        String[] strings = value.split(" > ");
-                        List<Option> allowedOptions = null;
-                        boolean applyNewOptions = true;
-                        for (int i = 0; i < strings.length; i++) {
-                            // get allowed options for the first level
-                            if (i == 0) {
-                                allowedOptions = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
-                            }
-                            int finalI = i;
-                            Option foundOption = allowedOptions.stream()
-                                .filter(option -> option.getValue().equals(strings[finalI].trim()))
-                                .findFirst()
-                                .orElse(null);
-                            if (foundOption == null) {
-                                warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
-                                applyNewOptions = false;
-                                break;
-                            } else {
-                                // add the option to the map (key for first level = null; key for any other level = level)
-                                newOptions.put(newOptions.isEmpty() ? null : "" + i, foundOption);
-                                // update allowed options for the next level
-                                allowedOptions = foundOption.getChildOptions();
-                            }
-                        }
-                        if (applyNewOptions && !newOptions.isEmpty()) {
-                            newSubtask.setCustomFieldValue(customField, newOptions);
-                        }
-                    });
                     break;
                 case CUSTOM_FIELD_TYPE_MULTISELECT:
                 case CUSTOM_FIELD_TYPE_CHECKBOXES:
@@ -481,18 +488,33 @@ public class SubtasksCreationService {
                         newSubtask.setCustomFieldValue(customField, selectedOptions);
                     }
                     break;
+                case CUSTOM_FIELD_DATE:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value -> {
+                            Timestamp timestamp = dateStringService.dateStringToTimestamp(value);
+                            if (timestamp != null) {
+                                newSubtask.setCustomFieldValue(customField, timestamp);
+                            } else {
+                                warnings.add("Invalid date (" + value + ") for custom field: " + customFieldId);
+                            }
+                        });
+                    }
+                    break;
                 case CUSTOM_FIELD_TYPE_USER:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value -> {
+                            ApplicationUser userByName = userManager.getUserByName(value);
+                            if (userByName == null) {
+                                warnings.add("Invalid user (" + value + ") for custom field: " + customFieldId);
+                            } else {
+                                newSubtask.setCustomFieldValue(customField, userByName);
+                            }
+                        });
                     }
-                    values.forEach(value -> {
-                        ApplicationUser userByName = userManager.getUserByName(value);
-                        if (userByName == null) {
-                            warnings.add("Invalid user (" + value + ") for custom field: " + customFieldId);
-                        } else {
-                            newSubtask.setCustomFieldValue(customField, userByName);
-                        }
-                    });
                     break;
                 default:
                     warnings.add("Unsupported custom field type: " + customFieldKey);

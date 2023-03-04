@@ -252,6 +252,7 @@ Since custom fields can have many data types not all custom field types are yet 
 The following custom field types can be used:
 
 * Checkboxes
+* Date Picker
 * Number Field
 * Radio Buttons
 * Select List (cascading)
@@ -262,8 +263,9 @@ The following custom field types can be used:
 * URL Field
 * User Picker (single user)
 
-Please note: `URL Field` only accepts valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
-
-Please note: `Select List (cascading)` accepts values in the following format: `parent-value -> child-value`
+Please note: 
+* `URL Field` only accepts valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
+* `Select List (cascading)` accepts values in the following format: `parent-value -> child-value`
+* `Date Picker` accepts values in the following format: `2023-12-24`
 
 If you need support for any other custom field type please [let us know](/support) about it.
