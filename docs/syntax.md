@@ -248,27 +248,23 @@ Here is an example with a subtask called `This subtask has custom fields` that a
       customfield_10099: female
       customfield_10007: this is{n}a multi-line{n}text
 
-Since custom fields can have many data types not all custom field types are yet supported.
-The following custom field types can be used:
+Since version `23.03.0` of Multiple Subtasks for Jira all Jira standard custom fields are supported.
+The following custom field types can be assigned with values during subtask creation:
 
-* Checkboxes
-* Date Picker
-* Date Time Picker
-* Labels
-* Number Field
-* Radio Buttons
-* Select List (cascading)
-* Select List (multiple choices)
-* Select List (single choice)
-* Text Field (multi-line)
-* Text Field (single-line)
-* URL Field
-* User Picker (single user)
-
-Please note: 
-* `URL Field` only accepts valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
-* `Select List (cascading)` accepts values in the following format: `parent-value > child-value`
-* `Date Picker` accepts values in the following format: `2023-12-24`
-* `Date Time Picker` accept values in the following formats: `2023-12-24` or `2023-12-24 19:15`
+| Custom Field Type              | Sample Data                                                                               | Accepts Multiple Values |
+|--------------------------------|-------------------------------------------------------------------------------------------|-------------------------|
+| Checkboxes                     | `checkbox-value`                                                                          | yes                     |
+| Date Picker                    | `2023-12-24`<br/>`2001-7-1` (short form)                                                  | no                      |
+| Date Time Picker               | `2023-12-24` (date only)<br/>`customfield_10003: 2023-12-24 17:45` (date and time)        | no                      |
+| Labels                         | `labelName`                                                                               | yes                     |
+| Number Field                   | `42`                                                                                      | no                      |
+| Radio Buttons                  | `radio-value`                                                                             | no                      |
+| Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy) | no                      |
+| Select List (multiple choices) | `choiceValue`                                                                             | yes                     |
+| Select List (single choice)    | `choiceValue`                                                                             | no                      |
+| Text Field (multi-line)        | `some text with optional{n}line feeds`                                                    | no                      |  
+| Text Field (single-line)       | `some single line text`                                                                   | no                      |
+| URL Field                      | `https://www.codescape.de` (leading protocol information is required)                     | no                      |
+| User Picker (single user)      | `username`                                                                                | no                      |
 
 If you need support for any other custom field type please [let us know](/support) about it.
