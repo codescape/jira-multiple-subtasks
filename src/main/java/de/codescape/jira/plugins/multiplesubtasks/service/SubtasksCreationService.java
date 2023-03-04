@@ -54,6 +54,7 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_RADIO = "com.atlassian.jira.plugin.system.customfieldtypes:radiobuttons";
     static final String CUSTOM_FIELD_TYPE_SELECT = "com.atlassian.jira.plugin.system.customfieldtypes:select";
     static final String CUSTOM_FIELD_TYPE_MULTISELECT = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect";
+    static final String CUSTOM_FIELD_TYPE_CHECKBOXES = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes";
 
     /* dependencies */
 
@@ -415,6 +416,7 @@ public class SubtasksCreationService {
                     });
                     break;
                 case CUSTOM_FIELD_TYPE_MULTISELECT:
+                case CUSTOM_FIELD_TYPE_CHECKBOXES:
                     Options optionsM = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
                     List<Option> selectedOptions = new ArrayList<>();
                     values.forEach(value -> {

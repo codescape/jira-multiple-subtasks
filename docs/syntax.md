@@ -257,5 +257,6 @@ The following custom field types can be used:
 * Radio Buttons
 * Select List (single-select)
 * Select List (multi-select)
+* Checkboxes
 
 If you need support for any other custom field type please [let us know](/support) about it.
