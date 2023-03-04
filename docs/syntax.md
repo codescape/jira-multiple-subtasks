@@ -259,6 +259,7 @@ The following custom field types can be used:
 * Text Field (multi-line)
 * Text Field (single-line)
 * URL Field
+* User Picker (single user)
 
 Please note: URL field requires valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
 

@@ -59,6 +59,7 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_MULTISELECT = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect";
     static final String CUSTOM_FIELD_TYPE_CHECKBOXES = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes";
     static final String CUSTOM_FIELD_TYPE_URL = "com.atlassian.jira.plugin.system.customfieldtypes:url";
+    static final String CUSTOM_FIELD_TYPE_USER = "com.atlassian.jira.plugin.system.customfieldtypes:userpicker";
 
     /* dependencies */
 
@@ -446,6 +447,19 @@ public class SubtasksCreationService {
                     if (!selectedOptions.isEmpty()) {
                         newSubtask.setCustomFieldValue(customField, selectedOptions);
                     }
+                    break;
+                case CUSTOM_FIELD_TYPE_USER:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    }
+                    values.forEach(value -> {
+                        ApplicationUser userByName = userManager.getUserByName(value);
+                        if (userByName == null) {
+                            warnings.add("Invalid user (" + value + ") for custom field: " + customFieldId);
+                        } else {
+                            newSubtask.setCustomFieldValue(customField, userByName);
+                        }
+                    });
                     break;
                 default:
                     warnings.add("Unsupported custom field type: " + customFieldKey);
