@@ -13,6 +13,7 @@ import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.label.Label;
 import com.atlassian.jira.issue.label.LabelManager;
 import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.watchers.WatcherManager;
@@ -36,6 +37,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
@@ -60,6 +62,7 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_USER = "com.atlassian.jira.plugin.system.customfieldtypes:userpicker";
     static final String CUSTOM_FIELD_TYPE_DATE = "com.atlassian.jira.plugin.system.customfieldtypes:datepicker";
     static final String CUSTOM_FIELD_TYPE_DATETIME = "com.atlassian.jira.plugin.system.customfieldtypes:datetime";
+    static final String CUSTOM_FIELD_TYPE_LABELS = "com.atlassian.jira.plugin.system.customfieldtypes:labels";
 
     /* dependencies */
 
@@ -529,6 +532,22 @@ public class SubtasksCreationService {
                                 newSubtask.setCustomFieldValue(customField, userByName);
                             }
                         });
+                    }
+                    break;
+                case CUSTOM_FIELD_TYPE_LABELS:
+                    Set<Label> labels = new HashSet<>();
+                    values.forEach(label -> {
+                        String cleanLabel = label.trim();
+                        if (cleanLabel.contains(" ")) {
+                            warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldId);
+                        } else if (cleanLabel.length() > 255) {
+                            warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldId);
+                        } else {
+                            labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), label));
+                        }
+                    });
+                    if (!labels.isEmpty()) {
+                        newSubtask.setCustomFieldValue(customField, labels);
                     }
                     break;
                 default:

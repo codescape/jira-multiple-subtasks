@@ -254,6 +254,7 @@ The following custom field types can be used:
 * Checkboxes
 * Date Picker
 * Date Time Picker
+* Labels
 * Number Field
 * Radio Buttons
 * Select List (cascading)
