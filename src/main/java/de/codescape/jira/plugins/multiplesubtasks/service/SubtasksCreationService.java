@@ -30,6 +30,9 @@ import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +58,7 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_SELECT = "com.atlassian.jira.plugin.system.customfieldtypes:select";
     static final String CUSTOM_FIELD_TYPE_MULTISELECT = "com.atlassian.jira.plugin.system.customfieldtypes:multiselect";
     static final String CUSTOM_FIELD_TYPE_CHECKBOXES = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes";
+    static final String CUSTOM_FIELD_TYPE_URL = "com.atlassian.jira.plugin.system.customfieldtypes:url";
 
     /* dependencies */
 
@@ -393,6 +397,18 @@ public class SubtasksCreationService {
                     values.forEach(value ->
                         newSubtask.setCustomFieldValue(customField, value));
                     break;
+                case CUSTOM_FIELD_TYPE_URL:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    }
+                    values.forEach(value -> {
+                        if (isValidURL(value)) {
+                            newSubtask.setCustomFieldValue(customField, value);
+                        } else {
+                            warnings.add("Invalid url value for custom field: " + customFieldId);
+                        }
+                    });
+                    break;
                 case CUSTOM_FIELD_TYPE_TEXTAREA:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
@@ -440,6 +456,15 @@ public class SubtasksCreationService {
             issueManager.updateIssue(jiraAuthenticationContext.getLoggedInUser(), newSubtask, UpdateIssueRequest.builder().build());
         } catch (RuntimeException e) {
             warnings.add("Unexpected error applying custom field values: " + e.getMessage());
+        }
+    }
+
+    boolean isValidURL(String url) {
+        try {
+            new URL(url).toURI();
+            return true;
+        } catch (MalformedURLException | URISyntaxException e) {
+            return false;
         }
     }
 

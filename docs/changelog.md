@@ -15,6 +15,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: add support for @inherit and @current on watcher (#71)
 * feat: add warning for invalid user provided as subtask watcher (#64)
 * feat: add support for custom fields of type checkbox (#69)
+* feat: add support for custom fields of type url (#68)
 
 ### [23.02.2] - 2023-02-26
 

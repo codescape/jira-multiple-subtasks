@@ -251,12 +251,15 @@ Here is an example with a subtask called `This subtask has custom fields` that a
 Since custom fields can have many data types not all custom field types are yet supported.
 The following custom field types can be used:
 
-* Number field
-* Text field (single-line)
-* Text field (multi-line)
-* Radio Buttons
-* Select List (single-select)
-* Select List (multi-select)
 * Checkboxes
+* Number Field
+* Radio Buttons
+* Select List (multiple choices)
+* Select List (single choice)
+* Text Field (multi-line)
+* Text Field (single-line)
+* URL Field
+
+Please note: URL field requires valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
 
 If you need support for any other custom field type please [let us know](/support) about it.
