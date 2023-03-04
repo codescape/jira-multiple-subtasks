@@ -1,7 +1,7 @@
 package de.codescape.jira.plugins.multiplesubtasks.model;
 
 import com.google.common.collect.ArrayListMultimap;
-import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateStringService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 
 import java.util.*;
@@ -241,7 +241,7 @@ public class Subtask {
         if (INHERIT_MARKER.equals(dueDate)) {
             return dueDate;
         }
-        Matcher matcher = DateStringService.PATTERN.matcher(dueDate);
+        Matcher matcher = DateTimeStringService.DATE_PATTERN.matcher(dueDate);
         if (!matcher.matches()) {
             throw new SyntaxFormatException("Invalid pattern for dueDate: " + dueDate);
         }

@@ -253,6 +253,7 @@ The following custom field types can be used:
 
 * Checkboxes
 * Date Picker
+* Date Time Picker
 * Number Field
 * Radio Buttons
 * Select List (cascading)
@@ -267,5 +268,6 @@ Please note:
 * `URL Field` only accepts valid URLs starting with a protocol. A valid example is `https://www.codescape.de`.
 * `Select List (cascading)` accepts values in the following format: `parent-value > child-value`
 * `Date Picker` accepts values in the following format: `2023-12-24`
+* `Date Time Picker` accept values in the following formats: `2023-12-24` or `2023-12-24 19:15`
 
 If you need support for any other custom field type please [let us know](/support) about it.

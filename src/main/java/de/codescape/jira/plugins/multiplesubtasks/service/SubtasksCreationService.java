@@ -24,7 +24,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
-import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateStringService;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,8 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_CHECKBOXES = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes";
     static final String CUSTOM_FIELD_TYPE_URL = "com.atlassian.jira.plugin.system.customfieldtypes:url";
     static final String CUSTOM_FIELD_TYPE_USER = "com.atlassian.jira.plugin.system.customfieldtypes:userpicker";
-    static final String CUSTOM_FIELD_DATE = "com.atlassian.jira.plugin.system.customfieldtypes:datepicker";
+    static final String CUSTOM_FIELD_TYPE_DATE = "com.atlassian.jira.plugin.system.customfieldtypes:datepicker";
+    static final String CUSTOM_FIELD_TYPE_DATETIME = "com.atlassian.jira.plugin.system.customfieldtypes:datetime";
 
     /* dependencies */
 
@@ -78,7 +79,7 @@ public class SubtasksCreationService {
     private final VersionManager versionManager;
     private final SubtasksSyntaxService subtasksSyntaxService;
     private final EstimateStringService estimateStringService;
-    private final DateStringService dateStringService;
+    private final DateTimeStringService dateTimeStringService;
 
     @Autowired
     public SubtasksCreationService(@ComponentImport IssueService issueService,
@@ -97,7 +98,7 @@ public class SubtasksCreationService {
                                    @ComponentImport VersionManager versionManager,
                                    SubtasksSyntaxService subtasksSyntaxService,
                                    EstimateStringService estimateStringService,
-                                   DateStringService dateStringService) {
+                                   DateTimeStringService dateTimeStringService) {
         this.issueService = issueService;
         this.issueFactory = issueFactory;
         this.issueManager = issueManager;
@@ -114,7 +115,7 @@ public class SubtasksCreationService {
         this.versionManager = versionManager;
         this.subtasksSyntaxService = subtasksSyntaxService;
         this.estimateStringService = estimateStringService;
-        this.dateStringService = dateStringService;
+        this.dateTimeStringService = dateTimeStringService;
     }
 
     /**
@@ -272,7 +273,7 @@ public class SubtasksCreationService {
                         newSubtask.setDueDate(parent.getDueDate());
                     }
                 } else {
-                    Timestamp timestamp = dateStringService.dateStringToTimestamp(subTaskRequest.getDueDate());
+                    Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(subTaskRequest.getDueDate());
                     if (timestamp != null) {
                         newSubtask.setDueDate(timestamp);
                     } else {
@@ -488,16 +489,30 @@ public class SubtasksCreationService {
                         newSubtask.setCustomFieldValue(customField, selectedOptions);
                     }
                     break;
-                case CUSTOM_FIELD_DATE:
+                case CUSTOM_FIELD_TYPE_DATE:
                     if (values.size() > 1) {
                         warnings.add("Custom field only allows single values: " + customFieldId);
                     } else {
                         values.forEach(value -> {
-                            Timestamp timestamp = dateStringService.dateStringToTimestamp(value);
+                            Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(value);
                             if (timestamp != null) {
                                 newSubtask.setCustomFieldValue(customField, timestamp);
                             } else {
                                 warnings.add("Invalid date (" + value + ") for custom field: " + customFieldId);
+                            }
+                        });
+                    }
+                    break;
+                case CUSTOM_FIELD_TYPE_DATETIME:
+                    if (values.size() > 1) {
+                        warnings.add("Custom field only allows single values: " + customFieldId);
+                    } else {
+                        values.forEach(value -> {
+                            Timestamp timestamp = dateTimeStringService.dateAndTimeStringToTimestamp(value);
+                            if (timestamp != null) {
+                                newSubtask.setCustomFieldValue(customField, timestamp);
+                            } else {
+                                warnings.add("Invalid date and time (" + value + ") for custom field: " + customFieldId);
                             }
                         });
                     }

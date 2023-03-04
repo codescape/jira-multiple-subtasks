@@ -20,6 +20,7 @@ Click on the version in the following list to see all changes since the previous
 * feat: add support for custom fields of type select list cascading (#77)
 * feat: add support for custom fields of type date (#65)
 * docs: fix documentation for select list cascading format (#77)
+* feat: add support for custom fields of type date and time (#67)
 
 ### [23.02.2] - 2023-02-26
 
