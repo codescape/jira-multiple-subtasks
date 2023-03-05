@@ -24,6 +24,7 @@ category: Administration
 * feat: add warning for invalid value provided as subtask component (#63)
 * docs: improve documentation for custom fields (#78)
 * docs: separate changelog for every major version
+* docs: improve developer documentation for subtask creation service
 
 ### [23.02.2] - 2023-02-26
 

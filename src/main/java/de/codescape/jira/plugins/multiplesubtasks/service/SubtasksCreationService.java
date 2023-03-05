@@ -568,7 +568,10 @@ public class SubtasksCreationService {
         }
     }
 
-    boolean isValidURL(String url) {
+    /**
+     * Verify the provided URL string is a valid URL to be persisted to a custom field of type URL.
+     */
+    private boolean isValidURL(String url) {
         try {
             new URL(url).toURI();
             return true;
