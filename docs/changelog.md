@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.03.0] - 2023-03-05
+
+**Support for all Jira standard custom fields**
+
 * feat: add support for @inherit and @current on watcher (#71)
 * feat: add warning for invalid user provided as subtask watcher (#64)
 * feat: add support for custom fields of type checkbox (#69)
@@ -81,7 +87,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.2...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.0...HEAD
+[23.03.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.2...23.03.0
 [23.02.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.1...23.02.2
 [23.02.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.0...23.02.1
 [23.02.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.01.0...23.02.0
