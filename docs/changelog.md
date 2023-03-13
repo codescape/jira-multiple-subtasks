@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: ignore dividing slashes for Quick Subtasks template imports 
 
 ### [23.03.0] - 2023-03-05
 

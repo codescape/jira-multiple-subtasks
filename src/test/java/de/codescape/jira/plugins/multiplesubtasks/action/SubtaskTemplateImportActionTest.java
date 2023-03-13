@@ -163,6 +163,16 @@ public class SubtaskTemplateImportActionTest {
             "- Task\n");
     }
 
+    /* accept syntax with dividing slashes */
+
+    @Test
+    public void shouldAcceptDivingSlashes() {
+        assertTransformation(
+            "- Task / estimate:\"6d\" / watcher:\"codescape\" / labels:\"one\"",
+            "- Task\n  estimate: 6d\n  watcher: codescape\n  label: one\n"
+            );
+    }
+
     /* complex example */
 
     @Test
