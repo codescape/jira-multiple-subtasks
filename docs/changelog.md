@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.03.1] - 2023-03-13
+
+**More robustness for template imports**
+
 * feat: ignore dividing slashes for Quick Subtasks template imports 
 
 ### [23.03.0] - 2023-03-05
@@ -87,7 +93,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.1...HEAD
+[23.03.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.0...23.03.1
 [23.03.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.2...23.03.0
 [23.02.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.1...23.02.2
 [23.02.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.0...23.02.1
