@@ -166,7 +166,7 @@ public class SubtaskTemplateImportActionTest {
     /* accept syntax with dividing slashes */
 
     @Test
-    public void shouldAcceptDivingSlashes() {
+    public void shouldAcceptDividingSlashes() {
         assertTransformation(
             "- Task / estimate:\"6d\" / watcher:\"codescape\" / labels:\"one\"",
             "- Task\n  estimate: 6d\n  watcher: codescape\n  label: one\n"
