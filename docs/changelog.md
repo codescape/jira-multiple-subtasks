@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: extend syntax and allow to set relative due dates (#73)
 
 ### [23.03.1] - 2023-03-13
 
