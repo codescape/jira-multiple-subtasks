@@ -270,17 +270,11 @@ public class SubtasksCreationService {
             // dueDate
             // optional dueDate can be set if it exists
             if (subTaskRequest.getDueDate() != null) {
-                if (INHERIT_MARKER.equals(subTaskRequest.getDueDate())) {
-                    if (parent.getDueDate() != null) {
-                        newSubtask.setDueDate(parent.getDueDate());
-                    }
+                Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(subTaskRequest.getDueDate(), parent.getDueDate());
+                if (timestamp != null) {
+                    newSubtask.setDueDate(timestamp);
                 } else {
-                    Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(subTaskRequest.getDueDate());
-                    if (timestamp != null) {
-                        newSubtask.setDueDate(timestamp);
-                    } else {
-                        warnings.add("Invalid dueDate: " + subTaskRequest.getDueDate());
-                    }
+                    warnings.add("Invalid dueDate: " + subTaskRequest.getDueDate());
                 }
             }
 
@@ -374,14 +368,14 @@ public class SubtasksCreationService {
             // persist data to optional custom field(s) of the just created subtask and ignore invalid data
             if (!subTaskRequest.getCustomFields().isEmpty()) {
                 subTaskRequest.getCustomFields().forEach((customFieldId, customFieldValues) ->
-                    applyValuesToCustomField(newSubtask, warnings, customFieldId, customFieldValues));
+                    applyValuesToCustomField(parent, newSubtask, warnings, customFieldId, customFieldValues));
             }
         });
 
         return subtasksCreated;
     }
 
-    private void applyValuesToCustomField(MutableIssue newSubtask, List<String> warnings, String customFieldId, List<String> values) {
+    private void applyValuesToCustomField(MutableIssue parent, MutableIssue newSubtask, List<String> warnings, String customFieldId, List<String> values) {
         CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
         if (customField == null) {
             warnings.add("Invalid custom field: " + customFieldId);
@@ -503,7 +497,8 @@ public class SubtasksCreationService {
                         warnings.add("Custom field only allows single values: " + customFieldId);
                     } else {
                         values.forEach(value -> {
-                            Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(value);
+                            Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
+                            Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(value, parentValue);
                             if (timestamp != null) {
                                 newSubtask.setCustomFieldValue(customField, timestamp);
                             } else {
@@ -517,7 +512,8 @@ public class SubtasksCreationService {
                         warnings.add("Custom field only allows single values: " + customFieldId);
                     } else {
                         values.forEach(value -> {
-                            Timestamp timestamp = dateTimeStringService.dateAndTimeStringToTimestamp(value);
+                            Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
+                            Timestamp timestamp = dateTimeStringService.dateAndTimeStringToTimestamp(value, parentValue);
                             if (timestamp != null) {
                                 newSubtask.setCustomFieldValue(customField, timestamp);
                             } else {
