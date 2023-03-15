@@ -238,11 +238,9 @@ public class Subtask {
         if (dueDate == null) {
             return null;
         }
-        if (INHERIT_MARKER.equals(dueDate)) {
-            return dueDate;
-        }
-        Matcher matcher = DateTimeStringService.DATE_PATTERN.matcher(dueDate);
-        if (!matcher.matches()) {
+        Matcher absoluteDateMatcher = DateTimeStringService.DATE_PATTERN.matcher(dueDate);
+        Matcher relativeDateMatcher = DateTimeStringService.RELATIVE_DATE_PATTERN.matcher(dueDate);
+        if (!absoluteDateMatcher.matches() && !relativeDateMatcher.matches()) {
             throw new SyntaxFormatException("Invalid pattern for dueDate: " + dueDate);
         }
         return dueDate;
