@@ -157,7 +157,8 @@ The estimate can be provided in weeks (`w`), days (`d`), hours (`h`), minutes (`
     - This is a take for one week
       estimate: 1w
 
-Please note: The order of the estimate attributes is fixed. A value of `2d 1w` will not be accepted while a value of `1w 2d` is valid and will be accepted.
+Please note: The order of the estimate attributes is fixed. 
+A value of `2d 1w` will not be accepted while a value of `1w 2d` is valid and will be accepted.
 
 #### Affected Version(s)
 
@@ -208,6 +209,26 @@ Please note:
 The required format for absolute dates is `yyyy-mm-dd`.
 For single-digit months and days, you can omit the leading zero.
 
+You can also use relative dates.
+These dates can be relative to the current date using `@now` or relative to the due date of the parent issue using `@inherit`.
+You can add (`+`) and subtract (`-`) from those dates a given amount of days (`d`), weeks (`w`), months (`m`) and years (`y`).
+
+    - This task should be done tomorrow
+      dueDate: @now + 1d
+    - This task should be done in a week
+      dueDate: @now + 1w
+    - This task should be done in one month and 5 days
+      dueDate: @now + 5d1m
+
+    - Due one year before the parent issue
+      dueDate: @inherit - 1y
+    - Due 13 days before the parent issue
+      dueDate: @inherit - 13d
+
+Please note:
+The order of the attributes is fixed: days before weeks, then months and then years.
+A value of `2m1d` will not be accepted while a value of `1d2m` is valid and will be accepted.
+
 #### Watcher(s)
 
 By default, newly created subtasks will not have any watchers.
@@ -251,21 +272,21 @@ Here is an example with a subtask called `This subtask has custom fields` that a
 Since version `23.03.0` of Multiple Subtasks for Jira all Jira standard custom fields are supported.
 The following custom field types can be assigned with values during subtask creation:
 
-| Custom Field Type              | Sample Data                                                                               | Accepts Multiple Values |
-|--------------------------------|-------------------------------------------------------------------------------------------|-------------------------|
-| Checkboxes                     | `checkboxValue`                                                                           | yes                     |
-| Date Picker                    | `2023-12-24`<br/>`2001-7-1` (short form)                                                  | no                      |
-| Date Time Picker               | `2023-12-24` (date only)<br/>`customfield_10003: 2023-12-24 17:45` (date and time)        | no                      |
-| Labels                         | `labelName`                                                                               | yes                     |
-| Number Field                   | `42`                                                                                      | no                      |
-| Radio Buttons                  | `radioValue`                                                                              | no                      |
-| Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy) | no                      |
-| Select List (multiple choices) | `choiceValue`                                                                             | yes                     |
-| Select List (single choice)    | `choiceValue`                                                                             | no                      |
-| Text Field (multi-line)        | `some text with optional{n}line feeds`                                                    | no                      |  
-| Text Field (single-line)       | `some single line text`                                                                   | no                      |
-| URL Field                      | `https://www.codescape.de` (leading protocol information is required)                     | no                      |
-| User Picker (single user)      | `username`                                                                                | no                      |
+| Custom Field Type              | Sample Data                                                                                                                                              | Accepts Multiple Values |
+|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
+| Checkboxes                     | `checkboxValue`                                                                                                                                          | yes                     |
+| Date Picker                    | `2023-12-24`<br/>`2001-7-1` (short form)<br/>`@now + 1d` (_see Due Date_)<br/>`@inherit - 7w` (_see Due Date_)                                           | no                      |
+| Date Time Picker               | `2023-12-24` (date only)<br/>`customfield_10003: 2023-12-24 17:45` (date and time)<br/>`@now + 6m` (_see Due Date_)<br/>`@inherit - 1y` (_see Due Date_) | no                      |
+| Labels                         | `labelName`                                                                                                                                              | yes                     |
+| Number Field                   | `42`                                                                                                                                                     | no                      |
+| Radio Buttons                  | `radioValue`                                                                                                                                             | no                      |
+| Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy)                                                                | no                      |
+| Select List (multiple choices) | `choiceValue`                                                                                                                                            | yes                     |
+| Select List (single choice)    | `choiceValue`                                                                                                                                            | no                      |
+| Text Field (multi-line)        | `some text with optional{n}line feeds`                                                                                                                   | no                      |  
+| Text Field (single-line)       | `some single line text`                                                                                                                                  | no                      |
+| URL Field                      | `https://www.codescape.de` (leading protocol information is required)                                                                                    | no                      |
+| User Picker (single user)      | `username`                                                                                                                                               | no                      |
 
 Please note: If a custom field type `accepts multiple values` remember to provide one value per attribute. The following example applies two values `important` and `knowledge` as labels to a labels custom field:
 

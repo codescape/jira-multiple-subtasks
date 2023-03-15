@@ -13,6 +13,7 @@ category: Administration
 
 * feat: extend syntax and allow to set relative dates (#73)
 * feat: validate for absolute or relative date on due date field (#73)
+* docs: add documentation for relative dates (#73)
 
 ### [23.03.1] - 2023-03-13
 
