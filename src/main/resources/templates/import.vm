@@ -35,7 +35,7 @@
 <h2>$i18n.getText("multiplesubtasks.import.quicksubtasks")</h2>
 
 <div class="aui-buttons">
-    <a href="MultipleSubtasksTemplateImport!quickSubtasksPrecheck.jspa" class="aui-button aui-button"><span class="aui-icon aui-icon-small aui-iconfont-search"></span> $i18n.getText('multiplesubtasks.import.buttons.precheck')</a>
+    <a href="MultipleSubtasksTemplateImport!quickSubtasksPreCheck.jspa" class="aui-button aui-button"><span class="aui-icon aui-icon-small aui-iconfont-search"></span> $i18n.getText('multiplesubtasks.import.buttons.precheck')</a>
     #if ($quickSubtasksCanImport)
     <a href="MultipleSubtasksTemplateImport!quickSubtasksImport.jspa" class="aui-button aui-button-primary"><span class="aui-icon aui-icon-small aui-iconfont-send"></span> $i18n.getText('multiplesubtasks.import.buttons.start')</a>
     #end
