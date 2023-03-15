@@ -15,6 +15,7 @@ category: Administration
 * feat: validate for absolute or relative date on due date field (#73)
 * docs: add documentation for relative dates (#73)
 * feat: improve logging and output for template import
+* feat: limit subtask creation to users with permission (#20)
 
 ### [23.03.1] - 2023-03-13
 
