@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.03.2] - 2023-03-15
+
+**Assign relative dates and improved template import**
+
 * feat: extend syntax and allow to set relative dates (#73)
 * feat: validate for absolute or relative date on due date field (#73)
 * docs: add documentation for relative dates (#73)
@@ -97,7 +103,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.1...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.2...HEAD
+[23.03.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.1...23.03.2
 [23.03.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.0...23.03.1
 [23.03.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.2...23.03.0
 [23.02.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.02.1...23.02.2
