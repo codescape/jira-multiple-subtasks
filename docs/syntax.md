@@ -21,6 +21,24 @@ To create three simple subtasks just have three lines starting with the `-` foll
 
 In addition to the simple syntax you can specify additional attributes for each subtask - one line per attribute.
 
+#### Summary
+
+A summary is required for every subtask (see _Simple Syntax_).
+
+You can use the keyword `@inherit` in the summary of your subtasks to be replaced by the summary of the parent issue. 
+And if you really want your subtask to contain the text `@inherit` you can escape it with a leading backslash `\@inherit`.
+
+Here are some examples for a parent issue with the summary `Hello World`:
+
+    - Let's say: @inherit
+    - @inherit
+    - Send email to mail\@inherit.com
+
+Those three lines will create three subtasks with the following summaries:
+* Let's say: Hello World
+* Hello World
+* Send email to mail@inherit.com
+
 #### Description
 
 By default, newly created subtasks will not have a description. 

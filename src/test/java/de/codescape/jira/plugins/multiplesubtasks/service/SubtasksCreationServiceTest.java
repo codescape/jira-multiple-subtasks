@@ -12,7 +12,6 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.google.common.collect.ArrayListMultimap;
-import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.Markers;
 import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
@@ -26,12 +25,14 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class SubtasksCreationServiceTest {
+
+    private static final String INPUT_STRING = "inputString";
+    private static final String ISSUE_KEY = "DEMO-1";
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -75,8 +76,6 @@ public class SubtasksCreationServiceTest {
     @Mock
     private IssueType subtaskIssueType;
 
-    private static final String ISSUE_KEY = "DEMO-1";
-
     @Before
     public void before() {
         // current user is known
@@ -96,6 +95,51 @@ public class SubtasksCreationServiceTest {
         when(project.getIssueTypes()).thenReturn(issueTypes);
         when(subtaskIssueType.isSubTask()).thenReturn(true);
     }
+    /* summary */
+
+    @Test
+    public void shouldUseSimpleSummary() {
+        expectSubtaskWithSummary("a simple summary");
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setSummary("a simple summary");
+    }
+
+    @Test
+    public void shouldInheritSummaryFromParent() {
+        expectSubtaskWithSummary("@inherit");
+        expectParentWithSummary("using summary of parent");
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setSummary("using summary of parent");
+    }
+
+    @Test
+    public void shouldReplaceInheritWithSummaryFromParent() {
+        expectSubtaskWithSummary("prefix for @inherit");
+        expectParentWithSummary("parent summary");
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setSummary("prefix for parent summary");
+    }
+
+    @Test
+    public void shouldNotReplaceEscapedInherit() {
+        expectSubtaskWithSummary("do not replace \\@inherit");
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setSummary("do not replace @inherit");
+    }
+
+    /* watcher(s) */
 
     @Test
     public void shouldAddKnownWatcher() throws Exception {
@@ -105,7 +149,7 @@ public class SubtasksCreationServiceTest {
         attributes.put("summary", "a task");
         attributes.put("watcher", "known.user");
         subtasks.add(new Subtask(attributes));
-        when(subtasksSyntaxService.parseString(eq("input"))).thenReturn(subtasks);
+        when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
@@ -113,7 +157,7 @@ public class SubtasksCreationServiceTest {
         // expect user to be looked up
         ApplicationUser knownUser = expectUserWithUsername("known.user");
 
-        subtasksCreationService.subtasksFromString(ISSUE_KEY, "input");
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
 
         // verify issue is created and linked to parent
         verify(issueManager).createIssueObject(eq(currentUser), eq(subtask));
@@ -131,12 +175,12 @@ public class SubtasksCreationServiceTest {
         attributes.put("summary", "a task");
         attributes.put("watcher", "unknown.user");
         subtasks.add(new Subtask(attributes));
-        when(subtasksSyntaxService.parseString(eq("input"))).thenReturn(subtasks);
+        when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
 
-        subtasksCreationService.subtasksFromString(ISSUE_KEY, "input");
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
 
         // verify issue is created and linked to parent
         verify(issueManager).createIssueObject(eq(currentUser), eq(subtask));
@@ -154,12 +198,12 @@ public class SubtasksCreationServiceTest {
         attributes.put("summary", "a task");
         attributes.put("watcher", Markers.CURRENT_MARKER);
         subtasks.add(new Subtask(attributes));
-        when(subtasksSyntaxService.parseString(eq("input"))).thenReturn(subtasks);
+        when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
 
-        subtasksCreationService.subtasksFromString(ISSUE_KEY, "input");
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
 
         // verify issue is created and linked to parent
         verify(issueManager).createIssueObject(eq(currentUser), eq(subtask));
@@ -170,6 +214,18 @@ public class SubtasksCreationServiceTest {
     }
 
     /* helpers */
+
+    private void expectParentWithSummary(String summary) {
+        when(parent.getSummary()).thenReturn(summary);
+    }
+
+    private void expectSubtaskWithSummary(String summary) {
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
+        attributes.put("summary", summary);
+        subtasks.add(new Subtask(attributes));
+        when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
+    }
 
     private ApplicationUser expectUserWithUsername(String username) {
         ApplicationUser knownUser = mock(ApplicationUser.class);

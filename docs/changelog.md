@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: add support for @inherit in summary (#82)
 
 ### [23.03.2] - 2023-03-15
 

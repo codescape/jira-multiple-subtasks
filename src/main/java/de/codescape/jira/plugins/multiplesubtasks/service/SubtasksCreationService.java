@@ -160,7 +160,10 @@ public class SubtasksCreationService {
             newSubtask.setProjectObject(parent.getProjectObject());
 
             // summary
-            newSubtask.setSummary(subTaskRequest.getSummary());
+            newSubtask.setSummary(subTaskRequest.getSummary()
+                .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parent.getSummary())
+                .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
+            );
 
             // description
             // use the optionally provided description
