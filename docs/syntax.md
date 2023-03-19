@@ -23,7 +23,7 @@ In addition to the simple syntax you can specify additional attributes for each 
 
 #### Summary
 
-A summary is required for every subtask (see _Simple Syntax_).
+A summary is required for every subtask (see [Simple Syntax](#simple-syntax)).
 
 You can use the keyword `@inherit` in the summary of your subtasks to be replaced by the summary of the parent issue. 
 And if you really want your subtask to contain the text `@inherit` you can escape it with a leading backslash `\@inherit`.
@@ -290,21 +290,21 @@ Here is an example with a subtask called `This subtask has custom fields` that a
 Since version `23.03.0` of Multiple Subtasks for Jira all Jira standard custom fields are supported.
 The following custom field types can be assigned with values during subtask creation:
 
-| Custom Field Type              | Sample Data                                                                                                                                              | Accepts Multiple Values |
-|--------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
-| Checkboxes                     | `checkboxValue`                                                                                                                                          | yes                     |
-| Date Picker                    | `2023-12-24`<br/>`2001-7-1` (short form)<br/>`@now + 1d` (_see Due Date_)<br/>`@inherit - 7w` (_see Due Date_)                                           | no                      |
-| Date Time Picker               | `2023-12-24` (date only)<br/>`customfield_10003: 2023-12-24 17:45` (date and time)<br/>`@now + 6m` (_see Due Date_)<br/>`@inherit - 1y` (_see Due Date_) | no                      |
-| Labels                         | `labelName`                                                                                                                                              | yes                     |
-| Number Field                   | `42`                                                                                                                                                     | no                      |
-| Radio Buttons                  | `radioValue`                                                                                                                                             | no                      |
-| Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy)                                                                | no                      |
-| Select List (multiple choices) | `choiceValue`                                                                                                                                            | yes                     |
-| Select List (single choice)    | `choiceValue`                                                                                                                                            | no                      |
-| Text Field (multi-line)        | `some text with optional{n}line feeds`                                                                                                                   | no                      |  
-| Text Field (single-line)       | `some single line text`                                                                                                                                  | no                      |
-| URL Field                      | `https://www.codescape.de` (leading protocol information is required)                                                                                    | no                      |
-| User Picker (single user)      | `username`                                                                                                                                               | no                      |
+| Custom Field Type              | Sample Data                                                                                                                                                                   | Accepts Multiple Values |
+|--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
+| Checkboxes                     | `checkboxValue`                                                                                                                                                               | yes                     |
+| Date Picker                    | `2023-12-24`<br/>`2001-7-1` (short form)<br/>`@now + 1d` (see [Due Date](#due-date))<br/>`@inherit - 7w` (see [Due Date](#due-date))                                                      | no                      |
+| Date Time Picker               | `2023-12-24` (date only)<br/>`customfield_10003: 2023-12-24 17:45` (date and time)<br/>`@now + 6m` (see [Due Date](#due-date))<br/>`@inherit - 1y` (see [Due Date](#due-date)) | no                      |
+| Labels                         | `labelName`                                                                                                                                                                   | yes                     |
+| Number Field                   | `42`                                                                                                                                                                          | no                      |
+| Radio Buttons                  | `radioValue`                                                                                                                                                                  | no                      |
+| Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy)                                                                                     | no                      |
+| Select List (multiple choices) | `choiceValue`                                                                                                                                                                 | yes                     |
+| Select List (single choice)    | `choiceValue`                                                                                                                                                                 | no                      |
+| Text Field (multi-line)        | `some text with optional{n}line feeds`                                                                                                                                        | no                      |  
+| Text Field (single-line)       | `some single line text`                                                                                                                                                       | no                      |
+| URL Field                      | `https://www.codescape.de` (leading protocol information is required)                                                                                                         | no                      |
+| User Picker (single user)      | `username`                                                                                                                                                                    | no                      |
 
 Please note: If a custom field type `accepts multiple values` remember to provide one value per attribute. The following example applies two values `important` and `knowledge` as labels to a labels custom field:
 
