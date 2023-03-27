@@ -14,6 +14,7 @@ category: Administration
 * docs: optimize anchor links on syntax documentation page
 * docs: improve headings on syntax documentation page
 * refactor: simplify regex for Quick Subtasks template syntax
+* feat: improve output for Quick Subtasks template import
 
 ### [23.03.3] - 2023-03-19
 

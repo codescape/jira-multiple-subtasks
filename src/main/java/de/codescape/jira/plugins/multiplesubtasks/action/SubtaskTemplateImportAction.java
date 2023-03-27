@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +42,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
     private static final String QUICK_SUBTASKS_PROJECT_TEMPLATES = "com.hascode.plugin.jira:subtask-templates";
     private static final String QUICK_SUBTASKS_USER_TEMPLATES_PREFIX = "subtasks-user-";
     private static final Pattern QUICK_SUBTASKS_TASK_PATTERN = Pattern.compile("^- *([^(?:/)]+)/?(?:(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*|[^\\r\\n]*)$");
+    private static final String NEWLINE = "\n";
 
     private final UserSearchService userSearchService;
     private final PluginSettingsFactory pluginSettingsFactory;
@@ -78,19 +80,19 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
      */
     @SupportedMethods({RequestMethod.GET})
     public String doQuickSubtasksPreCheck() {
-        output.append("Scanning users...").append("\n");
+        output.append("Scanning users...").append(NEWLINE);
         List<ApplicationUser> usersWithTemplates = getUsersWithQuickSubtasksTemplates();
-        output.append("Users with Quick Subtasks for Jira templates: ").append(Integer.toString(usersWithTemplates.size())).append("\n");
+        output.append("Users with Quick Subtasks for Jira templates: ").append(Integer.toString(usersWithTemplates.size())).append(NEWLINE);
 
-        output.append("Scanning projects...").append("\n");
+        output.append("Scanning projects...").append(NEWLINE);
         List<Project> projectsWithTemplates = getProjectsWithQuickSubtasksTemplates();
-        output.append("Projects with Quick Subtasks for Jira templates: ").append(Integer.toString(projectsWithTemplates.size())).append("\n");
+        output.append("Projects with Quick Subtasks for Jira templates: ").append(Integer.toString(projectsWithTemplates.size())).append(NEWLINE);
 
         quickSubtasksCanImport = !projectsWithTemplates.isEmpty() || !usersWithTemplates.isEmpty();
         if (quickSubtasksCanImport) {
-            output.append("Import can be started now!");
+            output.append("Import can be started now!").append(NEWLINE);
         } else {
-            output.append("Nothing to import!");
+            output.append("Nothing to import!").append(NEWLINE);
         }
         return SUCCESS;
     }
@@ -100,24 +102,26 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
      */
     @SupportedMethods({RequestMethod.GET})
     public String doQuickSubtasksImport() {
-        output.append("Import started.").append("\n");
-        output.append("Importing user templates...").append("\n");
+        output.append("Import started.").append(NEWLINE);
+        output.append("Importing user templates...").append(NEWLINE);
         PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
-        getUsersWithQuickSubtasksTemplates().forEach(applicationUser -> {
-            String templatesForUser = (String) settings.get(QUICK_SUBTASKS_USER_TEMPLATES_PREFIX + applicationUser.getUsername());
+        getUsersWithQuickSubtasksTemplates().forEach(user -> {
+            String templatesForUser = (String) settings.get(QUICK_SUBTASKS_USER_TEMPLATES_PREFIX + user.getUsername());
             if (templatesForUser != null) {
-                importQuickSubtasksTemplatesForUser(applicationUser, templatesForUser);
+                long counter = importQuickSubtasksTemplatesForUser(user, templatesForUser);
+                output.append("Imported templates for user ").append(user.getUsername()).append(": ").append(Long.toString(counter)).append(NEWLINE);
             }
         });
-        output.append("Importing project templates...").append("\n");
+        output.append("Importing project templates...").append(NEWLINE);
         getProjectsWithQuickSubtasksTemplates().forEach(project -> {
             PluginSettings settingsForProject = pluginSettingsFactory.createSettingsForKey(project.getKey());
             String templatesForProject = (String) settingsForProject.get(QUICK_SUBTASKS_PROJECT_TEMPLATES);
             if (templatesForProject != null) {
-                importQuickSubtasksTemplatesForProject(project, templatesForProject);
+                long counter = importQuickSubtasksTemplatesForProject(project, templatesForProject);
+                output.append("Imported templates for project ").append(project.getKey()).append(": ").append(Long.toString(counter)).append(NEWLINE);
             }
         });
-        output.append("Import finished.").append("\n");
+        output.append("Import finished.").append(NEWLINE);
         return SUCCESS;
     }
 
@@ -169,7 +173,8 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
     /**
      * Imports all Quick Subtasks templates for projects.
      */
-    private void importQuickSubtasksTemplatesForProject(Project project, String templatesForProject) {
+    private long importQuickSubtasksTemplatesForProject(Project project, String templatesForProject) {
+        AtomicLong counter = new AtomicLong();
         List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForProject, true);
         List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getProjectTemplates(project.getId());
         templates.forEach(template -> {
@@ -177,16 +182,19 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                 existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
             ).findFirst().orElse(null) == null) {
                 subtaskTemplateService.saveProjectTemplate(project.getId(), jiraAuthenticationContext.getLoggedInUser().getId(), null, template.getName(), template.getTemplate());
+                counter.getAndIncrement();
             } else {
                 log.info("Template already exists: " + template.getName());
             }
         });
+        return counter.get();
     }
 
     /**
      * Imports all Quick Subtasks templates for users.
      */
-    private void importQuickSubtasksTemplatesForUser(ApplicationUser applicationUser, String templatesForUser) {
+    private long importQuickSubtasksTemplatesForUser(ApplicationUser applicationUser, String templatesForUser) {
+        AtomicLong counter = new AtomicLong();
         List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForUser, false);
         List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getUserTemplates(applicationUser.getId());
         templates.forEach(template -> {
@@ -194,11 +202,13 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                     existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
                 ).findFirst().orElse(null) == null) {
                     subtaskTemplateService.saveUserTemplate(applicationUser.getId(), null, template.getName(), template.getTemplate());
+                    counter.getAndIncrement();
                 } else {
                     log.info("Template already exists: " + template.getName());
                 }
             }
         );
+        return counter.get();
     }
 
     /**
@@ -252,7 +262,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
 
     String transformQuickSubtasksTemplate(String templateString) {
         StringWriter output = new StringWriter();
-        Arrays.stream(templateString.split("\n")).forEach(line -> {
+        Arrays.stream(templateString.split(NEWLINE)).forEach(line -> {
             Matcher matcher = QUICK_SUBTASKS_TASK_PATTERN.matcher(line);
             if (matcher.matches()) {
                 String key = "";
@@ -273,34 +283,34 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                                     case "dueDate":
                                     case "reporter":
                                     case "issueType":
-                                        output.append("  ").append(key).append(": ").append(value).append("\n");
+                                        output.append("  ").append(key).append(": ").append(value).append(NEWLINE);
                                         break;
                                     // different keyword same value
                                     case "fixversion":
-                                        output.append("  ").append("fixVersion").append(": ").append(value).append("\n");
+                                        output.append("  ").append("fixVersion").append(": ").append(value).append(NEWLINE);
                                         break;
                                     case "affectedversion":
-                                        output.append("  ").append("affectedVersion").append(": ").append(value).append("\n");
+                                        output.append("  ").append("affectedVersion").append(": ").append(value).append(NEWLINE);
                                         break;
                                     // component (split values)
                                     case "component":
                                         String[] components = value.split(", *");
                                         Arrays.stream(components).forEach(component ->
-                                            output.append("  ").append("component").append(": ").append(component).append("\n")
+                                            output.append("  ").append("component").append(": ").append(component).append(NEWLINE)
                                         );
                                         break;
                                     // labels (split values)
                                     case "labels":
                                         String[] labels = value.split(", *");
                                         Arrays.stream(labels).forEach(label ->
-                                            output.append("  ").append("label").append(": ").append(label).append("\n")
+                                            output.append("  ").append("label").append(": ").append(label).append(NEWLINE)
                                         );
                                         break;
                                     // watcher (split values)
                                     case "watcher":
                                         String[] watchers = value.split(", *");
                                         Arrays.stream(watchers).forEach(watcher ->
-                                            output.append("  ").append("watcher").append(": ").append(watcher).append("\n")
+                                            output.append("  ").append("watcher").append(": ").append(watcher).append(NEWLINE)
                                         );
                                         break;
                                     // not supported (will be ignored)
@@ -310,7 +320,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                             }
                         } else {
                             // summary
-                            output.append("- ").append(matcher.group(i).trim()).append("\n");
+                            output.append("- ").append(matcher.group(i).trim()).append(NEWLINE);
                         }
                     }
                 }
