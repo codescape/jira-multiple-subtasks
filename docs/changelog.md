@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * docs: optimize anchor links on syntax documentation page
+* docs: improve headings on syntax documentation page
 
 ### [23.03.3] - 2023-03-19
 

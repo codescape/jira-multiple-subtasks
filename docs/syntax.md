@@ -4,12 +4,12 @@ title: Syntax for subtask creation
 category: User Guide
 ---
 
-This document explains the syntax to create tasks with Multiple Subtasks for Jira.
+This page explains the syntax to create subtasks using Multiple Subtasks for Jira.
 
 * Table of Contents
 {:toc}
 
-## Simple Syntax
+### Simple Syntax
 
 To create three simple subtasks just have three lines starting with the `-` followed by the summary of each subtask:
 
@@ -17,7 +17,7 @@ To create three simple subtasks just have three lines starting with the `-` foll
     - This is another subtask...
     - And here is another one!
 
-## Advanced Syntax
+### Advanced Syntax
 
 In addition to the simple syntax you can specify additional attributes for each subtask - one line per attribute.
 
