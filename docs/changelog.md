@@ -15,6 +15,7 @@ category: Administration
 * docs: improve headings on syntax documentation page
 * refactor: simplify regex for Quick Subtasks template syntax
 * feat: improve output for Quick Subtasks template import
+* feat: always inherit issue security level from parent issue
 
 ### [23.03.3] - 2023-03-19
 

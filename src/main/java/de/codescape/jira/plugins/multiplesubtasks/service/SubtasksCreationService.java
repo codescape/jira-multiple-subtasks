@@ -156,8 +156,13 @@ public class SubtasksCreationService {
             // parent issue
             newSubtask.setParentObject(parent);
 
-            // project
+            // project (always same as parent)
             newSubtask.setProjectObject(parent.getProjectObject());
+
+            // issue level security (same as parent if set)
+            if (parent.getSecurityLevelId() != null) {
+                newSubtask.setSecurityLevelId(parent.getSecurityLevelId());
+            }
 
             // summary
             newSubtask.setSummary(subTaskRequest.getSummary()

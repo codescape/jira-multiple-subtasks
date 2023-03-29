@@ -95,6 +95,7 @@ public class SubtasksCreationServiceTest {
         when(project.getIssueTypes()).thenReturn(issueTypes);
         when(subtaskIssueType.isSubTask()).thenReturn(true);
     }
+
     /* summary */
 
     @Test
@@ -137,6 +138,30 @@ public class SubtasksCreationServiceTest {
         subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
 
         verify(subtask, new Times(1)).setSummary("do not replace @inherit");
+    }
+
+    /* security level */
+
+    @Test
+    public void shouldNotSetAnySecurityLevelIfParentHasNone() {
+        expectSubtaskWithSummary("with security on parent");
+        when(parent.getSecurityLevelId()).thenReturn(null);
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(0)).setSecurityLevelId(anyLong());
+    }
+
+    @Test
+    public void shouldSetSecurityLevelAccordingToParentSecurityLevel() {
+        expectSubtaskWithSummary("without security on parent");
+        when(parent.getSecurityLevelId()).thenReturn(10004L);
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setSecurityLevelId(eq(10004L));
     }
 
     /* watcher(s) */
