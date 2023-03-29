@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.03.4] - 2023-03-29
+
+**Security levels for subtasks and improved imports**
+
 * docs: optimize anchor links on syntax documentation page
 * docs: improve headings on syntax documentation page
 * refactor: simplify regex for Quick Subtasks template syntax
@@ -113,7 +119,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.3...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.4...HEAD
+[23.03.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.3...23.03.4
 [23.03.3]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.2...23.03.3
 [23.03.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.1...23.03.2
 [23.03.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.0...23.03.1
