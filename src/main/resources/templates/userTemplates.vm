@@ -62,7 +62,7 @@
                 <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
                     <input type="hidden" name="atl_token" value="$atl_token">
                     <input type="hidden" name="templateId" value="$template.id">
-                    <button name="action" value="edit" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-edit-filled"></span></button>
+                    <button name="action" formaction="MultipleSubtasksUserTemplates.jspa#subtasks-template-form" value="edit" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-edit-filled"></span></button>
                     <button name="action" value="delete" type="submit" class="aui-button" onfocus="javascript:blur();"><span class="aui-icon aui-icon-small aui-iconfont-trash"></span></button>
                 </form>
             </td>
@@ -74,9 +74,9 @@
 #end
 
 #if($editTemplate.id)
-    <h2>$i18n.getText("multiplesubtasks.templates.edit")</h2>
+    <h2 id="subtasks-template-form">$i18n.getText("multiplesubtasks.templates.edit")</h2>
 #else
-    <h2>$i18n.getText("multiplesubtasks.templates.addnew")</h2>
+    <h2 id="subtasks-template-form">$i18n.getText("multiplesubtasks.templates.addnew")</h2>
 #end
 
 #if($action.hasAnyErrors())

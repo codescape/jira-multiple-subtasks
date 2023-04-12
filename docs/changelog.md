@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: ensure compatibility with Jira 9.7.0, 9.4.4 and 8.20.20
+* feat: improve editing of a subtask template (#84)
 
 ### [23.03.4] - 2023-03-29
 
