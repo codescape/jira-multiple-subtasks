@@ -15,6 +15,7 @@ category: Administration
 * feat: improve editing of a subtask template (#84)
 * feat: ensure compatibility with Jira 9.8.0, 9.4.5 and 8.20.21
 * feat: improve log output for template import (#88)
+* docs: add documentation to enable informational logging (#88)
 
 ### [23.03.4] - 2023-03-29
 

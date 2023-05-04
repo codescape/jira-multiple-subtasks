@@ -30,4 +30,18 @@ The import can be performed in two steps:
 2. `Start import` - If a minimum of one template is found you can start the import.
 
 All results are displayed on this page after any operation was performed.
-If the import fails please consult the logs and [let us know](/support) about it so that we can help you.
+If the import fails please consult the application logs and [let us know](/support) about it so that we can help you.
+
+Please note: The import allows to be restarted without creating duplicate entries.
+
+#### Logging
+
+The import uses minimal logging on the graphical user interface. 
+To see more details please consult the application log.
+By default, only errors are logged.
+To also enable informational logging please follow these steps:
+
+1. Navigate into the `System` tab in your Jira `Administration` 
+2. Locate and open the menu entry `Logging and profiling`
+3. Scroll down to the `Default Loggers`
+4. `Configure` a new logger with the package `de.codescape.jira.plugins.multiplesubtasks` and logging level `INFO`
