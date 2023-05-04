@@ -102,8 +102,10 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
      */
     @SupportedMethods({RequestMethod.GET})
     public String doQuickSubtasksImport() {
-        output.append("Import started.").append(NEWLINE);
-        output.append("Importing user templates...").append(NEWLINE);
+        output.append("Import started").append(NEWLINE);
+        log.info("Import started");
+        output.append("Importing user templates").append(NEWLINE);
+        log.info("Importing user templates");
         PluginSettings settings = pluginSettingsFactory.createGlobalSettings();
         getUsersWithQuickSubtasksTemplates().forEach(user -> {
             String templatesForUser = (String) settings.get(QUICK_SUBTASKS_USER_TEMPLATES_PREFIX + user.getUsername());
@@ -112,7 +114,8 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                 output.append("Imported templates for user ").append(user.getUsername()).append(": ").append(Long.toString(counter)).append(NEWLINE);
             }
         });
-        output.append("Importing project templates...").append(NEWLINE);
+        output.append("Importing project templates").append(NEWLINE);
+        log.info("Importing project templates");
         getProjectsWithQuickSubtasksTemplates().forEach(project -> {
             PluginSettings settingsForProject = pluginSettingsFactory.createSettingsForKey(project.getKey());
             String templatesForProject = (String) settingsForProject.get(QUICK_SUBTASKS_PROJECT_TEMPLATES);
@@ -121,7 +124,8 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                 output.append("Imported templates for project ").append(project.getKey()).append(": ").append(Long.toString(counter)).append(NEWLINE);
             }
         });
-        output.append("Import finished.").append(NEWLINE);
+        output.append("Import finished").append(NEWLINE);
+        log.info("Import finished");
         return SUCCESS;
     }
 
@@ -175,9 +179,11 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
      */
     private long importQuickSubtasksTemplatesForProject(Project project, String templatesForProject) {
         AtomicLong counter = new AtomicLong();
+        log.info("Extracting templates for project '" + project.getKey() + "'");
         List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForProject, true);
         List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getProjectTemplates(project.getId());
         templates.forEach(template -> {
+            log.info("Importing template for project '" + project.getKey() + "' with template name '" + template.getName() + "'");
             if (existingTemplates.stream().filter(existingTemplate ->
                 existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
             ).findFirst().orElse(null) == null) {
@@ -195,19 +201,20 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
      */
     private long importQuickSubtasksTemplatesForUser(ApplicationUser applicationUser, String templatesForUser) {
         AtomicLong counter = new AtomicLong();
+        log.info("Extracting templates for user '" + applicationUser.getUsername() + "'");
         List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForUser, false);
         List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getUserTemplates(applicationUser.getId());
         templates.forEach(template -> {
-                if (existingTemplates.stream().filter(existingTemplate ->
-                    existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
-                ).findFirst().orElse(null) == null) {
-                    subtaskTemplateService.saveUserTemplate(applicationUser.getId(), null, template.getName(), template.getTemplate());
-                    counter.getAndIncrement();
-                } else {
-                    log.info("Template already exists: " + template.getName());
-                }
+            log.info("Importing template for user '" + applicationUser.getUsername() + "' with template name '" + template.getName() + "'");
+            if (existingTemplates.stream().filter(existingTemplate ->
+                existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
+            ).findFirst().orElse(null) == null) {
+                subtaskTemplateService.saveUserTemplate(applicationUser.getId(), null, template.getName(), template.getTemplate());
+                counter.getAndIncrement();
+            } else {
+                log.info("Template already exists: " + template.getName());
             }
-        );
+        });
         return counter.get();
     }
 
@@ -245,12 +252,12 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                 }
 
                 if (title != null && text != null) {
-                    log.info("Importing template: " + title);
+                    log.info("Extracting template with name '" + title + "'");
                     String newTemplate = transformQuickSubtasksTemplate(text);
                     if (newTemplate != null && !newTemplate.isEmpty()) {
                         templates.add(new ShowSubtaskTemplate(title, newTemplate));
                     } else {
-                        log.error("Template cannot be parsed correctly: " + text);
+                        log.error("Template with name '" + title + "' cannot be parsed correctly: " + text);
                     }
                 }
             }
