@@ -1,0 +1,15 @@
+<div class="field-group">
+    <label for="subtasksTemplate">$i18n.getText('multiplesubtasks.workflowfunction.createsubtasks.template.label') <span class="aui-icon icon-required">(required)</span></label>
+    #if ($subtasksTemplate)
+        <textarea id="subtasksTemplate" name="subtasksTemplate" class="textarea long-field" rows="12" required="required" placeholder="$i18n.getText('multiplesubtasks.workflowfunction.createsubtasks.template.placeholder')">${subtasksTemplate}</textarea>
+    #else
+        <textarea id="subtasksTemplate" name="subtasksTemplate" class="textarea long-field" rows="12" required="required" placeholder="$i18n.getText('multiplesubtasks.workflowfunction.createsubtasks.template.placeholder')"></textarea>
+    #end
+    <div class="description">$i18n.getText('multiplesubtasks.workflowfunction.createsubtasks.template.description')</div>
+</div>
+<script>
+    AJS.toInit(function(){
+        // add the missing aui style to the form element
+        $('#subtasksTemplate').closest('form').addClass('aui');
+    });
+</script>

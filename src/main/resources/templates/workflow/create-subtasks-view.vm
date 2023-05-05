@@ -1,0 +1,8 @@
+$i18n.getText('multiplesubtasks.workflowfunction.createsubtasks.view')
+<pre>
+#if(${subtasksTemplate})
+$textutils.htmlEncode(${subtasksTemplate})
+#else
+<i>undefined</i>
+#end
+</pre>

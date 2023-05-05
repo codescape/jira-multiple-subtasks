@@ -99,6 +99,20 @@
         </actions>
     </webwork1>
 
+    <!-- workflow function to create subtasks -->
+    <workflow-function key="multiple-subtasks-create-subtasks-workflow-function"
+                       i18n-name-key="multiplesubtasks.workflowfunction.createsubtasks.name"
+                       class="de.codescape.jira.plugins.multiplesubtasks.workflow.CreateSubtasksWorkflowFunctionFactory">
+        <description key="multiplesubtasks.workflowfunction.createsubtasks.description"/>
+        <function-class>de.codescape.jira.plugins.multiplesubtasks.workflow.CreateSubtasksWorkflowFunction</function-class>
+        <orderable>true</orderable>
+        <unique>true</unique>
+        <deletable>true</deletable>
+        <resource type="velocity" name="view" location="templates/workflow/create-subtasks-view.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/workflow/create-subtasks-edit.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/workflow/create-subtasks-edit.vm"/>
+    </workflow-function>
+
     <!-- rest endpoint -->
     <rest key="multiple-subtasks-rest" path="/multiple-subtasks" version="1.0"/>
 
