@@ -124,6 +124,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                 output.append("Imported templates for project ").append(project.getKey()).append(": ").append(Long.toString(counter)).append(NEWLINE);
             }
         });
+        output.append("Check the log files for more details").append(NEWLINE);
         output.append("Import finished").append(NEWLINE);
         log.info("Import finished");
         return SUCCESS;

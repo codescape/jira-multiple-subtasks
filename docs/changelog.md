@@ -16,6 +16,7 @@ category: Administration
 * feat: ensure compatibility with Jira 9.8.0, 9.4.5 and 8.20.21
 * feat: improve log output for template import (#88)
 * docs: add documentation to enable informational logging (#88)
+* feat: refer to log files after template import (#88)
 
 ### [23.03.4] - 2023-03-29
 
