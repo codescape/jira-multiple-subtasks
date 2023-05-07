@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.05.0] - 2023-05-07
+
+**Better import and create subtask in workflow transitions**
+
 * feat: ensure compatibility with Jira 9.7.0, 9.4.4 and 8.20.20
 * feat: improve editing of a subtask template (#84)
 * feat: ensure compatibility with Jira 9.8.0, 9.4.5 and 8.20.21
@@ -127,7 +133,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.4...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.0...HEAD
+[23.05.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.4...23.05.0
 [23.03.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.3...23.03.4
 [23.03.3]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.2...23.03.3
 [23.03.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.1...23.03.2
