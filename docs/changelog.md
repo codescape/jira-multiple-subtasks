@@ -19,6 +19,7 @@ category: Administration
 * feat: refer to log files after template import (#88)
 * feat: provide workflow function to create subtasks (#34)
 * docs: add online documentation for workflow function (#34)
+* feat: prevent subtasks creation for subtasks (#34)
 
 ### [23.03.4] - 2023-03-29
 

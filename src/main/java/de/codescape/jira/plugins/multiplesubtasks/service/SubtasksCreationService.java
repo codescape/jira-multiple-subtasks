@@ -136,6 +136,10 @@ public class SubtasksCreationService {
             throw new RuntimeException("Parent issue not found.");
         }
 
+        if (parent.isSubTask()) {
+            throw new RuntimeException("Cannot create subtasks for a subtask.");
+        }
+
         Project projectObject = parent.getProjectObject();
         if (projectObject == null) {
             throw new RuntimeException("Parent project not found.");

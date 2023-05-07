@@ -26,6 +26,7 @@ import org.mockito.junit.MockitoRule;
 
 import java.util.ArrayList;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -94,6 +95,17 @@ public class SubtasksCreationServiceTest {
         issueTypes.add(subtaskIssueType);
         when(project.getIssueTypes()).thenReturn(issueTypes);
         when(subtaskIssueType.isSubTask()).thenReturn(true);
+    }
+
+    /* pre-checks */
+
+    @Test(expected = RuntimeException.class)
+    public void shouldStopIfIssueToCreateSubtasksForIsSubtaskItself() {
+        expectSubtaskWithSummary("subtask for another subtask?");
+        when(parent.isSubTask()).thenReturn(true);
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, "- subtask for another subtask?");
+        fail("Should return a RuntimeException.");
     }
 
     /* summary */
