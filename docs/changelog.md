@@ -18,6 +18,7 @@ category: Administration
 * docs: add documentation to enable informational logging (#88)
 * feat: refer to log files after template import (#88)
 * feat: provide workflow function to create subtasks (#34)
+* docs: add online documentation for workflow function (#34)
 
 ### [23.03.4] - 2023-03-29
 
