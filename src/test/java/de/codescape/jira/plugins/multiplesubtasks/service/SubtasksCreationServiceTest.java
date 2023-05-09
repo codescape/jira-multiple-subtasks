@@ -156,6 +156,42 @@ public class SubtasksCreationServiceTest {
         verify(subtask, new Times(1)).setSummary("do not replace @inherit");
     }
 
+    /* description */
+
+    @Test
+    public void shouldUseSimpleDescription() {
+        expectSubtaskWithDescription("Simple text!");
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setDescription("Simple text!");
+    }
+
+    @Test
+    public void shouldInheritDescriptionFromParent() {
+        expectSubtaskWithDescription(INHERIT_MARKER);
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        when(parent.getDescription()).thenReturn("Parent text!");
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setDescription("Parent text!");
+    }
+
+    @Test
+    public void shouldReplaceInheritWithDescriptionFromParent() {
+        expectSubtaskWithDescription("Let's say " + INHERIT_MARKER);
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        when(parent.getDescription()).thenReturn("hello world!");
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setDescription("Let's say hello world!");
+    }
+
     /* security level */
 
     @Test
@@ -280,8 +316,8 @@ public class SubtasksCreationServiceTest {
         // expect subtask with attributes
         ArrayList<Subtask> subtasks = new ArrayList<>();
         ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
-        attributes.put("summary", "a task");
-        attributes.put("watcher", "known.user");
+        attributes.put(Subtask.Attributes.SUMMARY, "a task");
+        attributes.put(Subtask.Attributes.WATCHER, "known.user");
         subtasks.add(new Subtask(attributes));
         when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
 
@@ -306,8 +342,8 @@ public class SubtasksCreationServiceTest {
         // expect subtask with attributes
         ArrayList<Subtask> subtasks = new ArrayList<>();
         ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
-        attributes.put("summary", "a task");
-        attributes.put("watcher", "unknown.user");
+        attributes.put(Subtask.Attributes.SUMMARY, "a task");
+        attributes.put(Subtask.Attributes.WATCHER, "unknown.user");
         subtasks.add(new Subtask(attributes));
         when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
 
@@ -329,8 +365,8 @@ public class SubtasksCreationServiceTest {
         // expect subtask with attributes
         ArrayList<Subtask> subtasks = new ArrayList<>();
         ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
-        attributes.put("summary", "a task");
-        attributes.put("watcher", Markers.CURRENT_MARKER);
+        attributes.put(Subtask.Attributes.SUMMARY, "a task");
+        attributes.put(Subtask.Attributes.WATCHER, Markers.CURRENT_MARKER);
         subtasks.add(new Subtask(attributes));
         when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
 
@@ -356,7 +392,16 @@ public class SubtasksCreationServiceTest {
     private void expectSubtaskWithSummary(String summary) {
         ArrayList<Subtask> subtasks = new ArrayList<>();
         ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
-        attributes.put("summary", summary);
+        attributes.put(Subtask.Attributes.SUMMARY, summary);
+        subtasks.add(new Subtask(attributes));
+        expectSubtasks(subtasks);
+    }
+
+    private void expectSubtaskWithDescription(String description) {
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
+        attributes.put(Subtask.Attributes.SUMMARY, "a task");
+        attributes.put(Subtask.Attributes.DESCRIPTION, description);
         subtasks.add(new Subtask(attributes));
         expectSubtasks(subtasks);
     }

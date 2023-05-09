@@ -177,7 +177,10 @@ public class SubtasksCreationService {
             // description
             // use the optionally provided description
             if (subTaskRequest.getDescription() != null) {
-                newSubtask.setDescription(subTaskRequest.getDescription().replaceAll("\\{n}", "\n"));
+                newSubtask.setDescription(subTaskRequest.getDescription()
+                    .replaceAll("\\{n}", "\n")
+                    .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parent.getDescription())
+                    .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER));
             }
 
             // priority

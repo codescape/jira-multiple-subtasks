@@ -72,6 +72,13 @@ This will render a table like this in the description of your subtask:
 |---------------|----------------|
 | first content | second content |
 
+The description of the parent task can be used for the newly created subtask as well:
+
+    - We use the description of the parent task
+      description: @inherit
+    - We append to the description of the parent task
+      description: @inherit{n}{n}and some more details here...
+
 #### Priority
 
 By default, the priority of the parent issue will be used for the new subtask.
