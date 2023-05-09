@@ -183,16 +183,20 @@ public class SubtasksCreationService {
             // priority
             // try to find provided priority otherwise fall back to priority of parent issue
             if (subTaskRequest.getPriority() != null) {
-                // TODO a priority scheme can be configured per project
-                Priority priority = priorityManager.getPriorities().stream()
-                    .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
-                    .findFirst()
-                    .orElse(null);
-                if (priority == null) {
-                    warnings.add("Invalid priority: " + subTaskRequest.getPriority());
+                if (INHERIT_MARKER.equals(subTaskRequest.getPriority())) {
                     newSubtask.setPriority(parent.getPriority());
                 } else {
-                    newSubtask.setPriority(priority);
+                    // TODO a priority scheme can be configured per project
+                    Priority priority = priorityManager.getPriorities().stream()
+                        .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
+                        .findFirst()
+                        .orElse(null);
+                    if (priority == null) {
+                        warnings.add("Invalid priority: " + subTaskRequest.getPriority());
+                        newSubtask.setPriority(parent.getPriority());
+                    } else {
+                        newSubtask.setPriority(priority);
+                    }
                 }
             } else {
                 newSubtask.setPriority(parent.getPriority());

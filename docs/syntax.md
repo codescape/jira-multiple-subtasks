@@ -83,6 +83,11 @@ In this example the subtask will be created with priority `Highest`:
 
 Please note: If the provided priority does not exist for this issue the priority of the parent issue will be used.
 
+If required the priority can be explicitly inherited from the parent issue by using the keyword `@inherit`:
+
+    - Task with same priority as parent
+      priority: @inherit
+
 #### Issue Type
 
 In many projects there is exactly one issue type for subtasks.

@@ -6,6 +6,7 @@ import com.atlassian.jira.issue.IssueFactory;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.issue.priority.Priority;
 import com.atlassian.jira.issue.watchers.WatcherManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -25,7 +26,9 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -176,6 +179,27 @@ public class SubtasksCreationServiceTest {
         verify(subtask, new Times(1)).setSecurityLevelId(eq(10004L));
     }
 
+    /* priority */
+
+    @Test
+    public void shouldAllowToInheritPriorityExplicitly() {
+        List<Subtask> subtasksRequest = new ArrayList<>();
+        Subtask subtaskRequest = mock(Subtask.class);
+        when(subtaskRequest.getSummary()).thenReturn("Inherit priority please");
+        when(subtaskRequest.getPriority()).thenReturn(INHERIT_MARKER);
+        subtasksRequest.add(subtaskRequest);
+        expectSubtasks(subtasksRequest);
+
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        Priority priority = mock(Priority.class);
+        when(parent.getPriority()).thenReturn(priority);
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, times(1)).setPriority(priority);
+    }
+
     /* watcher(s) */
 
     @Test
@@ -261,6 +285,10 @@ public class SubtasksCreationServiceTest {
         ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
         attributes.put("summary", summary);
         subtasks.add(new Subtask(attributes));
+        expectSubtasks(subtasks);
+    }
+
+    private void expectSubtasks(List<Subtask> subtasks) {
         when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
     }
 
