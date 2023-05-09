@@ -298,9 +298,15 @@ public class SubtasksCreationService {
             // try to find provided reporter and otherwise use the current user
             ApplicationUser reporter = null;
             if (subTaskRequest.getReporter() != null) {
-                reporter = userManager.getUserByName(subTaskRequest.getReporter());
-                if (reporter == null) {
-                    warnings.add("Invalid reporter: " + subTaskRequest.getReporter());
+                if (INHERIT_MARKER.equals(subTaskRequest.getReporter())) {
+                    reporter = parent.getReporter();
+                } else if (CURRENT_MARKER.equals(subTaskRequest.getReporter())) {
+                    reporter = jiraAuthenticationContext.getLoggedInUser();
+                } else {
+                    reporter = userManager.getUserByName(subTaskRequest.getReporter());
+                    if (reporter == null) {
+                        warnings.add("Invalid reporter: " + subTaskRequest.getReporter());
+                    }
                 }
             }
             newSubtask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());

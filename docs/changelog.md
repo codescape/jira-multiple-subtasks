@@ -13,6 +13,7 @@ category: Administration
 
 * feat: ignore wrong case on attributes and multiple whitespace on import (#90)
 * feat: allow to inherit priority of the parent task explicitly (#98)
+* feat: allow to inherit reporter or use current user explicitly (#70)
 
 ### [23.05.0] - 2023-05-07
 

@@ -110,13 +110,10 @@ In this example you will create a subtask assigned to user `bob`:
 
 Please note: If the provided assignee cannot be found no assignee will be used.
 
-You can also assign the subtask to the current user:
+You can also assign the subtask to the current user or inherit the assignee from the parent issue:
 
     - This subtask is assigned to the logged in user
       assignee: @current
-
-And you can also inherit the assignee of the parent issue:
-
     - This subtask is assigned to the assignee of the parent issue
       assignee: @inherit
 
@@ -130,6 +127,13 @@ In this example you will create a subtask with `stefan` as the reporter:
       reporter: stefan
 
 Please note: If the provided reporter cannot be found the current user will be used.
+
+You can also inherit the reporter from the parent issue or explicitly use the current user:
+
+    - This subtask has the same reporter as the parent issue
+      reporter: @inherit
+    - This subtask is reported by the current user
+      reporter: @current
 
 #### Label(s)
 

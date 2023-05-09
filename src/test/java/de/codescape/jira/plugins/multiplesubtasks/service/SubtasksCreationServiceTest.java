@@ -28,6 +28,7 @@ import org.mockito.junit.MockitoRule;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
@@ -198,6 +199,78 @@ public class SubtasksCreationServiceTest {
         subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
 
         verify(subtask, times(1)).setPriority(priority);
+    }
+
+    /* reporter */
+
+    @Test
+    public void shouldAllowToInheritReporterFromParent() {
+        List<Subtask> subtasksRequest = new ArrayList<>();
+        Subtask subtaskRequest = mock(Subtask.class);
+        when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
+        when(subtaskRequest.getReporter()).thenReturn(INHERIT_MARKER);
+        subtasksRequest.add(subtaskRequest);
+        expectSubtasks(subtasksRequest);
+
+        ApplicationUser reporter = mock(ApplicationUser.class);
+        when(parent.getReporter()).thenReturn(reporter);
+
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, times(1)).setReporter(reporter);
+    }
+
+    @Test
+    public void shouldAllowToSetCurrentUserAsReporterExplicitly() {
+        List<Subtask> subtasksRequest = new ArrayList<>();
+        Subtask subtaskRequest = mock(Subtask.class);
+        when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
+        when(subtaskRequest.getReporter()).thenReturn(CURRENT_MARKER);
+        subtasksRequest.add(subtaskRequest);
+        expectSubtasks(subtasksRequest);
+
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, times(1)).setReporter(currentUser);
+    }
+
+    @Test
+    public void shouldAllowToSetUserAsReporter() {
+        List<Subtask> subtasksRequest = new ArrayList<>();
+        Subtask subtaskRequest = mock(Subtask.class);
+        when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
+        when(subtaskRequest.getReporter()).thenReturn("codescape");
+        subtasksRequest.add(subtaskRequest);
+        expectSubtasks(subtasksRequest);
+
+        ApplicationUser explicitUser = mock(ApplicationUser.class);
+        when(userManager.getUserByName("codescape")).thenReturn(explicitUser);
+
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, times(1)).setReporter(explicitUser);
+    }
+
+    @Test
+    public void shouldFallBackToCurrentUserAsReporterIfCustomUserDoesNotExist() {
+        List<Subtask> subtasksRequest = new ArrayList<>();
+        Subtask subtaskRequest = mock(Subtask.class);
+        when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
+        when(subtaskRequest.getReporter()).thenReturn("unknown");
+        subtasksRequest.add(subtaskRequest);
+        expectSubtasks(subtasksRequest);
+
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, times(1)).setReporter(currentUser);
     }
 
     /* watcher(s) */
