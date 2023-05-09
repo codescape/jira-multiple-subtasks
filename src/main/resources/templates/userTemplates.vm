@@ -3,6 +3,7 @@
     <title>$i18n.getText("multiplesubtasks.title") - $i18n.getText("multiplesubtasks.templates.label")</title>
     <meta name="decorator" content="atl.userprofile"/>
     <meta name="tab" content="foo.bar">
+    $webResourceManager.requireResource("de.codescape.jira.plugins.multiple-subtasks:multiple-subtasks-resources")
 </head>
 <body class="multiple-subtasks">
 
@@ -42,23 +43,23 @@
 
 #set($counter = 0)
 #if(!$userTemplates.isEmpty())
-    <table width="100%" class="aui">
+    <table width="100%" class="aui subtask-templates">
     <thead>
         <tr>
-            <th>#</th>
-            <th>$i18n.getText("multiplesubtasks.templates.name")</th>
-            <th>$i18n.getText("multiplesubtasks.templates.template")</th>
-            <th></th>
+            <th class="template-counter">#</th>
+            <th class="template-name">$i18n.getText("multiplesubtasks.templates.name")</th>
+            <th class="template-code">$i18n.getText("multiplesubtasks.templates.template")</th>
+            <th class="template-actions"></th>
         </tr>
     </thead>
     <tbody>
     #foreach($template in $userTemplates)
     #set($counter = $counter + 1)
         <tr>
-            <td>$counter</td>
-            <td>$template.name</td>
-            <td><pre>$template.template</pre></td>
-            <td>
+            <td class="template-counter">$counter</td>
+            <td class="template-name">$template.name</td>
+            <td class="template-code"><pre>$template.template</pre></td>
+            <td class="template-actions">
                 <form class="aui long-label" action="MultipleSubtasksUserTemplates.jspa" method="post">
                     <input type="hidden" name="atl_token" value="$atl_token">
                     <input type="hidden" name="templateId" value="$template.id">

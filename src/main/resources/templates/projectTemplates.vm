@@ -5,6 +5,7 @@
     <meta name="admin.active.section" content="atl.jira.proj.config"/>
     <meta name="admin.active.tab" content="multiple-subtasks-project-configuration-item-link"/>
     <meta name="projectKey" content="$projectKey"/>
+    $webResourceManager.requireResource("de.codescape.jira.plugins.multiple-subtasks:multiple-subtasks-resources")
 </head>
 <body class="multiple-subtasks">
 
@@ -44,23 +45,23 @@
 
 #set($counter = 0)
 #if(!$projectTemplates.isEmpty())
-    <table width="100%" class="aui">
+    <table width="100%" class="aui subtask-templates">
     <thead>
         <tr>
-            <th>#</th>
-            <th>$i18n.getText("multiplesubtasks.templates.name")</th>
-            <th>$i18n.getText("multiplesubtasks.templates.template")</th>
-            <th></th>
+            <th class="template-counter">#</th>
+            <th class="template-name">$i18n.getText("multiplesubtasks.templates.name")</th>
+            <th class="template-code">$i18n.getText("multiplesubtasks.templates.template")</th>
+            <th class="template-actions"></th>
         </tr>
     </thead>
     <tbody>
     #foreach($template in $projectTemplates)
     #set($counter = $counter + 1)
         <tr>
-            <td>$counter</td>
-            <td>$template.name</td>
-            <td><pre>$template.template</pre></td>
-            <td>
+            <td class="template-counter">$counter</td>
+            <td class="template-name">$template.name</td>
+            <td class="template-code"><pre>$template.template</pre></td>
+            <td class="template-actions">
                 <form class="aui long-label" action="MultipleSubtasksProjectTemplates.jspa" method="post">
                     <input type="hidden" name="atl_token" value="$atl_token">
                     <input type="hidden" name="templateId" value="$template.id">

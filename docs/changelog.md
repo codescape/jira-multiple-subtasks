@@ -16,6 +16,7 @@ category: Administration
 * feat: allow to inherit reporter or use current user explicitly (#70)
 * feat: allow to inherit description of the parent task (#97)
 * feat: allow to inherit estimate of the parent task (#99)
+* feat: improve display of templates with long lines for tasks (#83)
 
 ### [23.05.0] - 2023-05-07
 

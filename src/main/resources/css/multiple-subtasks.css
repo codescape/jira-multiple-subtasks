@@ -1,0 +1,15 @@
+.subtask-templates .template-counter {
+    min-width: 25px;
+}
+
+.subtask-templates .template-name {
+    min-width: 200px;
+}
+
+.subtask-templates .template-code pre {
+    white-space: pre-wrap;
+}
+
+.subtask-templates .template-actions {
+    min-width: 100px;
+}
