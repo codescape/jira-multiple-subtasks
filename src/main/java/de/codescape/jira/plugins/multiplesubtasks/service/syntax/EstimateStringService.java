@@ -21,7 +21,7 @@ public class EstimateStringService {
     /**
      * This pattern describes the valid format to provide an estimate.
      */
-    public static final Pattern PATTERN = Pattern.compile("((?<weeks>\\d+)w)? ?((?<days>\\d+)d)? ?((?<hours>\\d+)h)? ?((?<minutes>\\d+)m)?");
+    public static final Pattern PATTERN = Pattern.compile("(@inherit|((?<weeks>\\d+)w)? ?((?<days>\\d+)d)? ?((?<hours>\\d+)h)? ?((?<minutes>\\d+)m)?)");
 
     private static final String MATCHER_WEEKS = "weeks";
     private static final String MATCHER_DAYS = "days";

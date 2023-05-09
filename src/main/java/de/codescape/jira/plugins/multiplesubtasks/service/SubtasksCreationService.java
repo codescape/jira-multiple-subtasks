@@ -339,7 +339,13 @@ public class SubtasksCreationService {
             // estimate
             // parse the estimate and set the duration in seconds
             if (subTaskRequest.getEstimate() != null) {
-                newSubtask.setEstimate(estimateStringService.estimateStringToSeconds(subTaskRequest.getEstimate()));
+                if (INHERIT_MARKER.equals(subTaskRequest.getEstimate())) {
+                    if (parent.getEstimate() != null) {
+                        newSubtask.setEstimate(parent.getEstimate());
+                    }
+                } else {
+                    newSubtask.setEstimate(estimateStringService.estimateStringToSeconds(subTaskRequest.getEstimate()));
+                }
             }
 
             // create and link the subtask to the parent issue

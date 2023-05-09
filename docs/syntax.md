@@ -194,6 +194,11 @@ The estimate can be provided in weeks (`w`), days (`d`), hours (`h`), minutes (`
 Please note: The order of the estimate attributes is fixed. 
 A value of `2d 1w` will not be accepted while a value of `1w 2d` is valid and will be accepted.
 
+You can also inherit the estimate from the parent issue:
+
+    - This task takes the full time of the parent issue
+      estimate: @inherit
+
 #### Affected Version(s)
 
 By default, newly created subtasks will not have any affected versions.

@@ -319,7 +319,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.WATCHER, "known.user");
         subtasks.add(new Subtask(attributes));
-        when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
+        expectSubtasks(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
@@ -345,7 +345,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.WATCHER, "unknown.user");
         subtasks.add(new Subtask(attributes));
-        when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
+        expectSubtasks(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
@@ -368,7 +368,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.WATCHER, Markers.CURRENT_MARKER);
         subtasks.add(new Subtask(attributes));
-        when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
+        expectSubtasks(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
@@ -381,6 +381,46 @@ public class SubtasksCreationServiceTest {
 
         // verify watchers
         verify(watcherManager).startWatching(currentUser, subtask);
+    }
+
+    /* estimate */
+
+    @Test
+    public void shouldInheritEstimateFromParentIssue() {
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
+        attributes.put(Subtask.Attributes.SUMMARY, "a task");
+        attributes.put(Subtask.Attributes.ESTIMATE, INHERIT_MARKER);
+        subtasks.add(new Subtask(attributes));
+        expectSubtasks(subtasks);
+
+        Long parentEstimate = 42L;
+        when(parent.getEstimate()).thenReturn(parentEstimate);
+
+        // expect subtask to be created
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, times(1)).setEstimate(parentEstimate);
+    }
+
+    @Test
+    public void shouldNotSetEstimateWhenInheritEstimateFromParentIssueWithoutEstimate() {
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
+        attributes.put(Subtask.Attributes.SUMMARY, "a task");
+        attributes.put(Subtask.Attributes.ESTIMATE, INHERIT_MARKER);
+        subtasks.add(new Subtask(attributes));
+        expectSubtasks(subtasks);
+
+        when(parent.getEstimate()).thenReturn(null);
+
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, times(0)).setEstimate(anyLong());
     }
 
     /* helpers */

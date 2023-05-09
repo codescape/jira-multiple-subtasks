@@ -158,6 +158,15 @@ public class SubtaskTest {
         new Subtask(map);
     }
 
+    @Test
+    public void shouldAcceptInheritingTheEstimateFromParentIssue() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task inherits the estimate!");
+        map.put(Subtask.Attributes.ESTIMATE, INHERIT_MARKER);
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getEstimate(), is(equalTo(INHERIT_MARKER)));
+    }
+
     /* component */
 
     @Test
