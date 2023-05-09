@@ -14,6 +14,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
+import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
@@ -41,7 +42,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
 
     private static final String QUICK_SUBTASKS_PROJECT_TEMPLATES = "com.hascode.plugin.jira:subtask-templates";
     private static final String QUICK_SUBTASKS_USER_TEMPLATES_PREFIX = "subtasks-user-";
-    private static final Pattern QUICK_SUBTASKS_TASK_PATTERN = Pattern.compile("^- *([^(?:/)]+)/?(?:(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*|[^\\r\\n]*)$");
+    private static final Pattern QUICK_SUBTASKS_TASK_PATTERN = Pattern.compile("^\\s*- *([^(?:/)]+)/?(?:\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*(?: ([^:]+):\"([^\"]+)\")?\\s*/?\\s*|[^\\r\\n]*)$");
     private static final String NEWLINE = "\n";
 
     private final UserSearchService userSearchService;
@@ -282,43 +283,47 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                                 key = matcher.group(i);
                             } else {
                                 value = matcher.group(i);
-                                switch (key) {
+                                switch (key.toLowerCase()) {
                                     // same keyword and value format
                                     case "priority":
                                     case "description":
                                     case "estimate":
                                     case "assignee":
-                                    case "dueDate":
                                     case "reporter":
-                                    case "issueType":
-                                        output.append("  ").append(key).append(": ").append(value).append(NEWLINE);
+                                        output.append("  ").append(key.toLowerCase()).append(": ").append(value).append(NEWLINE);
                                         break;
                                     // different keyword same value
+                                    case "issuetype":
+                                        output.append("  ").append(Subtask.Attributes.ISSUE_TYPE).append(": ").append(value).append(NEWLINE);
+                                        break;
+                                    case "duedate":
+                                        output.append("  ").append(Subtask.Attributes.DUE_DATE).append(": ").append(value).append(NEWLINE);
+                                        break;
                                     case "fixversion":
-                                        output.append("  ").append("fixVersion").append(": ").append(value).append(NEWLINE);
+                                        output.append("  ").append(Subtask.Attributes.FIX_VERSION).append(": ").append(value).append(NEWLINE);
                                         break;
                                     case "affectedversion":
-                                        output.append("  ").append("affectedVersion").append(": ").append(value).append(NEWLINE);
+                                        output.append("  ").append(Subtask.Attributes.AFFECTED_VERSION).append(": ").append(value).append(NEWLINE);
                                         break;
                                     // component (split values)
                                     case "component":
                                         String[] components = value.split(", *");
                                         Arrays.stream(components).forEach(component ->
-                                            output.append("  ").append("component").append(": ").append(component).append(NEWLINE)
+                                            output.append("  ").append(Subtask.Attributes.COMPONENT).append(": ").append(component).append(NEWLINE)
                                         );
                                         break;
                                     // labels (split values)
                                     case "labels":
                                         String[] labels = value.split(", *");
                                         Arrays.stream(labels).forEach(label ->
-                                            output.append("  ").append("label").append(": ").append(label).append(NEWLINE)
+                                            output.append("  ").append(Subtask.Attributes.LABEL).append(": ").append(label).append(NEWLINE)
                                         );
                                         break;
                                     // watcher (split values)
                                     case "watcher":
                                         String[] watchers = value.split(", *");
                                         Arrays.stream(watchers).forEach(watcher ->
-                                            output.append("  ").append("watcher").append(": ").append(watcher).append(NEWLINE)
+                                            output.append("  ").append(Subtask.Attributes.WATCHER).append(": ").append(watcher).append(NEWLINE)
                                         );
                                         break;
                                     // not supported (will be ignored)

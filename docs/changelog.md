@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: ignore wrong case on attributes and multiple whitespace on import (#90)
 
 ### [23.05.0] - 2023-05-07
 

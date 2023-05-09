@@ -19,21 +19,21 @@ public class Subtask {
     /**
      * Container for all named attributes that are interpreted in subtask syntax.
      */
-    static class Attributes {
+    public static class Attributes {
 
-        static final String SUMMARY = "summary";
-        static final String DESCRIPTION = "description";
-        static final String ASSIGNEE = "assignee";
-        static final String PRIORITY = "priority";
-        static final String ISSUE_TYPE = "issueType";
-        static final String REPORTER = "reporter";
-        static final String COMPONENT = "component";
-        static final String LABEL = "label";
-        static final String ESTIMATE = "estimate";
-        static final String WATCHER = "watcher";
-        static final String FIX_VERSION = "fixVersion";
-        static final String AFFECTED_VERSION = "affectedVersion";
-        static final String DUE_DATE = "dueDate";
+        public static final String SUMMARY = "summary";
+        public static final String DESCRIPTION = "description";
+        public static final String ASSIGNEE = "assignee";
+        public static final String PRIORITY = "priority";
+        public static final String ISSUE_TYPE = "issueType";
+        public static final String REPORTER = "reporter";
+        public static final String COMPONENT = "component";
+        public static final String LABEL = "label";
+        public static final String ESTIMATE = "estimate";
+        public static final String WATCHER = "watcher";
+        public static final String FIX_VERSION = "fixVersion";
+        public static final String AFFECTED_VERSION = "affectedVersion";
+        public static final String DUE_DATE = "dueDate";
 
         static final List<String> ALL = Arrays.asList(
             SUMMARY, DESCRIPTION, ASSIGNEE, PRIORITY, ISSUE_TYPE, REPORTER, COMPONENT, LABEL, ESTIMATE, WATCHER,

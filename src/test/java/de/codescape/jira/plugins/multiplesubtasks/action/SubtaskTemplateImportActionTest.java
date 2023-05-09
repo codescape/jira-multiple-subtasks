@@ -170,7 +170,25 @@ public class SubtaskTemplateImportActionTest {
         assertTransformation(
             "- Task / estimate:\"6d\" / watcher:\"codescape\" / labels:\"one\"",
             "- Task\n  estimate: 6d\n  watcher: codescape\n  label: one\n"
-            );
+        );
+    }
+
+    /* accept syntax with multiple spaces */
+
+    @Test
+    public void shouldAcceptAttributesWithMultipleSpaces() {
+        assertTransformation(
+            "  - Task  /     estimate:\"2h\"     labels:\"one\"   /   watcher:\"myself\" ",
+            "- Task\n  estimate: 2h\n  label: one\n  watcher: myself\n"
+        );
+    }
+
+    /* do not rely on case-sensitive attributes */
+
+    @Test
+    public void shouldNotEnforceCaseSensitiveAttributes() {
+        assertTransformation("- Task / eStIMate:\"2h\" duedate:\"2022-02-02\" LABELS:\"aaa\"",
+            "- Task\n  estimate: 2h\n  dueDate: 2022-02-02\n  label: aaa\n");
     }
 
     /* complex example */
