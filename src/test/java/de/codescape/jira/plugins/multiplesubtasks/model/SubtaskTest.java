@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -74,6 +75,27 @@ public class SubtaskTest {
         map.put(Subtask.Attributes.DESCRIPTION, expectedDescription);
         Subtask subtask = new Subtask(map);
         assertThat(subtask.getDescription(), is(equalTo(expectedDescription)));
+    }
+
+    /* priority */
+
+    @Test
+    public void shouldAcceptTaskWithPriority() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a priority");
+        String expectedPriority = "Highest";
+        map.put(Subtask.Attributes.PRIORITY, expectedPriority);
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getPriority(), is(equalTo(expectedPriority)));
+    }
+
+    @Test
+    public void shouldAcceptTaskWithPriorityInherited() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a priority");
+        map.put(Subtask.Attributes.PRIORITY, INHERIT_MARKER);
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getPriority(), is(equalTo(INHERIT_MARKER)));
     }
 
     /* label */
