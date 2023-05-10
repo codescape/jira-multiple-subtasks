@@ -17,7 +17,8 @@ category: Administration
 * feat: allow to inherit description of the parent task (#97)
 * feat: allow to inherit estimate of the parent task (#99)
 * feat: improve display of templates with long lines for tasks (#83)
-* feat: allow to inherit single-value custom fields (#79)
+* feat: allow to inherit values from single-value custom fields (#79)
+* feat: allow to inherit values from all supported custom fields (#79) 
 
 ### [23.05.0] - 2023-05-07
 

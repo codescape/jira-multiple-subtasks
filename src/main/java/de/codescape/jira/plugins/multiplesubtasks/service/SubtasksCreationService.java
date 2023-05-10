@@ -490,11 +490,18 @@ public class SubtasksCreationService {
                         warnings.add("Custom field only allows single values: " + customFieldId);
                     } else {
                         values.forEach(value -> {
-                            Option selectedOption = options.getOptionForValue(value, null);
-                            if (selectedOption == null) {
-                                warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                            if (INHERIT_MARKER.equals(value)) {
+                                Object optionFromParent = parent.getCustomFieldValue(customField);
+                                if (optionFromParent instanceof Option) {
+                                    newSubtask.setCustomFieldValue(customField, optionFromParent);
+                                }
                             } else {
-                                newSubtask.setCustomFieldValue(customField, selectedOption);
+                                Option selectedOption = options.getOptionForValue(value, null);
+                                if (selectedOption == null) {
+                                    warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                                } else {
+                                    newSubtask.setCustomFieldValue(customField, selectedOption);
+                                }
                             }
                         });
                     }
@@ -504,33 +511,40 @@ public class SubtasksCreationService {
                         warnings.add("Custom field only allows single values: " + customFieldId);
                     } else {
                         values.forEach(value -> {
-                            Map<String, Option> newOptions = new HashMap<>();
-                            String[] strings = value.split(" > ");
-                            List<Option> allowedOptions = null;
-                            boolean applyNewOptions = true;
-                            for (int i = 0; i < strings.length; i++) {
-                                // get allowed options for the first level
-                                if (i == 0) {
-                                    allowedOptions = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                            if (INHERIT_MARKER.equals(value)) {
+                                Object optionFromParent = parent.getCustomFieldValue(customField);
+                                if (optionFromParent instanceof Map) {
+                                    newSubtask.setCustomFieldValue(customField, optionFromParent);
                                 }
-                                int finalI = i;
-                                Option foundOption = allowedOptions.stream()
-                                    .filter(option -> option.getValue().equals(strings[finalI].trim()))
-                                    .findFirst()
-                                    .orElse(null);
-                                if (foundOption == null) {
-                                    warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
-                                    applyNewOptions = false;
-                                    break;
-                                } else {
-                                    // add the option to the map (key for first level = null; key for any other level = level)
-                                    newOptions.put(newOptions.isEmpty() ? null : "" + i, foundOption);
-                                    // update allowed options for the next level
-                                    allowedOptions = foundOption.getChildOptions();
+                            } else {
+                                Map<String, Option> newOptions = new HashMap<>();
+                                String[] strings = value.split(" > ");
+                                List<Option> allowedOptions = null;
+                                boolean applyNewOptions = true;
+                                for (int i = 0; i < strings.length; i++) {
+                                    // get allowed options for the first level
+                                    if (i == 0) {
+                                        allowedOptions = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                                    }
+                                    int finalI = i;
+                                    Option foundOption = allowedOptions.stream()
+                                        .filter(option -> option.getValue().equals(strings[finalI].trim()))
+                                        .findFirst()
+                                        .orElse(null);
+                                    if (foundOption == null) {
+                                        warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                                        applyNewOptions = false;
+                                        break;
+                                    } else {
+                                        // add the option to the map (key for first level = null; key for any other level = level)
+                                        newOptions.put(newOptions.isEmpty() ? null : "" + i, foundOption);
+                                        // update allowed options for the next level
+                                        allowedOptions = foundOption.getChildOptions();
+                                    }
                                 }
-                            }
-                            if (applyNewOptions && !newOptions.isEmpty()) {
-                                newSubtask.setCustomFieldValue(customField, newOptions);
+                                if (applyNewOptions && !newOptions.isEmpty()) {
+                                    newSubtask.setCustomFieldValue(customField, newOptions);
+                                }
                             }
                         });
                     }
@@ -540,11 +554,19 @@ public class SubtasksCreationService {
                     Options optionsM = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
                     List<Option> selectedOptions = new ArrayList<>();
                     values.forEach(value -> {
-                        Option selectedOption = optionsM.getOptionForValue(value, null);
-                        if (selectedOption == null) {
-                            warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                        if (INHERIT_MARKER.equals(value)) {
+                            Object optionsFromParent = parent.getCustomFieldValue(customField);
+                            if (optionsFromParent instanceof List) {
+                                //noinspection unchecked
+                                selectedOptions.addAll((List<Option>) optionsFromParent);
+                            }
                         } else {
-                            selectedOptions.add(selectedOption);
+                            Option selectedOption = optionsM.getOptionForValue(value, null);
+                            if (selectedOption == null) {
+                                warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                            } else {
+                                selectedOptions.add(selectedOption);
+                            }
                         }
                     });
                     if (!selectedOptions.isEmpty()) {
@@ -617,12 +639,20 @@ public class SubtasksCreationService {
                     Set<Label> labels = new HashSet<>();
                     values.forEach(label -> {
                         String cleanLabel = label.trim();
-                        if (cleanLabel.contains(" ")) {
-                            warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldId);
-                        } else if (cleanLabel.length() > 255) {
-                            warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldId);
+                        if (INHERIT_MARKER.equals(cleanLabel)) {
+                            Object labelsFromParent = parent.getCustomFieldValue(customField);
+                            if (labelsFromParent instanceof Set) {
+                                //noinspection unchecked
+                                labels.addAll((Set<Label>) labelsFromParent);
+                            }
                         } else {
-                            labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), label));
+                            if (cleanLabel.contains(" ")) {
+                                warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldId);
+                            } else if (cleanLabel.length() > 255) {
+                                warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldId);
+                            } else {
+                                labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), label));
+                            }
                         }
                     });
                     if (!labels.isEmpty()) {
