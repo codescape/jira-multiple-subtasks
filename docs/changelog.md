@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.05.1] - 2023-05-10
+
+**Inherit values for subtasks from parent issue**
+
 * feat: ignore wrong case on attributes and multiple whitespace on import (#90)
 * feat: allow to inherit priority of the parent task explicitly (#98)
 * feat: allow to inherit reporter or use current user explicitly (#70)
@@ -25,7 +31,7 @@ category: Administration
 
 ### [23.05.0] - 2023-05-07
 
-**Better import and create subtask in workflow transitions**
+**Better import and create subtasks in workflow transitions**
 
 * feat: ensure compatibility with Jira 9.7.0, 9.4.4 and 8.20.20
 * feat: improve editing of a subtask template (#84)
@@ -143,7 +149,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.1...HEAD
+[23.05.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.0...23.05.1
 [23.05.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.4...23.05.0
 [23.03.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.3...23.03.4
 [23.03.3]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.2...23.03.3
