@@ -333,4 +333,13 @@ Please note: If a custom field type `accepts multiple values` remember to provid
       customfield_10987: important
       customfield_10987: knowledge
 
+All custom fields allow to inherit the value of the same custom field from the parent issue.
+This can be done by using the keyword `@inherit` for those custom fields.
+
+    - Task that used values for custom fields from parent issue
+      customfield_10765: @inherit
+      customfield_10777: @inherit
+      customfield_10777: plus a second value
+      customfield_10111: parent issue says: @inherit
+
 If you are missing support for any other custom field type please [let us know](/support) about it and raise a feature request.

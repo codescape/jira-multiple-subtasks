@@ -20,6 +20,7 @@ category: Administration
 * feat: allow to inherit values from single-value custom fields (#79)
 * feat: allow to inherit values from all supported custom fields (#79)
 * fix: do not fail to inherit a text field with parent being empty (#100)
+* docs: add documentation for inheriting values on custom fields (#79)
 
 ### [23.05.0] - 2023-05-07
 
