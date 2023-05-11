@@ -297,8 +297,15 @@ So in most cases it is not necessary to add the current user as a watcher.
 #### Custom Field(s)
 
 Custom fields can be set in the same way other fields are provided with values.
-The custom field must be referenced by its ID which has the format `customfield_xxxxx` where `xxxxx` is a 5-digit number.
-Atlassian provides a documentation that helps to find out the custom field's IDs in their Jira knowledge base:
+There are two ways to apply a value to a custom field - either by ID or by name.
+The following example shows both ways:
+
+    - This task has two customfields
+      customfield_10001: value for custom field with ID 10001
+      customfield(Revenue): value for custom field with name Revenue
+
+When the custom field is referenced by ID then this has to be in the format `customfield_xxxxx` where `xxxxx` is a 5-digit number.
+Atlassian provides a documentation that helps to find out custom field IDs in their Jira knowledge base:
 [How to find any custom field's IDs](https://confluence.atlassian.com/jirakb/how-to-find-any-custom-field-s-ids-744522503.html)
 
 Here is an example with a subtask called `This subtask has custom fields` that applies the numeric value `42` to the first custom field, chooses the option `female` in the second custom field and applies the multi-line text to the third custom field:
@@ -308,7 +315,6 @@ Here is an example with a subtask called `This subtask has custom fields` that a
       customfield_10099: female
       customfield_10007: this is{n}a multi-line{n}text
 
-Since version `23.03.0` of Multiple Subtasks for Jira all Jira standard custom fields are supported.
 The following custom field types can be assigned with values during subtask creation:
 
 | Custom Field Type              | Sample Data                                                                                                                                                                    | Accepts Multiple Values |
@@ -330,16 +336,24 @@ The following custom field types can be assigned with values during subtask crea
 Please note: If a custom field type `accepts multiple values` remember to provide one value per attribute. The following example applies two values `important` and `knowledge` as labels to a labels custom field:
 
     - This task has two values for the same custom field
-      customfield_10987: important
-      customfield_10987: knowledge
+      customfield(my labels): important
+      customfield(my labels): knowledge
 
 All custom fields allow to inherit the value of the same custom field from the parent issue.
 This can be done by using the keyword `@inherit` for those custom fields.
 
     - Task that used values for custom fields from parent issue
-      customfield_10765: @inherit
+      customfield(my labels): @inherit
       customfield_10777: @inherit
       customfield_10777: plus a second value
-      customfield_10111: parent issue says: @inherit
+      customfield(greeting): parent issue says: @inherit
+
+Please note: If a custom field name contains the following characters: `(`, `)` or `:` they need to be escaped by a leading `\ ` to work properly.
+Here is an example for a custom field with name `foo:bar` and another custom field with name `pet(s)`:
+
+    - This task uses very uncommon custom field names
+      customfield(foo\:bar): value for field foo:bar
+      customfield(pet\(s\)): dog
+      customfield(pet\(s\)): cat
 
 If you are missing support for any other custom field type please [let us know](/support) about it and raise a feature request.
