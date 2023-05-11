@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.05.2] - 2023-05-11
+
+**Easy and comfortable custom field syntax**
+
 * feat: add support for custom fields by name (#91)
 * feat: allow to escape colons in custom field names (#91)
 * docs: add documentation for custom fields by name (#91)
@@ -151,7 +157,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.1...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.2...HEAD
+[23.05.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.1...23.05.2
 [23.05.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.0...23.05.1
 [23.05.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.4...23.05.0
 [23.03.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.3...23.03.4
