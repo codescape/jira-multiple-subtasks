@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.05.3] - 2023-05-11
+
+**Add support for custom fields in template imports**
+
 * feat: ensure compatibility with Jira 9.8.1, 9.4.6 and 8.20.22
 * feat: import custom fields in templates from Quick Subtasks for Jira (#93)
 
@@ -158,7 +164,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.2...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.3...HEAD
+[23.05.3]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.2...23.05.3
 [23.05.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.1...23.05.2
 [23.05.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.0...23.05.1
 [23.05.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.03.4...23.05.0
