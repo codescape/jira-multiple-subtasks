@@ -286,6 +286,7 @@ public class Subtask {
             return matcher.group("name")
                 .replaceAll("\\\\\\)", ")")
                 .replaceAll("\\\\\\(", "(")
+                .replaceAll("\\\\:", ":")
                 .trim();
         } else {
             throw new SyntaxFormatException("Illegal custom field name: " + customFieldString);

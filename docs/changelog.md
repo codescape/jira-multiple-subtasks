@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: add support for custom fields by name (#91)
+* feat: allow to escape colons in custom field names (#91)
 
 ### [23.05.1] - 2023-05-10
 

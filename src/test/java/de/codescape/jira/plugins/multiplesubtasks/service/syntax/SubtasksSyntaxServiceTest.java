@@ -130,6 +130,17 @@ public class SubtasksSyntaxServiceTest {
         assertThat(subtasks.get(0).getComponents(), containsInAnyOrder("backend", "frontend", "rest"));
     }
 
+    @Test
+    public void shouldIgnoreEscapedColonsInCustomFieldNames() {
+        String subtasksString = "- this task has a tricky custom field name\n" +
+            "  customfield(foo\\:bar): hello world";
+
+        List<Subtask> subtasks = subtasksSyntaxService.parseString(subtasksString);
+        assertThat(subtasks.size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getCustomFieldsByName().size(), is(equalTo(1)));
+        assertThat(subtasks.get(0).getCustomFieldsByName().get("foo:bar"), contains("hello world"));
+    }
+
     // negative tests
 
     @Test(expected = SyntaxFormatException.class)

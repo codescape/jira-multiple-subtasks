@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +21,7 @@ public class SubtasksSyntaxService {
 
     private static final String NEWLINE = "\n";
     private static final String MINUS_SIGN = "-";
+    private static final Pattern UNESCAPED_COLONS = Pattern.compile("(?<!\\\\):");
 
     /**
      * Parse an input string and try to transform it into potentially multiple subtasks.
@@ -54,7 +56,7 @@ public class SubtasksSyntaxService {
             .on(NEWLINE)
             .splitToList(entryWithSummary);
         Splitter keyValueSeparator = Splitter
-            .on(":")
+            .on(UNESCAPED_COLONS)
             .limit(2)
             .trimResults()
             .omitEmptyStrings();
