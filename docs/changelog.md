@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: add support for custom fields by name (#91)
 
 ### [23.05.1] - 2023-05-10
 

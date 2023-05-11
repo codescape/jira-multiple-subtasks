@@ -9,8 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
-
 /**
  * This class represents the request to create a new subtask with the given attributes.
  */
@@ -42,7 +40,11 @@ public class Subtask {
 
     }
 
-    private static final Pattern CUSTOM_FIELD_PATTERN = Pattern.compile("customfield_\\d{5}");
+    // custom fields can be referenced by id: customfield_12345:
+    private static final Pattern CUSTOM_FIELD_ID_PATTERN = Pattern.compile("customfield_\\d{5}");
+
+    // custom fields can be reference by name: customfield(fieldname):
+    private static final Pattern CUSTOM_FIELD_NAME_PATTERN = Pattern.compile("customfield\\((?<name>(?:\\\\\\\\|\\\\\\)|[^)])++)\\)");
 
     private final String summary;
     private final String description;
@@ -57,7 +59,8 @@ public class Subtask {
     private final List<String> fixVersions;
     private final List<String> affectedVersions;
     private final String dueDate;
-    private final Map<String, List<String>> customFields;
+    private final Map<String, List<String>> customFieldsById;
+    private final Map<String, List<String>> customFieldsByName;
 
     /**
      * Create a subtask with the provided attributes.
@@ -79,7 +82,8 @@ public class Subtask {
         fixVersions = attributes.get(Attributes.FIX_VERSION);
         affectedVersions = attributes.get(Attributes.AFFECTED_VERSION);
         dueDate = ensureValidDueDate(attributes);
-        customFields = extractCustomFields(attributes);
+        customFieldsById = extractCustomFieldsById(attributes);
+        customFieldsByName = extractCustomFieldsByName(attributes);
     }
 
     /**
@@ -174,10 +178,17 @@ public class Subtask {
     }
 
     /**
-     * Return the optional custom fields.
+     * Return the optional custom fields by id.
      */
-    public Map<String, List<String>> getCustomFields() {
-        return customFields;
+    public Map<String, List<String>> getCustomFieldsById() {
+        return customFieldsById;
+    }
+
+    /**
+     * Return the optional custom fields by name.
+     */
+    public Map<String, List<String>> getCustomFieldsByName() {
+        return customFieldsByName;
     }
 
     /* internal helper methods */
@@ -215,7 +226,8 @@ public class Subtask {
 
     private void verifyOnlyKnownAttributes(ArrayListMultimap<String, String> attributes) {
         attributes.forEach((key, value) -> {
-            if (!Attributes.ALL.contains(key) && !CUSTOM_FIELD_PATTERN.matcher(key).matches())
+            if (!Attributes.ALL.contains(key) && !CUSTOM_FIELD_ID_PATTERN.matcher(key).matches()
+                && !CUSTOM_FIELD_NAME_PATTERN.matcher(key).matches())
                 throw new SyntaxFormatException("Unknown attribute " + key + " found.");
         });
     }
@@ -246,15 +258,38 @@ public class Subtask {
         return dueDate;
     }
 
-    private Map<String, List<String>> extractCustomFields(ArrayListMultimap<String, String> attributes) {
+    private Map<String, List<String>> extractCustomFieldsById(ArrayListMultimap<String, String> attributes) {
         // get all custom field keys
         List<String> customFieldKeys = attributes.keySet().stream()
-            .filter(s -> CUSTOM_FIELD_PATTERN.matcher(s).matches())
+            .filter(s -> CUSTOM_FIELD_ID_PATTERN.matcher(s).matches())
             .collect(Collectors.toList());
         // collect all keys and values into a map
         Map<String, List<String>> customFields = new HashMap<>();
         customFieldKeys.forEach(s -> customFields.put(s, new ArrayList<>(attributes.get(s))));
         return customFields;
+    }
+
+    private Map<String, List<String>> extractCustomFieldsByName(ArrayListMultimap<String, String> attributes) {
+        // get all custom field keys
+        List<String> customFieldKeys = attributes.keySet().stream()
+            .filter(s -> CUSTOM_FIELD_NAME_PATTERN.matcher(s).matches())
+            .collect(Collectors.toList());
+        // collect all keys and values into a map
+        Map<String, List<String>> customFields = new HashMap<>();
+        customFieldKeys.forEach(key -> customFields.put(extractCustomFieldName(key), new ArrayList<>(attributes.get(key))));
+        return customFields;
+    }
+
+    private String extractCustomFieldName(String customFieldString) {
+        Matcher matcher = CUSTOM_FIELD_NAME_PATTERN.matcher(customFieldString);
+        if (matcher.matches()) {
+            return matcher.group("name")
+                .replaceAll("\\\\\\)", ")")
+                .replaceAll("\\\\\\(", "(")
+                .trim();
+        } else {
+            throw new SyntaxFormatException("Illegal custom field name: " + customFieldString);
+        }
     }
 
 }

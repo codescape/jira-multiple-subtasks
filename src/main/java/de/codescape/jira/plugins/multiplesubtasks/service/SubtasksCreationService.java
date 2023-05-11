@@ -400,273 +400,296 @@ public class SubtasksCreationService {
                     );
             }
 
-            // custom field(s)
+            // custom field(s) by id
             // persist data to optional custom field(s) of the just created subtask and ignore invalid data
-            if (!subTaskRequest.getCustomFields().isEmpty()) {
-                subTaskRequest.getCustomFields().forEach((customFieldId, customFieldValues) ->
-                    applyValuesToCustomField(parent, newSubtask, warnings, customFieldId, customFieldValues));
+            if (!subTaskRequest.getCustomFieldsById().isEmpty()) {
+                subTaskRequest.getCustomFieldsById().forEach((customFieldId, customFieldValues) ->
+                    applyValuesToCustomFieldByCustomFieldId(parent, newSubtask, warnings, customFieldId, customFieldValues));
+            }
+
+            // custom field(s) by name
+            // persist data to optional custom field(s) of the just created subtask and ignore invalid data
+            if (!subTaskRequest.getCustomFieldsByName().isEmpty()) {
+                subTaskRequest.getCustomFieldsByName().forEach((customFieldName, customFieldValues) ->
+                    applyValuesToCustomFieldByCustomFieldName(parent, newSubtask, warnings, customFieldName, customFieldValues));
             }
         });
 
         return subtasksCreated;
     }
 
-    private void applyValuesToCustomField(MutableIssue parent, MutableIssue newSubtask, List<String> warnings, String customFieldId, List<String> values) {
+    private void applyValuesToCustomFieldByCustomFieldName(MutableIssue parent, MutableIssue newSubtask, List<String> warnings, String customFieldName, List<String> values) {
+        Collection<CustomField> customFields = customFieldManager.getCustomFieldObjectsByName(customFieldName);
+        if (customFields.isEmpty()) {
+            warnings.add("Invalid custom field: " + customFieldName);
+        } else if (customFields.size() == 1) {
+            applyValuesToCustomField(parent, newSubtask, warnings, customFields.iterator().next(), values);
+        } else {
+            warnings.add("Custom field name is not unique: " + customFieldName);
+        }
+    }
+
+    private void applyValuesToCustomFieldByCustomFieldId(MutableIssue parent, MutableIssue newSubtask, List<String> warnings, String customFieldId, List<String> values) {
         CustomField customField = customFieldManager.getCustomFieldObject(customFieldId);
         if (customField == null) {
             warnings.add("Invalid custom field: " + customFieldId);
         } else {
-            String customFieldKey = customField.getCustomFieldType().getKey();
-            switch (customFieldKey) {
-                case CUSTOM_FIELD_TYPE_NUMBER:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        try {
-                            values.forEach(value -> {
-                                if (INHERIT_MARKER.equals(value)) {
-                                    if (parent.getCustomFieldValue(customField) != null) {
-                                        newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
-                                    }
-                                } else {
-                                    newSubtask.setCustomFieldValue(customField, Double.valueOf(value));
-                                }
-                            });
-                        } catch (NumberFormatException numberFormatException) {
-                            warnings.add("Invalid numeric value for custom field: " + customFieldId);
-                        }
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_TEXT:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
-                        values.forEach(value -> {
-                            String cleanedUpString = value
-                                .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parentValue)
-                                .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
-                                .trim();
-                            if (!cleanedUpString.isEmpty()) {
-                                newSubtask.setCustomFieldValue(customField, cleanedUpString);
-                            }
-                        });
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_URL:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
+            applyValuesToCustomField(parent, newSubtask, warnings, customField, values);
+        }
+    }
+
+    private void applyValuesToCustomField(MutableIssue parent, MutableIssue newSubtask, List<String> warnings, CustomField customField, List<String> values) {
+        String customFieldId = customField.getId();
+        String customFieldKey = customField.getCustomFieldType().getKey();
+        switch (customFieldKey) {
+            case CUSTOM_FIELD_TYPE_NUMBER:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    try {
                         values.forEach(value -> {
                             if (INHERIT_MARKER.equals(value)) {
                                 if (parent.getCustomFieldValue(customField) != null) {
                                     newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
                                 }
                             } else {
-                                if (isValidURL(value)) {
-                                    newSubtask.setCustomFieldValue(customField, value);
-                                } else {
-                                    warnings.add("Invalid url value for custom field: " + customFieldId);
-                                }
+                                newSubtask.setCustomFieldValue(customField, Double.valueOf(value));
                             }
                         });
+                    } catch (NumberFormatException numberFormatException) {
+                        warnings.add("Invalid numeric value for custom field: " + customFieldId);
                     }
-                    break;
-                case CUSTOM_FIELD_TYPE_TEXTAREA:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
-                        values.forEach(value -> {
-                            String cleanedUpString = value.replaceAll("\\{n}", "\n")
-                                .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parentValue)
-                                .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
-                                .trim();
-                            if (!cleanedUpString.isEmpty()) {
-                                newSubtask.setCustomFieldValue(customField, cleanedUpString);
-                            }
-                        });
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_SELECT:
-                case CUSTOM_FIELD_TYPE_RADIO:
-                    Options options = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        values.forEach(value -> {
-                            if (INHERIT_MARKER.equals(value)) {
-                                Object optionFromParent = parent.getCustomFieldValue(customField);
-                                if (optionFromParent instanceof Option) {
-                                    newSubtask.setCustomFieldValue(customField, optionFromParent);
-                                }
-                            } else {
-                                Option selectedOption = options.getOptionForValue(value, null);
-                                if (selectedOption == null) {
-                                    warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
-                                } else {
-                                    newSubtask.setCustomFieldValue(customField, selectedOption);
-                                }
-                            }
-                        });
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_CASCADING_SELECT:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        values.forEach(value -> {
-                            if (INHERIT_MARKER.equals(value)) {
-                                Object optionFromParent = parent.getCustomFieldValue(customField);
-                                if (optionFromParent instanceof Map) {
-                                    newSubtask.setCustomFieldValue(customField, optionFromParent);
-                                }
-                            } else {
-                                Map<String, Option> newOptions = new HashMap<>();
-                                String[] strings = value.split(" > ");
-                                List<Option> allowedOptions = null;
-                                boolean applyNewOptions = true;
-                                for (int i = 0; i < strings.length; i++) {
-                                    // get allowed options for the first level
-                                    if (i == 0) {
-                                        allowedOptions = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
-                                    }
-                                    int finalI = i;
-                                    Option foundOption = allowedOptions.stream()
-                                        .filter(option -> option.getValue().equals(strings[finalI].trim()))
-                                        .findFirst()
-                                        .orElse(null);
-                                    if (foundOption == null) {
-                                        warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
-                                        applyNewOptions = false;
-                                        break;
-                                    } else {
-                                        // add the option to the map (key for first level = null; key for any other level = level)
-                                        newOptions.put(newOptions.isEmpty() ? null : "" + i, foundOption);
-                                        // update allowed options for the next level
-                                        allowedOptions = foundOption.getChildOptions();
-                                    }
-                                }
-                                if (applyNewOptions && !newOptions.isEmpty()) {
-                                    newSubtask.setCustomFieldValue(customField, newOptions);
-                                }
-                            }
-                        });
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_MULTISELECT:
-                case CUSTOM_FIELD_TYPE_CHECKBOXES:
-                    Options optionsM = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
-                    List<Option> selectedOptions = new ArrayList<>();
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_TEXT:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
+                    values.forEach(value -> {
+                        String cleanedUpString = value
+                            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parentValue)
+                            .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
+                            .trim();
+                        if (!cleanedUpString.isEmpty()) {
+                            newSubtask.setCustomFieldValue(customField, cleanedUpString);
+                        }
+                    });
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_URL:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
                     values.forEach(value -> {
                         if (INHERIT_MARKER.equals(value)) {
-                            Object optionsFromParent = parent.getCustomFieldValue(customField);
-                            if (optionsFromParent instanceof List) {
-                                //noinspection unchecked
-                                selectedOptions.addAll((List<Option>) optionsFromParent);
+                            if (parent.getCustomFieldValue(customField) != null) {
+                                newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
                             }
                         } else {
-                            Option selectedOption = optionsM.getOptionForValue(value, null);
+                            if (isValidURL(value)) {
+                                newSubtask.setCustomFieldValue(customField, value);
+                            } else {
+                                warnings.add("Invalid url value for custom field: " + customFieldId);
+                            }
+                        }
+                    });
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_TEXTAREA:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
+                    values.forEach(value -> {
+                        String cleanedUpString = value.replaceAll("\\{n}", "\n")
+                            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parentValue)
+                            .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
+                            .trim();
+                        if (!cleanedUpString.isEmpty()) {
+                            newSubtask.setCustomFieldValue(customField, cleanedUpString);
+                        }
+                    });
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_SELECT:
+            case CUSTOM_FIELD_TYPE_RADIO:
+                Options options = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    values.forEach(value -> {
+                        if (INHERIT_MARKER.equals(value)) {
+                            Object optionFromParent = parent.getCustomFieldValue(customField);
+                            if (optionFromParent instanceof Option) {
+                                newSubtask.setCustomFieldValue(customField, optionFromParent);
+                            }
+                        } else {
+                            Option selectedOption = options.getOptionForValue(value, null);
                             if (selectedOption == null) {
                                 warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
                             } else {
-                                selectedOptions.add(selectedOption);
+                                newSubtask.setCustomFieldValue(customField, selectedOption);
                             }
                         }
                     });
-                    if (!selectedOptions.isEmpty()) {
-                        newSubtask.setCustomFieldValue(customField, selectedOptions);
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_DATE:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        values.forEach(value -> {
-                            if (INHERIT_MARKER.equals(value)) {
-                                if (parent.getCustomFieldValue(customField) != null) {
-                                    newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
-                                }
-                            } else {
-                                Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
-                                Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(value, parentValue);
-                                if (timestamp != null) {
-                                    newSubtask.setCustomFieldValue(customField, timestamp);
-                                } else {
-                                    warnings.add("Invalid date (" + value + ") for custom field: " + customFieldId);
-                                }
-                            }
-                        });
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_DATETIME:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        values.forEach(value -> {
-                            if (INHERIT_MARKER.equals(value)) {
-                                if (parent.getCustomFieldValue(customField) != null) {
-                                    newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
-                                }
-                            } else {
-                                Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
-                                Timestamp timestamp = dateTimeStringService.dateAndTimeStringToTimestamp(value, parentValue);
-                                if (timestamp != null) {
-                                    newSubtask.setCustomFieldValue(customField, timestamp);
-                                } else {
-                                    warnings.add("Invalid date and time (" + value + ") for custom field: " + customFieldId);
-                                }
-                            }
-                        });
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_USER:
-                    if (values.size() > 1) {
-                        warnings.add("Custom field only allows single values: " + customFieldId);
-                    } else {
-                        values.forEach(value -> {
-                            if (INHERIT_MARKER.equals(value)) {
-                                if (parent.getCustomFieldValue(customField) != null) {
-                                    newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
-                                }
-                            } else {
-                                ApplicationUser userByName = userManager.getUserByName(value);
-                                if (userByName == null) {
-                                    warnings.add("Invalid user (" + value + ") for custom field: " + customFieldId);
-                                } else {
-                                    newSubtask.setCustomFieldValue(customField, userByName);
-                                }
-                            }
-                        });
-                    }
-                    break;
-                case CUSTOM_FIELD_TYPE_LABELS:
-                    Set<Label> labels = new HashSet<>();
-                    values.forEach(label -> {
-                        String cleanLabel = label.trim();
-                        if (INHERIT_MARKER.equals(cleanLabel)) {
-                            Object labelsFromParent = parent.getCustomFieldValue(customField);
-                            if (labelsFromParent instanceof Set) {
-                                //noinspection unchecked
-                                labels.addAll((Set<Label>) labelsFromParent);
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_CASCADING_SELECT:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    values.forEach(value -> {
+                        if (INHERIT_MARKER.equals(value)) {
+                            Object optionFromParent = parent.getCustomFieldValue(customField);
+                            if (optionFromParent instanceof Map) {
+                                newSubtask.setCustomFieldValue(customField, optionFromParent);
                             }
                         } else {
-                            if (cleanLabel.contains(" ")) {
-                                warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldId);
-                            } else if (cleanLabel.length() > 255) {
-                                warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldId);
-                            } else {
-                                labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), label));
+                            Map<String, Option> newOptions = new HashMap<>();
+                            String[] strings = value.split(" > ");
+                            List<Option> allowedOptions = null;
+                            boolean applyNewOptions = true;
+                            for (int i = 0; i < strings.length; i++) {
+                                // get allowed options for the first level
+                                if (i == 0) {
+                                    allowedOptions = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                                }
+                                int finalI = i;
+                                Option foundOption = allowedOptions.stream()
+                                    .filter(option -> option.getValue().equals(strings[finalI].trim()))
+                                    .findFirst()
+                                    .orElse(null);
+                                if (foundOption == null) {
+                                    warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                                    applyNewOptions = false;
+                                    break;
+                                } else {
+                                    // add the option to the map (key for first level = null; key for any other level = level)
+                                    newOptions.put(newOptions.isEmpty() ? null : "" + i, foundOption);
+                                    // update allowed options for the next level
+                                    allowedOptions = foundOption.getChildOptions();
+                                }
+                            }
+                            if (applyNewOptions && !newOptions.isEmpty()) {
+                                newSubtask.setCustomFieldValue(customField, newOptions);
                             }
                         }
                     });
-                    if (!labels.isEmpty()) {
-                        newSubtask.setCustomFieldValue(customField, labels);
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_MULTISELECT:
+            case CUSTOM_FIELD_TYPE_CHECKBOXES:
+                Options optionsM = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
+                List<Option> selectedOptions = new ArrayList<>();
+                values.forEach(value -> {
+                    if (INHERIT_MARKER.equals(value)) {
+                        Object optionsFromParent = parent.getCustomFieldValue(customField);
+                        if (optionsFromParent instanceof List) {
+                            //noinspection unchecked
+                            selectedOptions.addAll((List<Option>) optionsFromParent);
+                        }
+                    } else {
+                        Option selectedOption = optionsM.getOptionForValue(value, null);
+                        if (selectedOption == null) {
+                            warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                        } else {
+                            selectedOptions.add(selectedOption);
+                        }
                     }
-                    break;
-                default:
-                    warnings.add("Unsupported custom field type: " + customFieldKey);
-            }
+                });
+                if (!selectedOptions.isEmpty()) {
+                    newSubtask.setCustomFieldValue(customField, selectedOptions);
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_DATE:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    values.forEach(value -> {
+                        if (INHERIT_MARKER.equals(value)) {
+                            if (parent.getCustomFieldValue(customField) != null) {
+                                newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
+                            }
+                        } else {
+                            Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
+                            Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(value, parentValue);
+                            if (timestamp != null) {
+                                newSubtask.setCustomFieldValue(customField, timestamp);
+                            } else {
+                                warnings.add("Invalid date (" + value + ") for custom field: " + customFieldId);
+                            }
+                        }
+                    });
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_DATETIME:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    values.forEach(value -> {
+                        if (INHERIT_MARKER.equals(value)) {
+                            if (parent.getCustomFieldValue(customField) != null) {
+                                newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
+                            }
+                        } else {
+                            Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
+                            Timestamp timestamp = dateTimeStringService.dateAndTimeStringToTimestamp(value, parentValue);
+                            if (timestamp != null) {
+                                newSubtask.setCustomFieldValue(customField, timestamp);
+                            } else {
+                                warnings.add("Invalid date and time (" + value + ") for custom field: " + customFieldId);
+                            }
+                        }
+                    });
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_USER:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldId);
+                } else {
+                    values.forEach(value -> {
+                        if (INHERIT_MARKER.equals(value)) {
+                            if (parent.getCustomFieldValue(customField) != null) {
+                                newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
+                            }
+                        } else {
+                            ApplicationUser userByName = userManager.getUserByName(value);
+                            if (userByName == null) {
+                                warnings.add("Invalid user (" + value + ") for custom field: " + customFieldId);
+                            } else {
+                                newSubtask.setCustomFieldValue(customField, userByName);
+                            }
+                        }
+                    });
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_LABELS:
+                Set<Label> labels = new HashSet<>();
+                values.forEach(label -> {
+                    String cleanLabel = label.trim();
+                    if (INHERIT_MARKER.equals(cleanLabel)) {
+                        Object labelsFromParent = parent.getCustomFieldValue(customField);
+                        if (labelsFromParent instanceof Set) {
+                            //noinspection unchecked
+                            labels.addAll((Set<Label>) labelsFromParent);
+                        }
+                    } else {
+                        if (cleanLabel.contains(" ")) {
+                            warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldId);
+                        } else if (cleanLabel.length() > 255) {
+                            warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldId);
+                        } else {
+                            labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), label));
+                        }
+                    }
+                });
+                if (!labels.isEmpty()) {
+                    newSubtask.setCustomFieldValue(customField, labels);
+                }
+                break;
+            default:
+                warnings.add("Unsupported custom field type: " + customFieldKey);
         }
 
         try {

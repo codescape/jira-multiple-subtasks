@@ -288,10 +288,10 @@ public class SubtaskTest {
         new Subtask(map);
     }
 
-    /* custom fields */
+    /* custom fields by id */
 
     @Test(expected = SyntaxFormatException.class)
-    public void shouldRejectIllegalCustomFields() {
+    public void shouldRejectIllegalCustomFieldsbyId() {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
         map.put(Subtask.Attributes.SUMMARY, "This task has an illegal custom field");
         map.put("customfield_abcde", "value");
@@ -301,15 +301,15 @@ public class SubtaskTest {
     @Test
     public void shouldAcceptMultipleCustomFields() {
         ArrayListMultimap<String, String> map = ArrayListMultimap.create();
-        map.put(Subtask.Attributes.SUMMARY, "This task has an illegal custom field");
+        map.put(Subtask.Attributes.SUMMARY, "This task has multiple custom fields");
         map.put("customfield_12345", "12345");
         map.put("customfield_10009", "value");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getCustomFields().keySet(), hasSize(2));
-        assertThat(subtask.getCustomFields().get("customfield_12345"), hasSize(1));
-        assertThat(subtask.getCustomFields().get("customfield_12345"), hasItem("12345"));
-        assertThat(subtask.getCustomFields().get("customfield_10009"), hasSize(1));
-        assertThat(subtask.getCustomFields().get("customfield_10009"), hasItem("value"));
+        assertThat(subtask.getCustomFieldsById().keySet(), hasSize(2));
+        assertThat(subtask.getCustomFieldsById().get("customfield_12345"), hasSize(1));
+        assertThat(subtask.getCustomFieldsById().get("customfield_12345"), hasItem("12345"));
+        assertThat(subtask.getCustomFieldsById().get("customfield_10009"), hasSize(1));
+        assertThat(subtask.getCustomFieldsById().get("customfield_10009"), hasItem("value"));
     }
 
     @Test
@@ -319,9 +319,60 @@ public class SubtaskTest {
         map.put("customfield_10000", "first value");
         map.put("customfield_10000", "second value");
         Subtask subtask = new Subtask(map);
-        assertThat(subtask.getCustomFields().keySet(), hasSize(1));
-        assertThat(subtask.getCustomFields().get("customfield_10000"), hasSize(2));
-        assertThat(subtask.getCustomFields().get("customfield_10000"), hasItems("first value", "second value"));
+        assertThat(subtask.getCustomFieldsById().keySet(), hasSize(1));
+        assertThat(subtask.getCustomFieldsById().get("customfield_10000"), hasSize(2));
+        assertThat(subtask.getCustomFieldsById().get("customfield_10000"), hasItems("first value", "second value"));
+    }
+
+    /* custom fields by name */
+
+    @Test(expected = SyntaxFormatException.class)
+    public void shouldRejectIllegalCustomFieldsByName() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has an illegal custom field");
+        map.put("customfield()", "value");
+        new Subtask(map);
+    }
+
+    @Test
+    public void shouldAcceptMultipleCustomFieldsByName() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has multiple custom fields");
+        map.put("customfield(field name)", "field value");
+        map.put("customfield(Revenue)", "900");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getCustomFieldsByName().keySet(), hasSize(2));
+        assertThat(subtask.getCustomFieldsByName().get("field name"), hasSize(1));
+        assertThat(subtask.getCustomFieldsByName().get("field name"), hasItem("field value"));
+        assertThat(subtask.getCustomFieldsByName().get("Revenue"), hasSize(1));
+        assertThat(subtask.getCustomFieldsByName().get("Revenue"), hasItem("900"));
+    }
+
+    @Test
+    public void shouldAcceptCustomFieldsByNameContainingEscapedRoundBracketsInKey() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has tricky custom field names");
+        map.put("customfield(parent(s\\))", "father");
+        map.put("customfield(parent(s\\))", "mother");
+        map.put("customfield(pet\\(s\\))", "dog");
+        map.put("customfield(pet\\(s\\))", "cat");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getCustomFieldsByName().keySet(), hasSize(2));
+        assertThat(subtask.getCustomFieldsByName().get("parent(s)"), hasSize(2));
+        assertThat(subtask.getCustomFieldsByName().get("parent(s)"), hasItems("father", "mother"));
+        assertThat(subtask.getCustomFieldsByName().get("pet(s)"), hasSize(2));
+        assertThat(subtask.getCustomFieldsByName().get("pet(s)"), hasItems("dog", "cat"));
+    }
+
+    @Test
+    public void shouldAcceptCustomFieldsIgnoringLeadingAndTrailingWhitespace() {
+        ArrayListMultimap<String, String> map = ArrayListMultimap.create();
+        map.put(Subtask.Attributes.SUMMARY, "This task has a whitespace custom field");
+        map.put("customfield( Whitespace   )", "Hello World");
+        Subtask subtask = new Subtask(map);
+        assertThat(subtask.getCustomFieldsByName().keySet(), hasSize(1));
+        assertThat(subtask.getCustomFieldsByName().get("Whitespace"), hasSize(1));
+        assertThat(subtask.getCustomFieldsByName().get("Whitespace"), hasItem("Hello World"));
     }
 
     /* helper methods */
