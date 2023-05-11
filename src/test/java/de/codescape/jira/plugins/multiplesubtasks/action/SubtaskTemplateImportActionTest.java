@@ -147,19 +147,35 @@ public class SubtaskTemplateImportActionTest {
             "- Task\n  watcher: codescape\n  watcher: bob\n");
     }
 
+    @Test
+    public void shouldTransformCustomFields() {
+        assertTransformation(
+            "- Task / cfield:\"field:value\"",
+            "- Task\n  customfield(field): value\n");
+    }
+
+    @Test
+    public void shouldTransformMultipleCustomFields() {
+        assertTransformation(
+            "- Task / cfield:\"cf1:@inherit\" cfield:\"cf2:@inherit\"",
+            "- Task\n  customfield(cf1): @inherit\n  customfield(cf2): @inherit\n"
+        );
+    }
+
+    @Test
+    public void shouldTransformAndEscapeCustomFields() {
+        assertTransformation(
+            "- Task / cfield:\"pet(s):@inherit\"",
+            "- Task\n  customfield(pet\\(s\\)): @inherit\n"
+        );
+    }
+
     /* not supported syntax */
 
     @Test
     public void shouldIgnoreLinks() {
         assertTransformation(
             "- Task / links:\"blocks -> DEMO-1\"",
-            "- Task\n");
-    }
-
-    @Test
-    public void shouldIgnoreCustomFields() {
-        assertTransformation(
-            "- Task / cfield:\"field:value\"",
             "- Task\n");
     }
 

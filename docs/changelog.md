@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: ensure compatibility with Jira 9.8.1, 9.4.6 and 8.20.22
+* feat: import custom fields in templates from Quick Subtasks for Jira (#93)
 
 ### [23.05.2] - 2023-05-11
 

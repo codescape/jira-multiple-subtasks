@@ -22,7 +22,7 @@ Navigate to the page `Template Import`.
 
 The import will be performed for all user and project subtask templates from `Quick Subtasks for Jira`.
 
-Please note: `Quick Subtask for Jira` supports issue links (syntax: `link: ...`) and custom fields (syntax: `cfield: ...`) with a completely different syntax.
+Please note: `Quick Subtask for Jira` supports issue links (syntax: `link: ...`).
 This information cannot be migrated and will be lost on the imported templates.
 
 The import can be performed in two steps:

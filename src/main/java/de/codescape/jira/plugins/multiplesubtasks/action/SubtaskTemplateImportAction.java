@@ -326,6 +326,20 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                                             output.append("  ").append(Subtask.Attributes.WATCHER).append(": ").append(watcher).append(NEWLINE)
                                         );
                                         break;
+                                    // custom fields
+                                    case "cfield":
+                                        String[] tokens = value.split(":", 2);
+                                        if (tokens.length == 2) {
+                                            String customFieldName = tokens[0]
+                                                .replaceAll("\\(", "\\\\(")
+                                                .replaceAll("\\)", "\\\\)")
+                                                .replaceAll(":", "\\:")
+                                                .trim();
+                                            output.append("  ").append("customfield(").append(customFieldName).append("): ").append(tokens[1]).append(NEWLINE);
+                                        } else {
+                                            log.error("Invalid custom field attributes: " + value);
+                                        }
+                                        break;
                                     // not supported (will be ignored)
                                     default:
                                         log.error("Ignoring unknown attribute '" + key + "' with value: '" + value + "'");
