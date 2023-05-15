@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* fix: accept special characters in summary of template import
 
 ### [23.05.3] - 2023-05-11
 

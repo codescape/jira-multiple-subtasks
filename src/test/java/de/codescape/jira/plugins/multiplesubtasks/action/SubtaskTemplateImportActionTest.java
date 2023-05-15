@@ -240,6 +240,22 @@ public class SubtaskTemplateImportActionTest {
         ));
     }
 
+    /* fix: do not fail on rounded brackets in summary */
+
+    @Test
+    public void shouldAcceptRoundedBracketsInSummary() {
+        assertTransformation("- a test (with rounded brackets)",
+            "- a test (with rounded brackets)\n");
+    }
+
+    /* fix: do not fail on colon or question mark in summary */
+
+    @Test
+    public void shouldAcceptColonAndQuestionMarkInSummary() {
+        assertTransformation("- a test: will it work?",
+            "- a test: will it work?\n");
+    }
+
     /* helper methods */
 
     private void assertTransformation(String input, String output) {
