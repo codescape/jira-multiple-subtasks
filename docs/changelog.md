@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.05.4] - 2023-05-15
+
+**Improve template import and more information in dialog**
+
 * fix: accept special characters in summary of template import
 * feat: display issue key of created subtasks in the dialog (#103)
 
@@ -165,7 +171,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.3...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.4...HEAD
+[23.05.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.3...23.05.4
 [23.05.3]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.2...23.05.3
 [23.05.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.1...23.05.2
 [23.05.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.0...23.05.1
