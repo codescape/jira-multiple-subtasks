@@ -30,6 +30,7 @@
                 <tr>
                     <td class="stsequence">$counter.</td>
                     <td class="issuetype"><img src="$subTask.issue.issueType.completeIconUrl"></td>
+                    <td class="issuekey"><a href="$baseurl/browse/$subTask.issue.key">$subTask.issue.key</a></td>
                     <td class="stsummary"><a href="$baseurl/browse/$subTask.issue.key">$subTask.issue.summary</a></td>
                     <td class="issue_actions">
                         #if($subTask.warningsMessage && !$subTask.warningsMessage.isEmpty())

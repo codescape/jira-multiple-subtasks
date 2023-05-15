@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * fix: accept special characters in summary of template import
+* feat: display issue key of created subtasks in the dialog (#103)
 
 ### [23.05.3] - 2023-05-11
 
