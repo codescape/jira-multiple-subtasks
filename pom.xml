@@ -43,7 +43,7 @@
         <activeobjects.version>4.0.3</activeobjects.version>
         <amps.version>8.1.0</amps.version>
         <atlassian-spring-scanner.version>3.0.1</atlassian-spring-scanner.version>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <jsr311.version>1.1.1</jsr311.version>
