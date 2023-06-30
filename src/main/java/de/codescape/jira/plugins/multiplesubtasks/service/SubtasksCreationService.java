@@ -348,8 +348,13 @@ public class SubtasksCreationService {
                     if (parent.getEstimate() != null) {
                         newSubtask.setEstimate(parent.getEstimate());
                     }
+                    if (parent.getOriginalEstimate() != null) {
+                        newSubtask.setOriginalEstimate(parent.getOriginalEstimate());
+                    }
                 } else {
-                    newSubtask.setEstimate(estimateStringService.estimateStringToSeconds(subTaskRequest.getEstimate()));
+                    Long estimateToSet = estimateStringService.estimateStringToSeconds(subTaskRequest.getEstimate());
+                    newSubtask.setEstimate(estimateToSet);
+                    newSubtask.setOriginalEstimate(estimateToSet);
                 }
             }
 

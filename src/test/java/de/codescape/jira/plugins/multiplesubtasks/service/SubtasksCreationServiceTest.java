@@ -15,6 +15,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.google.common.collect.ArrayListMultimap;
 import de.codescape.jira.plugins.multiplesubtasks.model.Markers;
 import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
+import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -65,6 +66,9 @@ public class SubtasksCreationServiceTest {
 
     @Mock
     private JiraAuthenticationContext jiraAuthenticationContext;
+
+    @Mock
+    private EstimateStringService estimateStringService;
 
     @InjectMocks
     private SubtasksCreationService subtasksCreationService;
@@ -386,6 +390,28 @@ public class SubtasksCreationServiceTest {
     /* estimate */
 
     @Test
+    public void shouldSetEstimateAndOriginalEstimateIfValidEstimateIsProvidedForSubtask() {
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
+        attributes.put(Subtask.Attributes.SUMMARY, "a task");
+        attributes.put(Subtask.Attributes.ESTIMATE, "4d");
+        subtasks.add(new Subtask(attributes));
+        expectSubtasks(subtasks);
+
+        // expect estimate service to resolve the long value
+        when(estimateStringService.estimateStringToSeconds(eq("4d"))).thenReturn(999L);
+
+        // expect subtask to be created
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        // verify that both values are set
+        verify(subtask, times(1)).setEstimate(999L);
+        verify(subtask, times(1)).setOriginalEstimate(999L);
+    }
+
+    @Test
     public void shouldInheritEstimateFromParentIssue() {
         ArrayList<Subtask> subtasks = new ArrayList<>();
         ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
@@ -396,13 +422,17 @@ public class SubtasksCreationServiceTest {
 
         Long parentEstimate = 42L;
         when(parent.getEstimate()).thenReturn(parentEstimate);
+        Long parentOriginalEstimate = 84L;
+        when(parent.getOriginalEstimate()).thenReturn(parentOriginalEstimate);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
 
         subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
 
+        // verify that both values are set
         verify(subtask, times(1)).setEstimate(parentEstimate);
+        verify(subtask, times(1)).setOriginalEstimate(parentOriginalEstimate);
     }
 
     @Test

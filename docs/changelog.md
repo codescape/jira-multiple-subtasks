@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: ensure compatibility with Jira 9.9.0
+* feat: apply given estimate to estimate and original estimate fields
 
 ### [23.05.4] - 2023-05-15
 
