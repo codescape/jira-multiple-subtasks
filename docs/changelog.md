@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.07.0] - 2023-07-02
+
+**Improve support for estimate fields**
+
 * feat: ensure compatibility with Jira 9.9.0
 * feat: apply given estimate to estimate and original estimate fields
 
@@ -172,7 +178,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.4...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.0...HEAD
+[23.07.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.5...23.07.0
 [23.05.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.3...23.05.4
 [23.05.3]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.2...23.05.3
 [23.05.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.1...23.05.2
