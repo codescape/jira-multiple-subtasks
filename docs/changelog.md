@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.07.1] - 2023-07-21
+
+**Improve exception handling and transactional behavior**
+
 * feat: ensure compatibility with Jira 9.10.0, 9.4.8 and 8.20.24
 * feat: create subtasks with custom fields in single transaction
 * feat: improve display of errors not related to subtask syntax
@@ -181,7 +187,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.1...HEAD
+[23.07.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.0...23.07.1
 [23.07.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.5...23.07.0
 [23.05.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.3...23.05.4
 [23.05.3]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.2...23.05.3
