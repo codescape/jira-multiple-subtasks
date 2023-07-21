@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: improve error handling during task creation
 
 ### [23.07.1] - 2023-07-21
 

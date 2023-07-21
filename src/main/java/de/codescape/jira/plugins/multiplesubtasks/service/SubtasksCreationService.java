@@ -8,7 +8,10 @@ import com.atlassian.jira.config.PriorityManager;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.exception.IssueFieldsCharacterLimitExceededException;
-import com.atlassian.jira.issue.*;
+import com.atlassian.jira.issue.CustomFieldManager;
+import com.atlassian.jira.issue.IssueFactory;
+import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.issue.customfields.option.Options;
@@ -379,12 +382,10 @@ public class SubtasksCreationService {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubtask);
                 subTaskManager.createSubTaskIssueLink(parent, newSubtask, jiraAuthenticationContext.getLoggedInUser());
                 subtasksCreated.add(new CreatedSubtask(newSubtask, warnings));
+            } catch (IssueFieldsCharacterLimitExceededException e) {
+                throw new SyntaxFormatException("Character limited exceeded: " + String.join(",", e.getInvalidFieldIds()), e);
             } catch (RuntimeException | CreateException e) {
-                if (e instanceof IssueFieldsCharacterLimitExceededException) {
-                    throw new SyntaxFormatException("Character limited exceeded: " + String.join(",", ((IssueFieldsCharacterLimitExceededException) e).getInvalidFieldIds()), e);
-                } else {
-                    throw new SyntaxFormatException("Error during creation of subtask.", e);
-                }
+                throw new SyntaxFormatException("Error during creation of subtask.", e);
             }
 
             // label(s)
