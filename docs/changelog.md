@@ -13,6 +13,7 @@ category: Administration
 
 * feat: ensure compatibility with Jira 9.10.0, 9.4.8 and 8.20.24
 * feat: create subtasks with custom fields in single transaction
+* feat: improve display of errors not related to subtask syntax 
 
 ### [23.07.0] - 2023-07-02
 

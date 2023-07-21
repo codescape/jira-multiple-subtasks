@@ -128,7 +128,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
                     inputString = getParameter(INPUT_STRING);
                     try {
                         createdSubTasks = subtasksCreationService.subtasksFromString(issueKey, inputString);
-                    } catch (SyntaxFormatException e) {
+                    } catch (RuntimeException e) {
                         addErrorMessage(e.getMessage());
                         return ERROR;
                     }
