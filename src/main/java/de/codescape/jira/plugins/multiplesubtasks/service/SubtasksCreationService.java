@@ -7,6 +7,7 @@ import com.atlassian.jira.bc.user.search.AssigneeService;
 import com.atlassian.jira.config.PriorityManager;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.exception.CreateException;
+import com.atlassian.jira.exception.IssueFieldsCharacterLimitExceededException;
 import com.atlassian.jira.issue.*;
 import com.atlassian.jira.issue.customfields.manager.OptionsManager;
 import com.atlassian.jira.issue.customfields.option.Option;
@@ -25,6 +26,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
+import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
@@ -358,13 +360,46 @@ public class SubtasksCreationService {
                 }
             }
 
+            // custom field(s) by id
+            // persist data to optional custom field(s) of the just created subtask and ignore invalid data
+            if (!subTaskRequest.getCustomFieldsById().isEmpty()) {
+                subTaskRequest.getCustomFieldsById().forEach((customFieldId, customFieldValues) ->
+                    applyValuesToCustomFieldByCustomFieldId(parent, newSubtask, warnings, customFieldId, customFieldValues));
+            }
+
+            // custom field(s) by name
+            // persist data to optional custom field(s) of the just created subtask and ignore invalid data
+            if (!subTaskRequest.getCustomFieldsByName().isEmpty()) {
+                subTaskRequest.getCustomFieldsByName().forEach((customFieldName, customFieldValues) ->
+                    applyValuesToCustomFieldByCustomFieldName(parent, newSubtask, warnings, customFieldName, customFieldValues));
+            }
+
             // create and link the subtask to the parent issue
             try {
                 issueManager.createIssueObject(jiraAuthenticationContext.getLoggedInUser(), newSubtask);
                 subTaskManager.createSubTaskIssueLink(parent, newSubtask, jiraAuthenticationContext.getLoggedInUser());
                 subtasksCreated.add(new CreatedSubtask(newSubtask, warnings));
-            } catch (CreateException e) {
-                throw new RuntimeException(e);
+            } catch (RuntimeException | CreateException e) {
+                if (e instanceof IssueFieldsCharacterLimitExceededException) {
+                    throw new SyntaxFormatException("Character limited exceeded: " + String.join(",", ((IssueFieldsCharacterLimitExceededException) e).getInvalidFieldIds()), e);
+                } else {
+                    throw new SyntaxFormatException("Error during creation of subtask.", e);
+                }
+            }
+
+            // label(s)
+            // add optional multiple labels to the just created subtask (we need the ID of the subtask to add them)
+            if (!subTaskRequest.getLabels().isEmpty()) {
+                if (subTaskRequest.getLabels().contains(INHERIT_MARKER)) {
+                    parent.getLabels().forEach(label ->
+                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label.getLabel(), false)
+                    );
+                }
+                subTaskRequest.getLabels().stream()
+                    .filter(label -> !INHERIT_MARKER.equals(label))
+                    .forEach(label ->
+                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label, false)
+                    );
             }
 
             // watcher(s)
@@ -388,35 +423,6 @@ public class SubtasksCreationService {
                             warnings.add("Invalid watcher: " + watcher);
                         }
                     });
-            }
-
-            // label(s)
-            // add optional multiple labels to the just created subtask (we need the ID of the subtask to add them)
-            if (!subTaskRequest.getLabels().isEmpty()) {
-                if (subTaskRequest.getLabels().contains(INHERIT_MARKER)) {
-                    parent.getLabels().forEach(label ->
-                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label.getLabel(), false)
-                    );
-                }
-                subTaskRequest.getLabels().stream()
-                    .filter(label -> !INHERIT_MARKER.equals(label))
-                    .forEach(label ->
-                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label, false)
-                    );
-            }
-
-            // custom field(s) by id
-            // persist data to optional custom field(s) of the just created subtask and ignore invalid data
-            if (!subTaskRequest.getCustomFieldsById().isEmpty()) {
-                subTaskRequest.getCustomFieldsById().forEach((customFieldId, customFieldValues) ->
-                    applyValuesToCustomFieldByCustomFieldId(parent, newSubtask, warnings, customFieldId, customFieldValues));
-            }
-
-            // custom field(s) by name
-            // persist data to optional custom field(s) of the just created subtask and ignore invalid data
-            if (!subTaskRequest.getCustomFieldsByName().isEmpty()) {
-                subTaskRequest.getCustomFieldsByName().forEach((customFieldName, customFieldValues) ->
-                    applyValuesToCustomFieldByCustomFieldName(parent, newSubtask, warnings, customFieldName, customFieldValues));
             }
         });
 
@@ -695,12 +701,6 @@ public class SubtasksCreationService {
                 break;
             default:
                 warnings.add("Unsupported custom field type: " + customFieldKey);
-        }
-
-        try {
-            issueManager.updateIssue(jiraAuthenticationContext.getLoggedInUser(), newSubtask, UpdateIssueRequest.builder().build());
-        } catch (RuntimeException e) {
-            warnings.add("Unexpected error applying custom field values: " + e.getMessage());
         }
     }
 
