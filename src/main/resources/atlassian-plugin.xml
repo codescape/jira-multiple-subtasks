@@ -40,6 +40,7 @@
         <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasIssuePermissionCondition">
             <param name="permission">create</param>
         </condition>
+        <condition class="de.codescape.jira.plugins.multiplesubtasks.condition.ProjectOfIssueHasSubtasksCondition" />
         <link linkId="multiple-subtasks-open-dialog">/secure/MultipleSubtasksDialog!default.jspa?issueKey=$issue.key</link>
         <styleClass>trigger-dialog</styleClass>
     </web-item>
