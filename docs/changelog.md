@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: improve error handling during task creation
+* fix: remove typo on template import page
 
 ### [23.07.1] - 2023-07-21
 
