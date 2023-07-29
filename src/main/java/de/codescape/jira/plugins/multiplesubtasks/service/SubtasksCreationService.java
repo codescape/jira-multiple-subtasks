@@ -1,5 +1,6 @@
 package de.codescape.jira.plugins.multiplesubtasks.service;
 
+import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
@@ -25,6 +26,7 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
+import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -67,6 +69,8 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_DATE = "com.atlassian.jira.plugin.system.customfieldtypes:datepicker";
     static final String CUSTOM_FIELD_TYPE_DATETIME = "com.atlassian.jira.plugin.system.customfieldtypes:datetime";
     static final String CUSTOM_FIELD_TYPE_LABELS = "com.atlassian.jira.plugin.system.customfieldtypes:labels";
+    static final String CUSTOM_FIELD_TYPE_GROUP = "com.atlassian.jira.plugin.system.customfieldtypes:grouppicker";
+    static final String CUSTOM_FIELD_TYPE_GROUPS = "com.atlassian.jira.plugin.system.customfieldtypes:multigrouppicker";
 
     /* dependencies */
 
@@ -84,6 +88,7 @@ public class SubtasksCreationService {
     private final CustomFieldManager customFieldManager;
     private final OptionsManager optionsManager;
     private final VersionManager versionManager;
+    private final GroupManager groupManager;
     private final SubtasksSyntaxService subtasksSyntaxService;
     private final EstimateStringService estimateStringService;
     private final DateTimeStringService dateTimeStringService;
@@ -103,6 +108,7 @@ public class SubtasksCreationService {
                                    @ComponentImport CustomFieldManager customFieldManager,
                                    @ComponentImport OptionsManager optionsManager,
                                    @ComponentImport VersionManager versionManager,
+                                   @ComponentImport GroupManager groupManager,
                                    SubtasksSyntaxService subtasksSyntaxService,
                                    EstimateStringService estimateStringService,
                                    DateTimeStringService dateTimeStringService) {
@@ -120,6 +126,7 @@ public class SubtasksCreationService {
         this.customFieldManager = customFieldManager;
         this.optionsManager = optionsManager;
         this.versionManager = versionManager;
+        this.groupManager = groupManager;
         this.subtasksSyntaxService = subtasksSyntaxService;
         this.estimateStringService = estimateStringService;
         this.dateTimeStringService = dateTimeStringService;
@@ -451,12 +458,12 @@ public class SubtasksCreationService {
     }
 
     private void applyValuesToCustomField(MutableIssue parent, MutableIssue newSubtask, List<String> warnings, CustomField customField, List<String> values) {
-        String customFieldId = customField.getId();
-        String customFieldKey = customField.getCustomFieldType().getKey();
-        switch (customFieldKey) {
+        String customFieldType = customField.getCustomFieldType().getKey();
+        String customFieldName = customField.getFieldName();
+        switch (customFieldType) {
             case CUSTOM_FIELD_TYPE_NUMBER:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     try {
                         values.forEach(value -> {
@@ -469,13 +476,13 @@ public class SubtasksCreationService {
                             }
                         });
                     } catch (NumberFormatException numberFormatException) {
-                        warnings.add("Invalid numeric value for custom field: " + customFieldId);
+                        warnings.add("Invalid numeric value for custom field: " + customFieldName);
                     }
                 }
                 break;
             case CUSTOM_FIELD_TYPE_TEXT:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
                     values.forEach(value -> {
@@ -491,7 +498,7 @@ public class SubtasksCreationService {
                 break;
             case CUSTOM_FIELD_TYPE_URL:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     values.forEach(value -> {
                         if (INHERIT_MARKER.equals(value)) {
@@ -502,7 +509,7 @@ public class SubtasksCreationService {
                             if (isValidURL(value)) {
                                 newSubtask.setCustomFieldValue(customField, value);
                             } else {
-                                warnings.add("Invalid url value for custom field: " + customFieldId);
+                                warnings.add("Invalid url value for custom field: " + customFieldName);
                             }
                         }
                     });
@@ -510,7 +517,7 @@ public class SubtasksCreationService {
                 break;
             case CUSTOM_FIELD_TYPE_TEXTAREA:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
                     values.forEach(value -> {
@@ -528,7 +535,7 @@ public class SubtasksCreationService {
             case CUSTOM_FIELD_TYPE_RADIO:
                 Options options = optionsManager.getOptions(customField.getRelevantConfig(newSubtask));
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     values.forEach(value -> {
                         if (INHERIT_MARKER.equals(value)) {
@@ -539,7 +546,7 @@ public class SubtasksCreationService {
                         } else {
                             Option selectedOption = options.getOptionForValue(value, null);
                             if (selectedOption == null) {
-                                warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                                warnings.add("Invalid option (" + value + ") for custom field: " + customFieldName);
                             } else {
                                 newSubtask.setCustomFieldValue(customField, selectedOption);
                             }
@@ -549,7 +556,7 @@ public class SubtasksCreationService {
                 break;
             case CUSTOM_FIELD_TYPE_CASCADING_SELECT:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     values.forEach(value -> {
                         if (INHERIT_MARKER.equals(value)) {
@@ -573,7 +580,7 @@ public class SubtasksCreationService {
                                     .findFirst()
                                     .orElse(null);
                                 if (foundOption == null) {
-                                    warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                                    warnings.add("Invalid option (" + value + ") for custom field: " + customFieldName);
                                     applyNewOptions = false;
                                     break;
                                 } else {
@@ -604,7 +611,7 @@ public class SubtasksCreationService {
                     } else {
                         Option selectedOption = optionsM.getOptionForValue(value, null);
                         if (selectedOption == null) {
-                            warnings.add("Invalid option (" + value + ") for custom field: " + customFieldId);
+                            warnings.add("Invalid option (" + value + ") for custom field: " + customFieldName);
                         } else {
                             selectedOptions.add(selectedOption);
                         }
@@ -616,7 +623,7 @@ public class SubtasksCreationService {
                 break;
             case CUSTOM_FIELD_TYPE_DATE:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     values.forEach(value -> {
                         if (INHERIT_MARKER.equals(value)) {
@@ -629,7 +636,7 @@ public class SubtasksCreationService {
                             if (timestamp != null) {
                                 newSubtask.setCustomFieldValue(customField, timestamp);
                             } else {
-                                warnings.add("Invalid date (" + value + ") for custom field: " + customFieldId);
+                                warnings.add("Invalid date (" + value + ") for custom field: " + customFieldName);
                             }
                         }
                     });
@@ -637,7 +644,7 @@ public class SubtasksCreationService {
                 break;
             case CUSTOM_FIELD_TYPE_DATETIME:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     values.forEach(value -> {
                         if (INHERIT_MARKER.equals(value)) {
@@ -650,7 +657,7 @@ public class SubtasksCreationService {
                             if (timestamp != null) {
                                 newSubtask.setCustomFieldValue(customField, timestamp);
                             } else {
-                                warnings.add("Invalid date and time (" + value + ") for custom field: " + customFieldId);
+                                warnings.add("Invalid date and time (" + value + ") for custom field: " + customFieldName);
                             }
                         }
                     });
@@ -658,7 +665,7 @@ public class SubtasksCreationService {
                 break;
             case CUSTOM_FIELD_TYPE_USER:
                 if (values.size() > 1) {
-                    warnings.add("Custom field only allows single values: " + customFieldId);
+                    warnings.add("Custom field only allows single values: " + customFieldName);
                 } else {
                     values.forEach(value -> {
                         if (INHERIT_MARKER.equals(value)) {
@@ -668,7 +675,7 @@ public class SubtasksCreationService {
                         } else {
                             ApplicationUser userByName = userManager.getUserByName(value);
                             if (userByName == null) {
-                                warnings.add("Invalid user (" + value + ") for custom field: " + customFieldId);
+                                warnings.add("Invalid user (" + value + ") for custom field: " + customFieldName);
                             } else {
                                 newSubtask.setCustomFieldValue(customField, userByName);
                             }
@@ -688,9 +695,9 @@ public class SubtasksCreationService {
                         }
                     } else {
                         if (cleanLabel.contains(" ")) {
-                            warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldId);
+                            warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldName);
                         } else if (cleanLabel.length() > 255) {
-                            warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldId);
+                            warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldName);
                         } else {
                             labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), label));
                         }
@@ -700,8 +707,50 @@ public class SubtasksCreationService {
                     newSubtask.setCustomFieldValue(customField, labels);
                 }
                 break;
+            case CUSTOM_FIELD_TYPE_GROUP:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldName);
+                } else {
+                    values.forEach(value -> {
+                        if (INHERIT_MARKER.equals(value)) {
+                            if (parent.getCustomFieldValue(customField) != null) {
+                                newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
+                            }
+                        } else {
+                            Group group = groupManager.getGroup(value);
+                            if (group != null) {
+                                newSubtask.setCustomFieldValue(customField, Collections.singletonList(group));
+                            } else {
+                                warnings.add("Invalid group (" + value + ") for custom field: " + customFieldName);
+                            }
+                        }
+                    });
+                }
+                break;
+            case CUSTOM_FIELD_TYPE_GROUPS:
+                Collection<Group> groups = new ArrayList<>();
+                values.forEach(groupName -> {
+                    if (INHERIT_MARKER.equals(groupName)) {
+                        Object groupsFromParent = parent.getCustomFieldValue(customField);
+                        if (groupsFromParent instanceof List) {
+                            //noinspection unchecked
+                            groups.addAll((List<Group>) groupsFromParent);
+                        }
+                    } else {
+                        Group group = groupManager.getGroup(groupName);
+                        if (group != null) {
+                            groups.add(group);
+                        } else {
+                            warnings.add("Invalid group (" + groupName + ") for custom field: " + customFieldName);
+                        }
+                    }
+                    if (!groups.isEmpty()) {
+                        newSubtask.setCustomFieldValue(customField, groups);
+                    }
+                });
+                break;
             default:
-                warnings.add("Unsupported custom field type: " + customFieldKey);
+                warnings.add("Unsupported custom field type (" + customFieldType + ") for custom field: " + customFieldName);
         }
     }
 
