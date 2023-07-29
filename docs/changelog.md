@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.07.2] - 2023-07-29
+
+**Extend support for custom field types**
+
 * feat: improve error handling during task creation
 * fix: remove typo on template import page
 * feat: add support for custom fields of type single/multi-group picker (#106)
@@ -191,7 +197,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.1...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.2...HEAD
+[23.07.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.1...23.07.2
 [23.07.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.0...23.07.1
 [23.07.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.5...23.07.0
 [23.05.4]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.3...23.05.4
