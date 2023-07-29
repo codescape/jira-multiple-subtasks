@@ -66,6 +66,7 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_CHECKBOXES = "com.atlassian.jira.plugin.system.customfieldtypes:multicheckboxes";
     static final String CUSTOM_FIELD_TYPE_URL = "com.atlassian.jira.plugin.system.customfieldtypes:url";
     static final String CUSTOM_FIELD_TYPE_USER = "com.atlassian.jira.plugin.system.customfieldtypes:userpicker";
+    static final String CUSTOM_FIELD_TYPE_USERS = "com.atlassian.jira.plugin.system.customfieldtypes:multiuserpicker";
     static final String CUSTOM_FIELD_TYPE_DATE = "com.atlassian.jira.plugin.system.customfieldtypes:datepicker";
     static final String CUSTOM_FIELD_TYPE_DATETIME = "com.atlassian.jira.plugin.system.customfieldtypes:datetime";
     static final String CUSTOM_FIELD_TYPE_LABELS = "com.atlassian.jira.plugin.system.customfieldtypes:labels";
@@ -682,6 +683,28 @@ public class SubtasksCreationService {
                         }
                     });
                 }
+                break;
+            case CUSTOM_FIELD_TYPE_USERS:
+                List<ApplicationUser> users = new ArrayList<>();
+                values.forEach(value -> {
+                    if (INHERIT_MARKER.equals(value)) {
+                        Object usersFromParent = parent.getCustomFieldValue(customField);
+                        if (usersFromParent instanceof List) {
+                            //noinspection unchecked
+                            users.addAll((List<ApplicationUser>) usersFromParent);
+                        }
+                    } else {
+                        ApplicationUser userByName = userManager.getUserByName(value);
+                        if (userByName == null) {
+                            warnings.add("Invalid user (" + value + ") for custom field: " + customFieldName);
+                        } else {
+                            users.add(userByName);
+                        }
+                    }
+                    if (!users.isEmpty()) {
+                        newSubtask.setCustomFieldValue(customField, users);
+                    }
+                });
                 break;
             case CUSTOM_FIELD_TYPE_LABELS:
                 Set<Label> labels = new HashSet<>();

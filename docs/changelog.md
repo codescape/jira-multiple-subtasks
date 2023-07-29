@@ -13,8 +13,9 @@ category: Administration
 
 * feat: improve error handling during task creation
 * fix: remove typo on template import page
-* feat: add support for custom fields of type single/multi group picker (#106)
+* feat: add support for custom fields of type single/multi-group picker (#106)
 * feat: improve warnings for invalid custom field values
+* feat: add support for custom fields of type multi-user picker
 
 ### [23.07.1] - 2023-07-21
 

@@ -322,18 +322,19 @@ The following custom field types can be assigned with values during subtask crea
 | Checkboxes                     | `checkboxValue`                                                                                                                                             | yes                     |
 | Date Picker                    | `2023-12-24`<br/>`2001-7-1` (short form)<br/>`@now + 1d` (see [Due Date](#due-date))<br/>`@inherit - 7w` (see [Due Date](#due-date))                        | no                      |
 | Date Time Picker               | `2023-12-24` (date only)<br/>`2023-12-24 17:45` (date and time)<br/>`@now + 6m` (see [Due Date](#due-date))<br/>`@inherit - 1y` (see [Due Date](#due-date)) | no                      |
+| Group Picker (single group)    | `groupName`                                                                                                                                                 | no                      |
+| Group Picker (multiple groups) | `groupName`                                                                                                                                                 | yes                     |
 | Labels                         | `labelName`                                                                                                                                                 | yes                     |
 | Number Field                   | `42`                                                                                                                                                        | no                      |
 | Radio Buttons                  | `radioValue`                                                                                                                                                | no                      |
-| Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy)                                                                   | no                      |
-| Select List (multiple choices) | `choiceValue`                                                                                                                                               | yes                     |
 | Select List (single choice)    | `choiceValue`                                                                                                                                               | no                      |
-| Text Field (multi-line)        | `some text with optional{n}line feeds`                                                                                                                      | no                      |  
+| Select List (multiple choices) | `choiceValue`                                                                                                                                               | yes                     |
+| Select List (cascading)        | `parentValue` (for first hierarchy)<br/>`parentValue > childValue` (for second hierarchy)                                                                   | no                      |
 | Text Field (single-line)       | `some single line text`                                                                                                                                     | no                      |
+| Text Field (multi-line)        | `some text with optional{n}line feeds`                                                                                                                      | no                      |
 | URL Field                      | `https://www.codescape.de` (leading protocol information is required)                                                                                       | no                      |
 | User Picker (single user)      | `username`                                                                                                                                                  | no                      |
-| Group Picker (single group)    | `groupName`                                                                                                                                                 | no                      |
-| Group Picker (multiple groups) | `groupName`                                                                                                                                                 | yes                     |
+| User Picker (multiple users)   | `username`                                                                                                                                                  | yes                     |
 
 Please note: If a custom field type `accepts multiple values` remember to provide one value per attribute. The following example applies two values `important` and `knowledge` as labels to a labels custom field:
 
