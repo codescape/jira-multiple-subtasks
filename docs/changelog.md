@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: ensure compatibility with Jira 9.11.0, 9.4.9 and 8.20.25
+* fix: correct assignee for multiple users with overlap in username and mail
 
 ### [23.07.2] - 2023-07-29
 

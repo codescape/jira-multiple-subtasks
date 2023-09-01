@@ -239,17 +239,22 @@ public class SubtasksCreationService {
             }
 
             // assignee
-            // try to find provided assignee in the list of assignable users for current project and ignore users who are not assignable
+            // try to find provided assignee as a user and check whether he is allowed to be assigned in the current project
             if (subTaskRequest.getAssignee() != null) {
                 if (INHERIT_MARKER.equals(subTaskRequest.getAssignee())) {
                     newSubtask.setAssignee(parent.getAssignee());
                 } else if (CURRENT_MARKER.equals(subTaskRequest.getAssignee())) {
                     newSubtask.setAssignee(jiraAuthenticationContext.getLoggedInUser());
                 } else {
-                    newSubtask.setAssignee(assigneeService.findAssignableUsers(subTaskRequest.getAssignee(), projectObject)
-                        .stream().findFirst().orElse(null));
-                    if (newSubtask.getAssignee() == null) {
-                        warnings.add("Invalid assignee: " + subTaskRequest.getAssignee());
+                    ApplicationUser assignee = userManager.getUserByName(subTaskRequest.getAssignee());
+                    if (assignee != null) {
+                        if (assigneeService.isAssignable(projectObject, assignee)) {
+                            newSubtask.setAssignee(assignee);
+                        } else {
+                            warnings.add("User is no valid assignee: " + subTaskRequest.getAssignee());
+                        }
+                    } else {
+                        warnings.add("User not found: " + subTaskRequest.getAssignee());
                     }
                 }
             }
