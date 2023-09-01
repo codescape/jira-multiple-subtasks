@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.09.0] - 2023-09-01
+
+**Improve correct selection of assignee by username**
+
 * feat: ensure compatibility with Jira 9.11.0, 9.4.9 and 8.20.25
 * fix: correct assignee for multiple users with overlap in username and mail
 
@@ -198,7 +204,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.2...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.0...HEAD
+[23.09.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.2...23.09.0
 [23.07.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.1...23.07.2
 [23.07.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.0...23.07.1
 [23.07.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.05.5...23.07.0
