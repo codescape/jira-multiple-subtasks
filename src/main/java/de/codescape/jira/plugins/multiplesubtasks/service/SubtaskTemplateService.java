@@ -3,8 +3,10 @@ package de.codescape.jira.plugins.multiplesubtasks.service;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.activeobjects.tx.Transactional;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SubtaskTemplateType;
+import de.codescape.jira.plugins.multiplesubtasks.model.TemplateSortOrder;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,13 @@ import java.util.List;
 public class SubtaskTemplateService {
 
     private final ActiveObjects activeObjects;
+    private MultipleSubtasksConfigurationService multipleSubtasksConfigurationService;
 
     @Autowired
-    public SubtaskTemplateService(@ComponentImport ActiveObjects activeObjects) {
+    public SubtaskTemplateService(@ComponentImport ActiveObjects activeObjects,
+                                  MultipleSubtasksConfigurationService multipleSubtasksConfigurationService) {
         this.activeObjects = activeObjects;
+        this.multipleSubtasksConfigurationService = multipleSubtasksConfigurationService;
     }
 
     /**
@@ -56,7 +61,7 @@ public class SubtaskTemplateService {
         return Arrays.asList(activeObjects.find(SubtaskTemplate.class,
             Query.select()
                 .where("USER_ID = ? and TEMPLATE_TYPE = ?", userId, SubtaskTemplateType.USER)
-                .order("ID DESC"))
+                .order(getTemplateSortOrder()))
         );
     }
 
@@ -111,7 +116,7 @@ public class SubtaskTemplateService {
         return Arrays.asList(activeObjects.find(SubtaskTemplate.class,
             Query.select()
                 .where("PROJECT_ID = ? and TEMPLATE_TYPE = ?", projectId, SubtaskTemplateType.PROJECT)
-                .order("ID DESC"))
+                .order(getTemplateSortOrder()))
         );
     }
 
@@ -133,6 +138,15 @@ public class SubtaskTemplateService {
             Query.select()
                 .where("PROJECT_ID = ? and ID = ? and TEMPLATE_TYPE = ?", projectId, templateId, SubtaskTemplateType.PROJECT));
         return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
+    }
+
+    private String getTemplateSortOrder() {
+        SubtaskConfig config = multipleSubtasksConfigurationService.get(MultipleSubtasksConfigurationService.TEMPLATES_SORT_ORDER);
+        if (config != null) {
+            return TemplateSortOrder.valueOf(config.getValue()).getSql();
+        } else {
+            return TemplateSortOrder.NAME_ASC.getSql();
+        }
     }
 
 }

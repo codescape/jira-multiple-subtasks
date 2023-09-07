@@ -54,6 +54,20 @@
         <div class="description">$i18n.getText("multiplesubtasks.configuration.templatesperproject.description")</div>
     </div>
 
+<!-- Sort Order for Template -->
+
+    <div class="field-group">
+        <label for="$action.templatesSortOrder">$i18n.getText("multiplesubtasks.configuration.templatessortorder.label")
+            <span class="aui-icon icon-required">(required)</span></label>
+        <select class="text long-field multiple-subtasks-config"
+               id="$action.templatesSortOrder" name="$action.templatesSortOrder" required="required">
+            #foreach($option in $action.templatesSortOrderOptions)
+                <option value="${option.name()}">$i18n.getText("multiplesubtasks.configuration.templatessortorder.option.${option.bundle}") ($i18n.getText("multiplesubtasks.configuration.templatessortorder.order.${option.order}"))</option>
+            #end
+        </select>
+        <div class="description">$i18n.getText("multiplesubtasks.configuration.templatessortorder.description")</div>
+    </div>
+
 </form>
 
 <script>
@@ -66,7 +80,9 @@
         if (configuration.length > 0) {
             configuration.forEach(function(config) {
                 console.log(config);
-                AJS.$('#' + config.key ).val(config.value);
+                if (AJS.$('#' + config.key).length) {
+                    AJS.$('#' + config.key).val(config.value);
+                }
             });
         }
     }

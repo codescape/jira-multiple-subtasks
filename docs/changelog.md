@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: configure the sorting order of user and project templates
 
 ### [23.09.0] - 2023-09-01
 

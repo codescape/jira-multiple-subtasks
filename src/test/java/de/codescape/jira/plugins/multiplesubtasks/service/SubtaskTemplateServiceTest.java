@@ -45,7 +45,8 @@ public class SubtaskTemplateServiceTest {
     @Before
     public void before() {
         activeObjects = new TestActiveObjects(entityManager);
-        subtaskTemplateService = new SubtaskTemplateService(activeObjects);
+        MultipleSubtasksConfigurationService multipleSubtasksConfigurationService = mock(MultipleSubtasksConfigurationService.class);
+        subtaskTemplateService = new SubtaskTemplateService(activeObjects, multipleSubtasksConfigurationService);
         currentUser = mock(ApplicationUser.class);
         anotherUser = mock(ApplicationUser.class);
         deleteAllSubtaskTemplates();
