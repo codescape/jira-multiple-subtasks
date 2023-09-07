@@ -41,6 +41,17 @@ You can configure the allowed maximum number of templates per project here.
 
 Default value: `10 templates per project`
 
+#### Sorting order of templates
+
+You can configure the sorting order of templates in the subtasks creation dialog.
+
+The options are:
+
+* Name (ascending or descending)
+* Age (ascending or descending)
+
+Default value: `Name (ascending)`
+
 ### Missing configuration options?
 
 If you have any request for configuration options please [let us know](/support) about it.
