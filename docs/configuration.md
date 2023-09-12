@@ -29,13 +29,13 @@ On the page `Configuration` you have global configuration options to make Multip
 
 This chapter describes the configuration options that are available to customize behavior and appearance of Multiple Subtasks for Jira.
 
-#### Templates per User
+#### Templates per user
 
 You can configure the allowed maximum number of templates per user here.
 
 Default value: `10 templates per user`
 
-#### Templates per Project
+#### Templates per project
 
 You can configure the allowed maximum number of templates per project here.
 

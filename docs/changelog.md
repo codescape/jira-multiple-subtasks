@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* docs: improve configuration documentation
 
 ### [23.09.1] - 2023-09-12
 
