@@ -15,6 +15,7 @@ category: Administration
 * docs: include configuration for sorting order
 * refactor: optimize i18n bundle for internationalization
 * test: add tests for configuration action
+* feat: disallow negative values for configuration options
 
 ### [23.09.0] - 2023-09-01
 
