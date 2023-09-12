@@ -12,7 +12,8 @@ category: Administration
 ### [Unreleased]
 
 * feat: configure the sorting order of user and project templates
-* docs: include configuration for sorting order 
+* docs: include configuration for sorting order
+* refactor: optimize i18n bundle for internationalization
 
 ### [23.09.0] - 2023-09-01
 
