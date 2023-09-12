@@ -57,10 +57,10 @@
 <!-- Sort Order for Template -->
 
     <div class="field-group">
-        <label for="$action.templatesSortOrder">$i18n.getText("multiplesubtasks.configuration.templatessortorder.label")
+        <label for="$action.templatesSortOrderKey">$i18n.getText("multiplesubtasks.configuration.templatessortorder.label")
             <span class="aui-icon icon-required">(required)</span></label>
         <select class="text long-field multiple-subtasks-config"
-               id="$action.templatesSortOrder" name="$action.templatesSortOrder" required="required">
+               id="$action.templatesSortOrderKey" name="$action.templatesSortOrderKey" required="required">
             #foreach($option in $action.templatesSortOrderOptions)
                 <option value="${option.name()}">$i18n.getText("multiplesubtasks.configuration.templatessortorder.option.${option.bundle}") ($i18n.getText("multiplesubtasks.configuration.templatessortorder.order.${option.order}"))</option>
             #end

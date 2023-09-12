@@ -37,7 +37,7 @@ public class MultipleSubtasksConfigurationAction extends JiraWebActionSupport {
     /**
      * Return the key for the sort order of templates.
      */
-    public String getTemplatesSortOrder() {
+    public String getTemplatesSortOrderKey() {
         return MultipleSubtasksConfigurationService.TEMPLATES_SORT_ORDER;
     }
 
