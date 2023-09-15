@@ -12,7 +12,6 @@ category: Administration
 ### [Unreleased]
 
 * docs: improve configuration documentation
-* fix: enforcing uniqueness in database might fail after database migration
 
 ### [23.09.1] - 2023-09-12
 
