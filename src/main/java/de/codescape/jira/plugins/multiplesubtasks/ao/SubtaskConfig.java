@@ -4,15 +4,17 @@ import net.java.ao.Preload;
 import net.java.ao.schema.Indexed;
 import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
+import net.java.ao.schema.Unique;
 
 @Preload
 public interface SubtaskConfig extends BaseEntity {
 
     /**
-     * The key of the setting.
+     * The unique key of the setting.
      */
     @NotNull
     @Indexed
+    @Unique
     @StringLength(255)
     String getKey();
 

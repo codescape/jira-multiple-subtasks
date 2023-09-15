@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* fix: enforcing uniqueness in database might fail after database migration
+* ...
 
 ### [23.09.0] - 2023-09-01
 
