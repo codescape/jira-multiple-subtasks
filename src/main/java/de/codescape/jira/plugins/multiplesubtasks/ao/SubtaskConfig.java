@@ -4,7 +4,6 @@ import net.java.ao.Preload;
 import net.java.ao.schema.Indexed;
 import net.java.ao.schema.NotNull;
 import net.java.ao.schema.StringLength;
-import net.java.ao.schema.Unique;
 
 @Preload
 public interface SubtaskConfig extends BaseEntity {
@@ -14,7 +13,6 @@ public interface SubtaskConfig extends BaseEntity {
      */
     @NotNull
     @Indexed
-    @Unique
     @StringLength(255)
     String getKey();
 
