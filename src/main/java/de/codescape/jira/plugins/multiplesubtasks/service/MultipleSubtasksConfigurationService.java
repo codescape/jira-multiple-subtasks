@@ -21,6 +21,7 @@ public class MultipleSubtasksConfigurationService {
 
     public static final String TEMPLATES_PER_USER = "TEMPLATES_PER_USER";
     public static final String TEMPLATES_PER_PROJECT = "TEMPLATES_PER_PROJECT";
+    public static final String TEMPLATES_SORT_ORDER = "TEMPLATES_SORT_ORDER";
 
     private final ActiveObjects activeObjects;
 

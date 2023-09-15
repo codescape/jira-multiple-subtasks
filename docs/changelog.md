@@ -11,7 +11,17 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* docs: improve configuration documentation
+
+### [23.09.1] - 2023-09-12
+
+**Configure the sorting order of templates**
+
+* feat: configure the sorting order of user and project templates
+* docs: include configuration for sorting order
+* refactor: optimize i18n bundle for internationalization
+* test: add tests for configuration action
+* feat: disallow negative values for configuration options
 
 ### [23.09.0] - 2023-09-01
 
@@ -204,7 +214,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.1...HEAD
+[23.09.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.0...23.09.1
 [23.09.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.2...23.09.0
 [23.07.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.1...23.07.2
 [23.07.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.0...23.07.1

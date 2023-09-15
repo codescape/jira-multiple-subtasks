@@ -39,7 +39,7 @@
     <div class="field-group">
         <label for="$action.templatesPerUserKey">$i18n.getText("multiplesubtasks.configuration.templatesperuser.label")
             <span class="aui-icon icon-required">(required)</span></label>
-        <input type="number" step="1" class="text short-field multiple-subtasks-config"
+        <input type="number" step="1" min="0" class="text short-field multiple-subtasks-config"
                id="$action.templatesPerUserKey" name="$action.templatesPerUserKey" required="required">
         <div class="description">$i18n.getText("multiplesubtasks.configuration.templatesperuser.description")</div>
     </div>
@@ -49,9 +49,23 @@
     <div class="field-group">
         <label for="$action.templatesPerProjectKey">$i18n.getText("multiplesubtasks.configuration.templatesperproject.label")
             <span class="aui-icon icon-required">(required)</span></label>
-        <input type="number" step="1" class="text short-field multiple-subtasks-config"
+        <input type="number" step="1" min="0" class="text short-field multiple-subtasks-config"
                id="$action.templatesPerProjectKey" name="$action.templatesPerProjectKey" required="required">
         <div class="description">$i18n.getText("multiplesubtasks.configuration.templatesperproject.description")</div>
+    </div>
+
+<!-- Sort Order for Template -->
+
+    <div class="field-group">
+        <label for="$action.templatesSortOrderKey">$i18n.getText("multiplesubtasks.configuration.templatessortorder.label")
+            <span class="aui-icon icon-required">(required)</span></label>
+        <select class="text long-field multiple-subtasks-config"
+               id="$action.templatesSortOrderKey" name="$action.templatesSortOrderKey" required="required">
+            #foreach($option in $action.templatesSortOrderOptions)
+                <option value="${option.name()}">$i18n.getText("multiplesubtasks.configuration.templatessortorder.option.${option.bundle}") ($i18n.getText("multiplesubtasks.configuration.templatessortorder.order.${option.order}"))</option>
+            #end
+        </select>
+        <div class="description">$i18n.getText("multiplesubtasks.configuration.templatessortorder.description")</div>
     </div>
 
 </form>
@@ -66,7 +80,9 @@
         if (configuration.length > 0) {
             configuration.forEach(function(config) {
                 console.log(config);
-                AJS.$('#' + config.key ).val(config.value);
+                if (AJS.$('#' + config.key).length) {
+                    AJS.$('#' + config.key).val(config.value);
+                }
             });
         }
     }
