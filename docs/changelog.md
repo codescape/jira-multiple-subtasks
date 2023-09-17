@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * docs: improve configuration documentation
+* fix: remove potentially redundant index from configuration key
 
 ### [23.09.1] - 2023-09-12
 
