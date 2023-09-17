@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.09.2] - 2023-09-17
+
+**Fix for potentially redundant index in database**
+
 * docs: improve configuration documentation
 * fix: remove potentially redundant index from configuration key
 
@@ -215,7 +221,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.1...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.2...HEAD
+[23.09.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.1...23.09.2
 [23.09.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.0...23.09.1
 [23.09.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.2...23.09.0
 [23.07.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.1...23.07.2
