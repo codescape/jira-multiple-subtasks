@@ -23,7 +23,7 @@ import java.util.List;
 public class SubtaskTemplateService {
 
     private final ActiveObjects activeObjects;
-    private MultipleSubtasksConfigurationService multipleSubtasksConfigurationService;
+    private final MultipleSubtasksConfigurationService multipleSubtasksConfigurationService;
 
     @Autowired
     public SubtaskTemplateService(@ComponentImport ActiveObjects activeObjects,

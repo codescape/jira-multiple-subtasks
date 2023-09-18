@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* refactor: configuration service can be final in template service
 
 ### [23.09.2] - 2023-09-17
 
