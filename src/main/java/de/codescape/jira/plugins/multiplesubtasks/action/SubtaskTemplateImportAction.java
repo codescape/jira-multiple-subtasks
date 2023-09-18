@@ -186,9 +186,9 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
         List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getProjectTemplates(project.getId());
         templates.forEach(template -> {
             log.info("Importing template for project '" + project.getKey() + "' with template name '" + template.getName() + "'");
-            if (existingTemplates.stream().filter(existingTemplate ->
+            if (existingTemplates.stream().noneMatch(existingTemplate ->
                 existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
-            ).findFirst().orElse(null) == null) {
+            )) {
                 subtaskTemplateService.saveProjectTemplate(project.getId(), jiraAuthenticationContext.getLoggedInUser().getId(), null, template.getName(), template.getTemplate());
                 counter.getAndIncrement();
             } else {
@@ -208,9 +208,9 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
         List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getUserTemplates(applicationUser.getId());
         templates.forEach(template -> {
             log.info("Importing template for user '" + applicationUser.getUsername() + "' with template name '" + template.getName() + "'");
-            if (existingTemplates.stream().filter(existingTemplate ->
+            if (existingTemplates.stream().noneMatch(existingTemplate ->
                 existingTemplate.getName().equals(template.getName()) && existingTemplate.getTemplate().equals(template.getTemplate())
-            ).findFirst().orElse(null) == null) {
+            )) {
                 subtaskTemplateService.saveUserTemplate(applicationUser.getId(), null, template.getName(), template.getTemplate());
                 counter.getAndIncrement();
             } else {

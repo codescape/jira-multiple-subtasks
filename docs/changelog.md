@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * refactor: configuration service can be final in template service
+* refactor: improve filtering duplicates during template import
 
 ### [23.09.2] - 2023-09-17
 
