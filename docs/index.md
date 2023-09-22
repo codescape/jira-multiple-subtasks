@@ -19,7 +19,7 @@ The documentation is split into these three categories:
     </div>
     <div class="one-third column">
       <i class="icon admin-icon"></i>
-      <p>The <code>Administration</code> section covers topics like the installation and configuration of Scrum Poker for Jira from the administrator perspective.</p>
+      <p>The <code>Administration</code> section covers topics like the installation and configuration of Multiple Subtasks for Jira from the administrator perspective.</p>
     </div>
     <div class="one-third column">
       <i class="icon legal-icon"></i>
