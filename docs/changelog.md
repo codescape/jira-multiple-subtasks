@@ -14,6 +14,7 @@ category: Administration
 * refactor: configuration service can be final in template service
 * refactor: improve filtering duplicates during template import
 * test: add tests for upgrade tasks
+* docs: fix wrong app name in documentation page
 
 ### [23.09.2] - 2023-09-17
 
