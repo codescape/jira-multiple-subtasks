@@ -15,6 +15,7 @@ category: Administration
 * refactor: improve filtering duplicates during template import
 * test: add tests for upgrade tasks
 * docs: fix wrong app name in documentation page
+* feat: display success message for changes in configuration
 
 ### [23.09.2] - 2023-09-17
 

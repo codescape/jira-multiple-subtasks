@@ -4,6 +4,7 @@
     <meta name="decorator" content="admin" />
     <meta name="admin.active.section" content="admin_plugins_menu/multiple-subtasks-configuration" />
     <meta name="admin.active.tab" content="multiple-subtasks-configuration-link1" />
+    $webResourceManager.requireResource("de.codescape.jira.plugins.multiple-subtasks:multiple-subtasks-configuration-resources")
 </head>
 <body class="multiple-subtasks configuration">
 
@@ -69,49 +70,5 @@
     </div>
 
 </form>
-
-<script>
-    // load the configuration and apply all settings to the respective fields
-    const getConfiguration = async function () {
-        console.log('Loading configuration...');
-        const response = await fetch(AJS.contextPath() + '/rest/multiple-subtasks/1.0/configuration');
-        const configuration = await response.json();
-
-        if (configuration.length > 0) {
-            configuration.forEach(function(config) {
-                console.log(config);
-                if (AJS.$('#' + config.key).length) {
-                    AJS.$('#' + config.key).val(config.value);
-                }
-            });
-        }
-    }
-
-    // save the changed configuration and reload all settings
-    const saveConfiguration = async function (key, value) {
-        await fetch(AJS.contextPath() + '/rest/multiple-subtasks/1.0/configuration/' + key, {
-            method: 'POST',
-            body: value,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        await getConfiguration();
-    }
-
-    AJS.$(document).ready(function () {
-        // show all configured settings
-        getConfiguration();
-
-        // register any changes to be send to the server
-        AJS.$(".multiple-subtasks-config").change(function() {
-            const key = $(this).attr('name');
-            const value = $(this).val();
-            console.log('Updating value for ' + key + ' with value ' + value);
-            saveConfiguration(key, value);
-        });
-    });
-</script>
-
 </body>
 </html>

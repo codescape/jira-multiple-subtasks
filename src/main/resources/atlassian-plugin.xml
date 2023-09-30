@@ -23,12 +23,21 @@
     <resource type="i18n" name="i18n" location="i18n.multiple-subtasks"/>
 
     <!-- static web resources -->
-    <web-resource key="multiple-subtasks-resources" name="multiple-subtasks Web Resources">
+    <web-resource key="multiple-subtasks-resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <resource type="download" name="multiple-subtasks.css" location="/css/multiple-subtasks.css"/>
         <resource type="download" name="multiple-subtasks.js" location="/js/multiple-subtasks.js"/>
         <resource type="download" name="images/" location="/images"/>
         <context>multiple-subtasks</context>
+    </web-resource>
+
+    <!-- static web resources for the configuration view -->
+    <web-resource key="multiple-subtasks-configuration-resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <resource type="download" name="multiple-subtasks-configuration.js" location="/js/multiple-subtasks-configuration.js"/>
     </web-resource>
 
     <!-- button to open create dialog -->
