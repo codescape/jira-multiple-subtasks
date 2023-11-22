@@ -78,8 +78,12 @@
         <link linkId="multiple-subtasks-configuration-link1">/secure/admin/MultipleSubtasksConfiguration!default.jspa</link>
     </web-item>
     <web-item key="scrum-poker-configuration-item2" section="admin_plugins_menu/multiple-subtasks-configuration" weight="20">
+        <label key="multiplesubtasks.templates.global.label"/>
+        <link linkId="multiple-subtasks-configuration-link2">/secure/admin/MultipleSubtasksGlobalTemplates!default.jspa</link>
+    </web-item>
+    <web-item key="scrum-poker-configuration-item3" section="admin_plugins_menu/multiple-subtasks-configuration" weight="30">
         <label key="multiplesubtasks.import.label"/>
-        <link linkId="multiple-subtasks-configuration-link2">/secure/admin/MultipleSubtasksTemplateImport!default.jspa</link>
+        <link linkId="multiple-subtasks-configuration-link3">/secure/admin/MultipleSubtasksTemplateImport!default.jspa</link>
     </web-item>
 
     <!-- webworks -->
@@ -97,6 +101,10 @@
             <action name="de.codescape.jira.plugins.multiplesubtasks.action.ProjectSubtaskTemplatesAction"
                     alias="MultipleSubtasksProjectTemplates" roles-required="use">
                 <view name="success">/templates/projectTemplates.vm</view>
+            </action>
+            <action name="de.codescape.jira.plugins.multiplesubtasks.action.GlobalSubtaskTemplatesAction"
+                    alias="MultipleSubtasksGlobalTemplates" roles-required="admin">
+                <view name="success">/templates/globalTemplates.vm</view>
             </action>
             <action name="de.codescape.jira.plugins.multiplesubtasks.action.MultipleSubtasksConfigurationAction"
                     alias="MultipleSubtasksConfiguration" roles-required="admin">

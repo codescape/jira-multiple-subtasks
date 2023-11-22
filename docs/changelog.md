@@ -16,6 +16,7 @@ category: Administration
 * test: add tests for upgrade tasks
 * docs: fix wrong app name in documentation page
 * feat: display success message for changes in configuration
+* feat: allow administrators to create global templates (#111)
 
 ### [23.09.2] - 2023-09-17
 

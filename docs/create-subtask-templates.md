@@ -41,3 +41,17 @@ That's it!
 On this page you can create, edit and delete project specific templates.
 
 The page looks exactly the same as for your personal user templates (see above).
+
+## Manage Global Templates
+
+As a Jira administrator you can create global templates available for every project.
+To do this follow these steps:
+
+1. To locate the global configuration navigate to the `Administration` menu, then select the entry labelled `Manage apps`.
+1. You will now find a section called `Multiple Subtasks` in the left sidebar as shown in the screenshot below.
+1. Choose `Global Templates` from the sidebar.
+
+That's it!
+On this page you can create, edit and delete global templates.
+
+The page looks exactly the same as for your personal user templates (see above).

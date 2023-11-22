@@ -79,6 +79,15 @@
                     <option disabled>$i18n.getText("multiplesubtasks.dialog.templates.empty")</option>
                 #end
                 </optgroup>
+                <optgroup label="$i18n.getText('multiplesubtasks.dialog.templates.global')">
+                #if(!$globalTemplates.isEmpty())
+                    #foreach($template in $globalTemplates)
+                        <option value="$template.id" data-template="$template.template">$template.name</option>
+                    #end
+                #else
+                    <option disabled>$i18n.getText("multiplesubtasks.dialog.templates.empty")</option>
+                #end
+                </optgroup>
             </select>
         </div>
         <div class="field-group">

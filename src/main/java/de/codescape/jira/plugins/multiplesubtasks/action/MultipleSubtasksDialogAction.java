@@ -167,6 +167,16 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a list of all existing global templates.
+     */
+    public List<ShowSubtaskTemplate> getGlobalTemplates() {
+        return subtaskTemplateService.getGlobalTemplates()
+            .stream()
+            .map(ShowSubtaskTemplate::new)
+            .collect(Collectors.toList());
+    }
+
     /* helper methods */
 
     private void clearInputString() {

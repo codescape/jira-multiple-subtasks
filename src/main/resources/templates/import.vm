@@ -3,7 +3,7 @@
     <title>$i18n.getText("multiplesubtasks.title") - $i18n.getText("multiplesubtasks.import.label")</title>
     <meta name="decorator" content="admin" />
     <meta name="admin.active.section" content="admin_plugins_menu/multiple-subtasks-configuration" />
-    <meta name="admin.active.tab" content="multiple-subtasks-configuration-link2" />
+    <meta name="admin.active.tab" content="multiple-subtasks-configuration-link3" />
 </head>
 <body class="multiple-subtasks configuration">
 

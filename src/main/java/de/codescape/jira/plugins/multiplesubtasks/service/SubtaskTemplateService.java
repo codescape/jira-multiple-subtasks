@@ -149,4 +149,58 @@ public class SubtaskTemplateService {
         }
     }
 
+    /**
+     * Save a global subtask template.
+     */
+    public void saveGlobalTemplate(Long userId, Long templateId, String templateName, String templateText) {
+        if (templateId == null) {
+            SubtaskTemplate subtaskTemplate = activeObjects.create(SubtaskTemplate.class,
+                new DBParam("TEMPLATE_TYPE", SubtaskTemplateType.GLOBAL),
+                new DBParam("USER_ID", userId),
+                new DBParam("NAME", templateName),
+                new DBParam("TEMPLATE", templateText)
+            );
+            subtaskTemplate.save();
+        } else {
+            SubtaskTemplate subtaskTemplate = findGlobalTemplate(templateId);
+            if (subtaskTemplate != null) {
+                subtaskTemplate.setUserId(userId);
+                subtaskTemplate.setName(templateName);
+                subtaskTemplate.setTemplate(templateText);
+                subtaskTemplate.save();
+            }
+        }
+    }
+
+    /**
+     * Find a given global subtask template.
+     */
+    public SubtaskTemplate findGlobalTemplate(Long templateId) {
+        SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class,
+            Query.select()
+                .where("ID = ? and TEMPLATE_TYPE = ?", templateId, SubtaskTemplateType.GLOBAL));
+        return subtaskTemplates.length > 0 ? subtaskTemplates[0] : null;
+    }
+
+    /**
+     * Delete a given global subtask template.
+     */
+    public void deleteGlobalTemplate(Long templateId) {
+        SubtaskTemplate subtaskTemplate = findGlobalTemplate(templateId);
+        if (subtaskTemplate != null) {
+            activeObjects.delete(subtaskTemplate);
+        }
+    }
+
+    /**
+     * Return a list of all global subtask templates.
+     */
+    public List<SubtaskTemplate> getGlobalTemplates() {
+        return Arrays.asList(activeObjects.find(SubtaskTemplate.class,
+            Query.select()
+                .where("TEMPLATE_TYPE = ?", SubtaskTemplateType.GLOBAL)
+                .order(getTemplateSortOrder()))
+        );
+    }
+
 }
