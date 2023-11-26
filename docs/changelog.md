@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.11.0] - 2023-11-26
+
+**Provide global subtask templates**
+
 * refactor: configuration service can be final in template service
 * refactor: improve filtering duplicates during template import
 * test: add tests for upgrade tasks
@@ -226,7 +232,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.2...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.11.0...HEAD
+[23.11.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.2...23.11.0
 [23.09.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.1...23.09.2
 [23.09.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.0...23.09.1
 [23.09.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.07.2...23.09.0
