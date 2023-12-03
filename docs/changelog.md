@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: ensure compatibility with Jira 9.12.0, 9.4.12 and 8.20.28
+* feat: include root cause in case of errors during subtask creation (#113)
 
 ### [23.11.0] - 2023-11-26
 

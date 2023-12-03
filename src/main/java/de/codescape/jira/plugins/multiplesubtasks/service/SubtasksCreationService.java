@@ -398,7 +398,11 @@ public class SubtasksCreationService {
             } catch (IssueFieldsCharacterLimitExceededException e) {
                 throw new SyntaxFormatException("Character limited exceeded: " + String.join(",", e.getInvalidFieldIds()), e);
             } catch (RuntimeException | CreateException e) {
-                throw new SyntaxFormatException("Error during creation of subtask.", e);
+                if (e.getMessage() != null) {
+                    throw new SyntaxFormatException("Error during creation of subtask: " + e.getMessage(), e);
+                } else {
+                    throw new SyntaxFormatException("Error during creation of subtask.", e);
+                }
             }
 
             // label(s)
