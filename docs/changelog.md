@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [23.12.0] - 2023-12-06
+
+**Improve error handling during subtask creation**
+
 * feat: ensure compatibility with Jira 9.12.0, 9.4.12 and 8.20.28
 * feat: include root cause in case of errors during subtask creation (#113)
 
@@ -233,7 +239,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.11.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.12.0...HEAD
+[23.12.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.11.0...23.12.0
 [23.11.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.2...23.11.0
 [23.09.2]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.1...23.09.2
 [23.09.1]: https://github.com/codescape/jira-multiple-subtasks/compare/23.09.0...23.09.1
