@@ -13,6 +13,8 @@ category: Administration
 
 * feat: ensure compatibility with Jira 9.12.1, 9.4.14
 * docs: move changelog for 23.x releases into archive
+* feat: add translations into 27 additional languages
+* docs: list supported languages in documentation
 
 ### Older versions
 
