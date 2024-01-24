@@ -16,6 +16,7 @@ category: Administration
 * feat: add translations into 27 additional languages
 * docs: list supported languages in documentation
 * fix: fix encoding for French translation
+* docs: improve supported languages page
 
 ### Older versions
 
