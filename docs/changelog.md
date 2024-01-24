@@ -18,6 +18,7 @@ category: Administration
 * fix: fix encoding for French translation
 * docs: improve supported languages page
 * feat: ensure compatibility with Jira 9.13.0, 9.12.2, 9.4.15
+* chore: adjust dependency versions to versions defined by Jira 9.12.1
 
 ### Older versions
 
@@ -27,4 +28,3 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.12.0...HEAD
-

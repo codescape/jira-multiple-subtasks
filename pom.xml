@@ -39,23 +39,23 @@
         <jira.version.oldest>9.4.15</jira.version.oldest>
 
         <!-- Dependency versions -->
-        <!-- https://packages.atlassian.com/artifactory/maven-external/com/atlassian/jira/jira-project/${jira.version}/ -->
-        <activeobjects.version>4.0.3</activeobjects.version>
-        <amps.version>8.1.0</amps.version>
-        <atlassian-spring-scanner.version>3.0.1</atlassian-spring-scanner.version>
-        <guava.version>31.0.1-jre</guava.version>
+        <!-- https://packages.atlassian.com/artifactory/maven-external/com/atlassian/jira/jira-project/9.12.1/ -->
+        <activeobjects.version>5.0.3</activeobjects.version>
+        <amps.version>8.2.3</amps.version>
+        <atlassian-spring-scanner.version>3.0.3</atlassian-spring-scanner.version>
+        <guava.version>32.1.1-jre</guava.version>
         <hamcrest.version>2.2</hamcrest.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <jsr311.version>1.1.1</jsr311.version>
         <junit.version>4.13.1</junit.version>
-        <log4j2.version>2.20.0</log4j2.version>
+        <log4j2.version>2.17.2</log4j2.version>
         <lucene.version>7.3.1</lucene.version>
         <mockito.version>3.1.0</mockito.version>
-        <profiling.version>4.8.1</profiling.version>
-        <quick.reload.version>3.2.0</quick.reload.version>
+        <profiling.version>4.9.1</profiling.version>
+        <quick.reload.version>4.0.0</quick.reload.version>
         <servlet-api.version>4.0.1</servlet-api.version>
-        <spring.version>5.3.19</spring.version>
-        <upm.version>6.0.4</upm.version>
+        <spring.version>5.3.29</spring.version>
+        <upm.version>6.1.7</upm.version>
 
         <!-- Source encoding -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
