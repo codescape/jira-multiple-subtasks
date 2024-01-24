@@ -17,6 +17,7 @@ category: Administration
 * docs: list supported languages in documentation
 * fix: fix encoding for French translation
 * docs: improve supported languages page
+* feat: ensure compatibility with Jira 9.13.0, 9.12.2, 9.4.15
 
 ### Older versions
 
