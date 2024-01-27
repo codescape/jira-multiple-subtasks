@@ -19,6 +19,7 @@ category: Administration
 * docs: improve supported languages page
 * feat: ensure compatibility with Jira 9.13.0, 9.12.2, 9.4.15
 * chore: adjust dependency versions to versions defined by Jira 9.12.1
+* chore: use jira-project to define all library versions
 
 ### Older versions
 
