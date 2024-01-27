@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [24.01.0] - 2024-01-27
+
+**Multiple Subtasks speaks 28 languages**
+
 * feat: ensure compatibility with Jira 9.12.1, 9.4.14
 * docs: move changelog for 23.x releases into archive
 * feat: add translations into 27 additional languages
@@ -28,4 +34,5 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/23.12.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/24.01.0...HEAD
+[24.01.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.12.0...24.01.0
