@@ -141,7 +141,7 @@ public class ProjectSubtaskTemplatesAction extends JiraWebActionSupport {
      * Returns a list of all existing subtask templates for the current project.
      */
     public List<ShowSubtaskTemplate> getProjectTemplates() {
-        return subtaskTemplateService.getProjectTemplates(projectManager.getProjectByCurrentKey(projectKey).getId())
+        return subtaskTemplateService.getProjectTemplates(projectManager.getProjectByCurrentKey(projectKey).getId(), false)
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());

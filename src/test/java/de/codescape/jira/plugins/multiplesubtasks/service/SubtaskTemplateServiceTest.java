@@ -3,6 +3,7 @@ package de.codescape.jira.plugins.multiplesubtasks.service;
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.jira.user.ApplicationUser;
 import de.codescape.jira.plugins.multiplesubtasks.MultipleSubtasksDatabaseUpdater;
+import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskShare;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SubtaskTemplateType;
 import net.java.ao.EntityManager;
@@ -96,7 +97,7 @@ public class SubtaskTemplateServiceTest {
         when(anotherUser.getId()).thenReturn(ANOTHER_USER);
         subtaskTemplateService.saveUserTemplate(ANOTHER_USER, null, "another template", "- task");
 
-        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(CURRENT_USER);
+        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(CURRENT_USER, false);
         assertThat(userTemplates.size(), is(equalTo(3)));
         assertThat(userTemplates.stream().map(SubtaskTemplate::getName).collect(Collectors.toList()),
             hasItems("first template", "second template", "third template"));
@@ -105,8 +106,25 @@ public class SubtaskTemplateServiceTest {
     @Test
     public void getUserTemplatesReturnsEmptyListForUserWithoutTemplates() {
         when(currentUser.getId()).thenReturn(CURRENT_USER);
-        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(CURRENT_USER);
+        List<SubtaskTemplate> userTemplates = subtaskTemplateService.getUserTemplates(CURRENT_USER, false);
         assertThat(userTemplates, is(empty()));
+    }
+
+    @Test
+    public void getUserTemplatesReturnsSharedTemplatesIfRequested() {
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        when(anotherUser.getId()).thenReturn(ANOTHER_USER);
+
+        SubtaskTemplate sharedTemplate = subtaskTemplateService.saveUserTemplate(ANOTHER_USER, null, "shared template", "- task");
+        subtaskTemplateService.shareUserTemplate(sharedTemplate, currentUser);
+        subtaskTemplateService.saveUserTemplate(ANOTHER_USER, null, "private template", "- task");
+
+        List<SubtaskTemplate> userTemplatesWithoutShares = subtaskTemplateService.getUserTemplates(CURRENT_USER, false);
+        assertThat(userTemplatesWithoutShares, is(empty()));
+
+        List<SubtaskTemplate> userTemplatesWithShares = subtaskTemplateService.getUserTemplates(CURRENT_USER, true);
+        assertThat(userTemplatesWithShares.size(), is(equalTo(1)));
+        assertThat(userTemplatesWithShares.stream().map(SubtaskTemplate::getName).collect(Collectors.toList()), hasItem("shared template"));
     }
 
     /* tests for deleteUserTemplate */
@@ -136,6 +154,47 @@ public class SubtaskTemplateServiceTest {
 
         SubtaskTemplate[] subtaskTemplates = activeObjects.find(SubtaskTemplate.class);
         assertThat(subtaskTemplates.length, is(equalTo(1)));
+    }
+
+    /* tests for shareUserTemplate */
+
+    @Test
+    public void shareUserTemplateSharesTheGivenTemplateWithAnotherUser() {
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        when(anotherUser.getId()).thenReturn(ANOTHER_USER);
+
+        SubtaskTemplate subtaskTemplate = subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "template", "- task");
+        subtaskTemplateService.shareUserTemplate(subtaskTemplate, anotherUser);
+
+        SubtaskShare[] subtaskShares = activeObjects.find(SubtaskShare.class);
+        assertThat(subtaskShares.length, is(equalTo(1)));
+        assertThat(subtaskShares[0].getTemplate(), is(equalTo(subtaskTemplate)));
+        assertThat(subtaskShares[0].getUserId(), is(equalTo(ANOTHER_USER)));
+    }
+
+    @Test
+    public void shareUserTemplateSharesTheGivenTemplateWithAnotherUserOnlyOnce() {
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        when(anotherUser.getId()).thenReturn(ANOTHER_USER);
+
+        SubtaskTemplate subtaskTemplate = subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "template", "- task");
+        subtaskTemplateService.shareUserTemplate(subtaskTemplate, anotherUser);
+        subtaskTemplateService.shareUserTemplate(subtaskTemplate, anotherUser);
+
+        SubtaskShare[] subtaskShares = activeObjects.find(SubtaskShare.class);
+        assertThat(subtaskShares.length, is(equalTo(1)));
+    }
+
+    @Test
+    public void shareUserTemplateSharesTheGivenTemplateNeverWithTheOwner() {
+        when(currentUser.getId()).thenReturn(CURRENT_USER);
+        when(anotherUser.getId()).thenReturn(ANOTHER_USER);
+
+        SubtaskTemplate subtaskTemplate = subtaskTemplateService.saveUserTemplate(CURRENT_USER, null, "template", "- task");
+        subtaskTemplateService.shareUserTemplate(subtaskTemplate, currentUser);
+
+        SubtaskShare[] subtaskShares = activeObjects.find(SubtaskShare.class);
+        assertThat(subtaskShares.length, is(equalTo(0)));
     }
 
     /* helper methods */

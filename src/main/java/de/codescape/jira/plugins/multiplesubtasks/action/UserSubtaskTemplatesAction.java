@@ -113,7 +113,7 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
      * Returns a list of all existing user templates for the currently logged-in user.
      */
     public List<ShowSubtaskTemplate> getUserTemplates() {
-        return subtaskTemplateService.getUserTemplates(currentUserId())
+        return subtaskTemplateService.getUserTemplates(currentUserId(), false)
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());

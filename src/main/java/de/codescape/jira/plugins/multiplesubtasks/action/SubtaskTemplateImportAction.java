@@ -183,7 +183,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
         AtomicLong counter = new AtomicLong();
         log.info("Extracting templates for project '" + project.getKey() + "'");
         List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForProject, true);
-        List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getProjectTemplates(project.getId());
+        List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getProjectTemplates(project.getId(), false);
         templates.forEach(template -> {
             log.info("Importing template for project '" + project.getKey() + "' with template name '" + template.getName() + "'");
             if (existingTemplates.stream().noneMatch(existingTemplate ->
@@ -205,7 +205,7 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
         AtomicLong counter = new AtomicLong();
         log.info("Extracting templates for user '" + applicationUser.getUsername() + "'");
         List<ShowSubtaskTemplate> templates = extractQuickSubtasksTemplatesFromXml(templatesForUser, false);
-        List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getUserTemplates(applicationUser.getId());
+        List<SubtaskTemplate> existingTemplates = subtaskTemplateService.getUserTemplates(applicationUser.getId(), false);
         templates.forEach(template -> {
             log.info("Importing template for user '" + applicationUser.getUsername() + "' with template name '" + template.getName() + "'");
             if (existingTemplates.stream().noneMatch(existingTemplate ->

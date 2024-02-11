@@ -1,6 +1,5 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
-import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -9,10 +8,8 @@ import com.atlassian.jira.security.request.SupportedMethods;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
-import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksLicenseService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
@@ -147,7 +144,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
      * Returns a list of all existing user templates for the currently logged-in user.
      */
     public List<ShowSubtaskTemplate> getUserTemplates() {
-        return subtaskTemplateService.getUserTemplates(jiraAuthenticationContext.getLoggedInUser().getId())
+        return subtaskTemplateService.getUserTemplates(jiraAuthenticationContext.getLoggedInUser().getId(), true)
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());
@@ -161,7 +158,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
         if (project == null) {
             return Collections.emptyList();
         }
-        return subtaskTemplateService.getProjectTemplates(project.getId())
+        return subtaskTemplateService.getProjectTemplates(project.getId(), true)
             .stream()
             .map(ShowSubtaskTemplate::new)
             .collect(Collectors.toList());

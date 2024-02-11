@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* feat: allow to share templates with other users and projects (backend)
 
 ### [24.01.0] - 2024-01-27
 
