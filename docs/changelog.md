@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* fix: always open documentation in subtasks dialog in new window
 
 ### [24.01.0] - 2024-01-27
 

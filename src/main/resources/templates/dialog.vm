@@ -100,7 +100,7 @@
             <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.submit')" />
             <a href="#" rel="refreshIssue" class="aui-button aui-button-link">$i18n.getText('multiplesubtasks.dialog.buttons.cancel')</a>
         </div>
-        <div class="aui-dialog2-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="blank">$i18n.getText('multiplesubtasks.dialog.documentation')</a></div>
+        <div class="aui-dialog2-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="_blank">$i18n.getText('multiplesubtasks.dialog.documentation')</a></div>
     </footer>
 </form>
 
