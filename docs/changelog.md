@@ -13,6 +13,7 @@ category: Administration
 
 * fix: always open documentation in subtasks dialog in new window
 * feat: ensure compatibility with Jira 9.15.0, 9.12.5, 9.4.18
+* feat: documentation link in dialog footer is always visible (CASUP-110)
 
 ### [24.01.0] - 2024-01-27
 
