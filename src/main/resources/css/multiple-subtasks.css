@@ -1,15 +1,16 @@
+/* column widths on template pages */
 .subtask-templates .template-counter {
-    min-width: 25px;
-}
+    min-width: 25px; }
 
 .subtask-templates .template-name {
-    min-width: 200px;
-}
+    min-width: 200px; }
 
 .subtask-templates .template-code pre {
-    white-space: pre-wrap;
-}
+    white-space: pre-wrap; }
 
 .subtask-templates .template-actions {
-    min-width: 100px;
-}
+    min-width: 100px; }
+
+/* text in dialog footer is always visible (CASUP-110) */
+#multiple-subtasks-open-dialog-dialog #subtaskForm .aui-dialog2-footer-hint {
+    overflow: visible !important; }

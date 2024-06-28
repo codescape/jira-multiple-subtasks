@@ -43,7 +43,7 @@
             </tbody>
         </table>
     </div>
-  <footer class="aui-dialog2-footer">
+    <footer class="aui-dialog2-footer">
         <div class="aui-dialog2-footer-actions">
             <input id="subtaskAction" type="hidden" name="action" value="reset">
             <input class="aui-button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.reset')" />
@@ -94,7 +94,7 @@
             <textarea id="subtaskInputString" name="inputString" class="textarea long-field" rows="12" required="required" placeholder="$i18n.getText('multiplesubtasks.dialog.input.placeholder')">${inputString}</textarea>
         </div>
     </div>
-  <footer class="aui-dialog2-footer">
+    <footer class="aui-dialog2-footer">
         <div class="aui-dialog2-footer-actions">
             <input id="subtaskAction" type="hidden" name="action" value="create">
             <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.submit')" />
