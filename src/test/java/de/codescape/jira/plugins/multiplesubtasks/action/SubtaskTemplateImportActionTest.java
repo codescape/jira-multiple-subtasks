@@ -1,10 +1,13 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
+import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -254,6 +257,22 @@ public class SubtaskTemplateImportActionTest {
     public void shouldAcceptColonAndQuestionMarkInSummary() {
         assertTransformation("- a test: will it work?",
             "- a test: will it work?\n");
+    }
+
+    /* fix: do not fail on uncommon characters */
+
+    @Test
+    public void shouldAcceptUncommonLetters() {
+        String input = "<list>\n" +
+            "      <subtaskTemplate>\n" +
+            "        <text>- Serve a drink in the Café / assignee:&quot;bartender&quot;</text>\n" +
+            "        <title>drinking</title>\n" +
+            "        <id>84634E96-7E97-4490-903E-6C159E3CE590</id>\n" +
+            "      </subtaskTemplate>\n" +
+            "    </list>";
+        List<ShowSubtaskTemplate> templates = subtaskTemplateImportAction.extractQuickSubtasksTemplatesFromXml(input, true);
+        assertThat(templates.size(), is(equalTo(1)));
+        assertThat(templates.get(0).getTemplate(), containsString("Serve a drink in the Café"));
     }
 
     /* helper methods */

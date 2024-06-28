@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,7 +28,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -223,11 +226,11 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
     /**
      * Returns {@link ShowSubtaskTemplate} objects from the given XML.
      */
-    private List<ShowSubtaskTemplate> extractQuickSubtasksTemplatesFromXml(String templatesXml, boolean isProjectTemplate) {
+    List<ShowSubtaskTemplate> extractQuickSubtasksTemplatesFromXml(String templatesXml, boolean isProjectTemplate) {
         List<ShowSubtaskTemplate> templates = new ArrayList<>();
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = builder.parse(new ByteArrayInputStream(templatesXml.getBytes()));
+            Document doc = builder.parse(new InputSource(new InputStreamReader(new ByteArrayInputStream(templatesXml.getBytes()))));
             doc.getDocumentElement().normalize();
 
             // templates for users and projects are saved with different element names

@@ -13,6 +13,7 @@ category: Administration
 
 * fix: always open documentation in subtasks dialog in new window
 * feat: ensure compatibility with Jira 9.15.0, 9.12.5, 9.4.18
+* fix: robustness of template import for non-UTF8 characters 
 
 ### [24.01.0] - 2024-01-27
 
