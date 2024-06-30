@@ -11,9 +11,15 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [24.06.0] - 2024-06-30
+
+**Better import for Quick Subtasks for Jira templates**
+
 * fix: always open documentation in subtasks dialog in new window
 * feat: ensure compatibility with Jira 9.15.0, 9.12.5, 9.4.18
-* feat: documentation link in dialog footer is always visible (CASUP-110)
+* feat: documentation link in dialog footer is always visible
 * feat: ensure compatibility with Jira 9.16.0, 9.12.9, 9.4.22
 * fix: robustness of template import for non-UTF8 characters
 * feat: ensure compatibility with Jira 9.17.0
@@ -40,5 +46,6 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/24.01.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/24.06.0...HEAD
+[24.06.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.01.0...24.06.0
 [24.01.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.12.0...24.01.0
