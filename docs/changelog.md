@@ -17,6 +17,7 @@ category: Administration
 * feat: ensure compatibility with Jira 9.16.0, 9.12.9, 9.4.22
 * fix: robustness of template import for non-UTF8 characters
 * feat: ensure compatibility with Jira 9.17.0
+* refactor: optimize imports for import action
 
 ### [24.01.0] - 2024-01-27
 
