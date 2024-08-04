@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * feat: introduce first version of REST API for subtasks creation
+* docs: provide documentation for REST API
 
 ### [24.06.0] - 2024-06-30
 

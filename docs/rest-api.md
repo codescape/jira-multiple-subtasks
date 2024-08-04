@@ -1,13 +1,13 @@
 ---
 layout: default
-title: Rest API
+title: REST API
 category: User Guide
 ---
 
-This page explains how to use the Rest API to create subtasks provided by Multiple Subtasks for Jira.
+This page explains how to use the REST API to create subtasks provided by Multiple Subtasks for Jira.
 
 Please note:
-The Rest API requires a minimum version `24.08.0` of Multiple Subtasks for Jira.
+The REST API requires a minimum version `24.08.0` of Multiple Subtasks for Jira.
 Please make sure you have updates Multiple Subtasks for Jira to the latest version for full support of all endpoints.
 
 * Table of Contents
