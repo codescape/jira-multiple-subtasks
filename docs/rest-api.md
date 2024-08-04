@@ -1,0 +1,55 @@
+---
+layout: default
+title: Rest API
+category: User Guide
+---
+
+This page explains how to use the Rest API to create subtasks provided by Multiple Subtasks for Jira.
+
+Please note:
+The Rest API requires a minimum version `24.08.0` of Multiple Subtasks for Jira.
+Please make sure you have updates Multiple Subtasks for Jira to the latest version for full support of all endpoints.
+
+* Table of Contents
+{:toc}
+
+### Create Subtasks `POST /subtasks/{issueKey}`
+
+    Request URL: /rest/multiple-subtasks/1.0/subtasks/{issueKey}
+    Request Method: POST
+    Content-Type: text/plain
+    Accept: application/json, text/plain
+
+Create the subtasks from the payload for the given `issueKey`.
+
+#### Status Codes
+
+| Status | Reason       | Payload                                                                                                    |
+|--------|--------------|------------------------------------------------------------------------------------------------------------|
+| 200    | Success      | The request was successfull and returns a list of created subtasks and all warnings in `application/json`. |
+| 400    | Bad Request  | The request failed and returns an error message in `text/plain`.                                           |
+| 401    | Unauthorized | -                                                                                                          |
+
+#### Example Request
+
+    - Hallo World
+      fixVersion: unknown
+    - Hallo Moon
+      label: rest-api-demo
+
+#### Example Response
+
+    [
+      {
+        "issueKey": "YEAH-43",
+        "issueSummary": "Hallo World",
+        "warnings": [
+          "Invalid fixVersion: unknown"
+        ]
+      },
+      {
+        "issueKey": "YEAH-44",
+        "issueSummary": "Hallo Moon",
+        "warnings": []
+      }
+    ]
