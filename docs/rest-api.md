@@ -30,14 +30,16 @@ Create the subtasks from the payload for the given `issueKey`.
 | 400    | Bad Request  | The request failed and returns an error message in `text/plain`.                                           |
 | 401    | Unauthorized | -                                                                                                          |
 
-#### Example Request
+#### Example 
+
+This is an example for the payload in the request in order to create two subtasks:
 
     - Hallo World
       fixVersion: unknown
     - Hallo Moon
       label: rest-api-demo
 
-#### Example Response
+The plugin successfully creates two subtasks and responds with the following JSON:
 
     [
       {

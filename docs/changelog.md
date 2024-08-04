@@ -14,6 +14,7 @@ category: Administration
 * feat: introduce first version of REST API for subtasks creation
 * docs: provide documentation for REST API
 * docs: improve REST API documentation
+* docs: provide example payload in documentation
 
 ### [24.06.0] - 2024-06-30
 
