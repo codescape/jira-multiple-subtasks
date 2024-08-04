@@ -53,3 +53,8 @@ Create the subtasks from the payload for the given `issueKey`.
         "warnings": []
       }
     ]
+
+### Missing features?
+
+Do you miss any features on the REST API?
+Feel free to [get in contact](/support) with us in order to find a solution!
