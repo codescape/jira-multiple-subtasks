@@ -24,11 +24,11 @@ Create the subtasks from the payload for the given `issueKey`.
 
 #### Status Codes
 
-| Status | Reason       | Payload                                                                                                    |
-|--------|--------------|------------------------------------------------------------------------------------------------------------|
-| 200    | Success      | The request was successfull and returns a list of created subtasks and all warnings in `application/json`. |
-| 400    | Bad Request  | The request failed and returns an error message in `text/plain`.                                           |
-| 401    | Unauthorized | -                                                                                                          |
+| Code | Status       | Reason and Payload                                                                                        |
+|------|--------------|-----------------------------------------------------------------------------------------------------------|
+| 200  | Success      | The request was successful and returns a list of created subtasks and all warnings in `application/json`. |
+| 400  | Bad Request  | The request failed and returns an error message in `text/plain`.                                          |
+| 401  | Unauthorized | The request failed because of missing authentication or authorization.                                    |
 
 #### Example 
 
