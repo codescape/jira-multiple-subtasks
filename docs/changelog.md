@@ -15,6 +15,7 @@ category: Administration
 * docs: provide documentation for REST API
 * docs: improve REST API documentation
 * docs: provide example payload in documentation
+* docs: add documentation for authentication
 
 ### [24.06.0] - 2024-06-30
 
