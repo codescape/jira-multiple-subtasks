@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [24.08.0] - 2024-08-20
+
+**Introducing a new REST API**
+
 * feat: introduce first version of REST API for subtasks creation
 * docs: provide documentation for REST API
 * docs: improve REST API documentation
@@ -50,6 +56,7 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/24.06.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/24.08.0...HEAD
+[24.08.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.06.0...24.08.0
 [24.06.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.01.0...24.06.0
 [24.01.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.12.0...24.01.0
