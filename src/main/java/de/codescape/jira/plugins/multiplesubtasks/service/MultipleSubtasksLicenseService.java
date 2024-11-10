@@ -6,8 +6,9 @@ import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.upm.api.license.PluginLicenseManager;
 import com.atlassian.upm.api.license.entity.PluginLicense;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * License service to check for the existence of a valid license to use the plugin.
@@ -20,7 +21,7 @@ public class MultipleSubtasksLicenseService {
     private final PluginLicenseManager pluginLicenseManager;
     private final PluginAccessor pluginAccessor;
 
-    @Autowired
+    @Inject
     public MultipleSubtasksLicenseService(@ComponentImport PluginLicenseManager pluginLicenseManager,
                                           @ComponentImport PluginAccessor pluginAccessor) {
         this.pluginLicenseManager = pluginLicenseManager;

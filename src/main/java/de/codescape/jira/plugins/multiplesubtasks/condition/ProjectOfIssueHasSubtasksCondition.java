@@ -5,14 +5,12 @@ import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.plugin.webfragment.conditions.AbstractIssueWebCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.user.ApplicationUser;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 /**
  * This condition ensures that the issue has a project with subtask issue types available.
  */
-@Component
 public class ProjectOfIssueHasSubtasksCondition extends AbstractIssueWebCondition {
 
     @Override

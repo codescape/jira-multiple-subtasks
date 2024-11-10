@@ -35,9 +35,9 @@ import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -94,7 +94,7 @@ public class SubtasksCreationService {
     private final EstimateStringService estimateStringService;
     private final DateTimeStringService dateTimeStringService;
 
-    @Autowired
+    @Inject
     public SubtasksCreationService(@ComponentImport IssueService issueService,
                                    @ComponentImport IssueFactory issueFactory,
                                    @ComponentImport IssueManager issueManager,

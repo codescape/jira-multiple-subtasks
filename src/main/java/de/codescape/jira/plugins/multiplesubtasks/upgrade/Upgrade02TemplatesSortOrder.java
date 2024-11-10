@@ -4,10 +4,10 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 import de.codescape.jira.plugins.multiplesubtasks.model.TemplateSortOrder;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 /**
  * Initialize configuration with default settings for templates sort order.
@@ -20,7 +20,7 @@ public class Upgrade02TemplatesSortOrder extends AbstractUpgradeTask {
 
     private final MultipleSubtasksConfigurationService multipleSubtasksConfigurationService;
 
-    @Autowired
+    @Inject
     public Upgrade02TemplatesSortOrder(MultipleSubtasksConfigurationService multipleSubtasksConfigurationService) {
         this.multipleSubtasksConfigurationService = multipleSubtasksConfigurationService;
     }

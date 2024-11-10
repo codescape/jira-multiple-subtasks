@@ -9,20 +9,19 @@ import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 /**
  * This condition ensures that the current user has either global administration or system administration rights or
  * has project administration rights for the current project explicitly.
  */
-@Component
 public class ProjectAdministrationCondition extends AbstractWebCondition {
 
     private final GlobalPermissionManager globalPermissionManager;
     private final PermissionManager permissionManager;
 
-    @Autowired
+    @Inject
     public ProjectAdministrationCondition(@ComponentImport GlobalPermissionManager globalPermissionManager,
                                           @ComponentImport PermissionManager permissionManager) {
         this.globalPermissionManager = globalPermissionManager;
@@ -42,7 +41,7 @@ public class ProjectAdministrationCondition extends AbstractWebCondition {
      * @param project         project
      * @return <code>true</code> if user has permission to administrate the project, otherwise <code>false</code>
      */
-    public boolean userIsAllowedToAdministrateProject(ApplicationUser applicationUser, Project project) {
+    private boolean userIsAllowedToAdministrateProject(ApplicationUser applicationUser, Project project) {
         return globalPermissionManager.hasPermission(GlobalPermissionKey.SYSTEM_ADMIN, applicationUser) ||
             globalPermissionManager.hasPermission(GlobalPermissionKey.ADMINISTER, applicationUser) ||
             permissionManager.hasPermission(ProjectPermissions.ADMINISTER_PROJECTS, project, applicationUser);

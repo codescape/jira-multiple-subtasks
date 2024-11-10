@@ -6,9 +6,9 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class MultipleSubtasksConfigurationService {
 
     private final ActiveObjects activeObjects;
 
-    @Autowired
+    @Inject
     public MultipleSubtasksConfigurationService(@ComponentImport ActiveObjects activeObjects) {
         this.activeObjects = activeObjects;
     }

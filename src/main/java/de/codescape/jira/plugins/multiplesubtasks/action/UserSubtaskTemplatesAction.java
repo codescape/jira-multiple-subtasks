@@ -12,8 +12,8 @@ import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,7 +56,7 @@ public class UserSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private ShowSubtaskTemplate editTemplate;
 
-    @Autowired
+    @Inject
     public UserSubtaskTemplatesAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                       SubtaskTemplateService subtaskTemplateService,
                                       SubtasksSyntaxService subtasksSyntaxService,

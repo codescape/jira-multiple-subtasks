@@ -12,6 +12,16 @@ category: Administration
 ### [Unreleased]
 
 * feat: ensure compatibility with Jira 9.17.2, 9.12.12, 9.4.25
+* feat: Multiple Subtasks supports Jira 10
+* chore: switch to new Jackson library for REST
+* chore: migration to REST 2 scheme
+* chore: add Velocity allow-list for allowed methods
+* chore: use @Inject instead of @Autowired
+* chore: compile against Java 17
+* chore: remove @Component from conditions
+* chore: add docker configuration
+* docs: update compatibility matrix
+* chore: change dialog behaviour to work with Jira 10
 
 ### [24.08.0] - 2024-08-20
 

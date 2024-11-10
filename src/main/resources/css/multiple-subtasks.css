@@ -10,7 +10,3 @@
 
 .subtask-templates .template-actions {
     min-width: 100px; }
-
-/* text in dialog footer is always visible (CASUP-110) */
-#multiple-subtasks-open-dialog-dialog #subtaskForm .aui-dialog2-footer-hint {
-    overflow: visible !important; }

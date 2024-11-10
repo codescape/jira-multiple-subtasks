@@ -1,8 +1,8 @@
 package de.codescape.jira.plugins.multiplesubtasks.rest.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * JSON entity to transport the configuration.

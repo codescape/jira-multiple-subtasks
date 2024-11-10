@@ -1,7 +1,5 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
-import com.atlassian.jira.project.Project;
-import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.request.RequestMethod;
 import com.atlassian.jira.security.request.SupportedMethods;
@@ -11,11 +9,10 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
-import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,10 +54,10 @@ public class GlobalSubtaskTemplatesAction extends JiraWebActionSupport {
 
     private ShowSubtaskTemplate editTemplate;
 
-    @Autowired
+    @Inject
     public GlobalSubtaskTemplatesAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
-                                         SubtaskTemplateService subtaskTemplateService,
-                                         SubtasksSyntaxService subtasksSyntaxService) {
+                                        SubtaskTemplateService subtaskTemplateService,
+                                        SubtasksSyntaxService subtasksSyntaxService) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.subtaskTemplateService = subtaskTemplateService;
         this.subtasksSyntaxService = subtasksSyntaxService;

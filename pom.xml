@@ -28,19 +28,17 @@
 
     <properties>
         <!-- Java version -->
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Jira versions -->
-        <jira.version>9.17.2</jira.version>
-        <jira.version.latest>${jira.version}</jira.version.latest>
-        <jira.version.enterprise>9.12.12</jira.version.enterprise>
-        <jira.version.oldest>9.4.25</jira.version.oldest>
+        <jira.version>10.1.1</jira.version>
 
         <!-- Plugin versions (keep in sync with jira-project) -->
-        <amps.version>8.2.3</amps.version>
+        <amps.version>9.1.1</amps.version>
         <platform.spring-scanner.version>3.0.3</platform.spring-scanner.version>
+        <platform7.version>7.0.14</platform7.version>
 
         <!-- Source encoding -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -58,8 +56,29 @@
             <!-- import all library and plugin versions from jira-project -->
             <dependency>
                 <groupId>com.atlassian.jira</groupId>
-                <artifactId>jira-project</artifactId>
+                <artifactId>jira-api-bom</artifactId>
                 <version>${jira.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-bundled-plugins-bom</artifactId>
+                <version>${jira.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-internal-bom</artifactId>
+                <version>${jira.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.platform.dependencies</groupId>
+                <artifactId>platform-test-resources</artifactId>
+                <version>${platform7.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -104,11 +123,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
@@ -116,6 +130,28 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- rest -->
+        <dependency>
+            <groupId>com.atlassian.plugins.rest</groupId>
+            <artifactId>atlassian-rest-v2-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -151,8 +187,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
+            <version>2.7.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -187,90 +224,45 @@
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
                 <configuration>
+                    <skipRestDocGeneration>true</skipRestDocGeneration>
                     <allowGoogleTracking>false</allowGoogleTracking>
+
+                    <!-- QuickReload plugin allows reloading the plugin during development -->
+                    <!-- see https://bitbucket.org/atlassianlabs/quickreload -->
                     <enableQuickReload>true</enableQuickReload>
-                    <pluginArtifacts>
-                        <pluginArtifact>
-                            <groupId>com.atlassian.labs.plugins</groupId>
-                            <artifactId>quickreload</artifactId>
-                        </pluginArtifact>
-                    </pluginArtifacts>
+
+                    <!-- OSGi instructions for Spring Scanner -->
                     <!-- see https://bitbucket.org/atlassian/atlassian-spring-scanner -->
                     <instructions>
                         <Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
                         <Export-Package>
-                            de.codescape.jira.plugins.multiplesubtasks,
+                            de.codescape.jira.plugins.multiplesubtasks.api,
                         </Export-Package>
                         <Import-Package>
-                            com.atlassian.plugin.web,
-                            com.atlassian.plugin.web.baseconditions,
-                            com.atlassian.jira.plugin.webfragment.conditions,
+                            com.atlassian.jira.plugin.webfragment.conditions;resolution:=optional,
                             com.atlassian.jira.security.request;resolution:=optional,
                             com.atlassian.jira.security.xsrf;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
                         <Spring-Context>*</Spring-Context>
                     </instructions>
-                    <!-- jira-latest is used by default and can be overridden with the parameter testGroup <name> -->
-                    <product>jira-latest</product>
+
+                    <!-- Application configuration -->
+                    <applications>
+                        <application>
+                            <applicationKey>jira-software</applicationKey>
+                            <version>${jira.version}</version>
+                        </application>
+                    </applications>
+
+                    <!-- Product configurations -->
                     <products>
                         <product>
                             <id>jira</id>
-                            <instanceId>jira-latest</instanceId>
-                            <version>${jira.version.latest}</version>
-                            <productDataVersion>${jira.version.latest}</productDataVersion>
-                            <applications>
-                                <application>
-                                    <applicationKey>jira-software</applicationKey>
-                                    <version>${jira.version.latest}</version>
-                                </application>
-                            </applications>
-                        </product>
-                        <product>
-                            <id>jira</id>
-                            <instanceId>jira-enterprise</instanceId>
-                            <version>${jira.version.enterprise}</version>
-                            <productDataVersion>${jira.version.enterprise}</productDataVersion>
-                            <applications>
-                                <application>
-                                    <applicationKey>jira-software</applicationKey>
-                                    <version>${jira.version.enterprise}</version>
-                                </application>
-                            </applications>
-                        </product>
-                        <product>
-                            <id>jira</id>
-                            <instanceId>jira-oldest</instanceId>
-                            <version>${jira.version.oldest}</version>
-                            <productDataVersion>${jira.version.oldest}</productDataVersion>
-                            <applications>
-                                <application>
-                                    <applicationKey>jira-software</applicationKey>
-                                    <version>${jira.version.oldest}</version>
-                                </application>
-                            </applications>
+                            <version>${jira.version}</version>
+                            <productDataVersion>${jira.version}</productDataVersion>
                         </product>
                     </products>
-                    <testGroups>
-                        <testGroup>
-                            <id>jira-latest</id>
-                            <productIds>
-                                <productId>jira-latest</productId>
-                            </productIds>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-enterprise</id>
-                            <productIds>
-                                <productId>jira-enterprise</productId>
-                            </productIds>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-oldest</id>
-                            <productIds>
-                                <productId>jira-oldest</productId>
-                            </productIds>
-                        </testGroup>
-                    </testGroups>
                 </configuration>
             </plugin>
             <plugin>
@@ -288,6 +280,24 @@
                 <configuration>
                     <verbose>false</verbose>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar" toDir="${project.build.directory}/quickreload"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

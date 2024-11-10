@@ -8,8 +8,8 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.rest.entities.CreatedSubtaskEntity;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -29,7 +29,7 @@ public class SubtasksResource {
     private final PermissionManager permissionManager;
     private final SubtasksCreationService subtasksCreationService;
 
-    @Autowired
+    @Inject
     public SubtasksResource(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                             @ComponentImport IssueManager issueManager,
                             @ComponentImport PermissionManager permissionManager,

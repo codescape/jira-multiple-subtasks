@@ -1,6 +1,5 @@
 package de.codescape.jira.plugins.multiplesubtasks.action;
 
-import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -9,15 +8,13 @@ import com.atlassian.jira.security.request.SupportedMethods;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
-import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksLicenseService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,7 +61,7 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
     private String inputString = EMPTY_STRING;
     private List<CreatedSubtask> createdSubTasks;
 
-    @Autowired
+    @Inject
     public MultipleSubtasksDialogAction(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                         @ComponentImport IssueManager issueManager,
                                         SubtasksCreationService subtasksCreationService,
@@ -139,8 +136,10 @@ public class MultipleSubtasksDialogAction extends JiraWebActionSupport {
                 case Actions.CLOSE:
                     return returnComplete();
             }
+            return SUCCESS;
+        } else {
+            return ERROR;
         }
-        return SUCCESS;
     }
 
     /**

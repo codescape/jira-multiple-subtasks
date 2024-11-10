@@ -14,52 +14,51 @@
 
 #if ($createdSubTasks && !$createdSubTasks.isEmpty())
 
-<form id="subtaskForm" class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
-    <input type="hidden" name="issueKey" value="${issueKey}">
-    <input type="hidden" name="atl_token" value="$atl_token">
+    <form id="multipleSubtasksForm" class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
+        <input type="hidden" name="issueKey" value="${issueKey}">
+        <input type="hidden" name="atl_token" value="$atl_token">
+        <input id="subtaskAction" type="hidden" name="action" value="reset">
+        <div class="aui-message aui-message-confirmation multiple">
+            <p class="title">$i18n.getText("multiplesubtasks.dialog.success")</p>
+        </div>
 
-    <div class="aui-message aui-message-confirmation">
-        <p class="title">$i18n.getText("multiplesubtasks.dialog.success")</p>
-    </div>
-
-    <div class="content-body" style="max-height:512px; overflow:auto">
-        <table width="100%" class="aui" id="issuetable">
-            <tbody>
-                #set($counter = 1)
-                #foreach($subTask in $createdSubTasks)
-                <tr>
-                    <td class="stsequence">$counter.</td>
-                    <td class="issuetype"><img src="$subTask.issue.issueType.completeIconUrl"></td>
-                    <td class="issuekey"><a href="$baseurl/browse/$subTask.issue.key">$subTask.issue.key</a></td>
-                    <td class="stsummary"><a href="$baseurl/browse/$subTask.issue.key">$subTask.issue.summary</a></td>
-                    <td class="issue_actions">
-                        #if($subTask.warningsMessage && !$subTask.warningsMessage.isEmpty())
-                            <span class="aui-icon aui-icon-small aui-iconfont-warning subtask-warnings-tooltip tooltip-inner" title="$i18n.getText('multiplesubtasks.dialog.subtask.warnings') $subTask.warningsMessage"></span>
-                        #end
-                    </td>
-                </tr>
-                #set($counter = $counter + 1)
-                #end
-            </tbody>
-        </table>
-    </div>
+        <div class="subtasks-body" style="max-height:512px; overflow:auto; margin: 10px 0">
+            <table width="100%" class="aui" id="issuetable">
+                <tbody>
+                    #set($counter = 1)
+                    #foreach($subTask in $createdSubTasks)
+                    <tr>
+                        <td class="stsequence">$counter.</td>
+                        <td class="issuetype"><img src="$subTask.issue.issueType.completeIconUrl"></td>
+                        <td class="issuekey"><a href="$baseurl/browse/$subTask.issue.key">$subTask.issue.key</a></td>
+                        <td class="stsummary"><a href="$baseurl/browse/$subTask.issue.key">$subTask.issue.summary</a></td>
+                        <td class="issue_actions">
+                            #if($subTask.warningsMessage && !$subTask.warningsMessage.isEmpty())
+                                <span class="aui-icon aui-icon-small aui-iconfont-warning subtask-warnings-tooltip tooltip-inner" title="$i18n.getText('multiplesubtasks.dialog.subtask.warnings') $subTask.warningsMessage"></span>
+                            #end
+                        </td>
+                    </tr>
+                    #set($counter = $counter + 1)
+                    #end
+                </tbody>
+            </table>
+        </div>
+    </form>
     <footer class="aui-dialog2-footer">
         <div class="aui-dialog2-footer-actions">
-            <input id="subtaskAction" type="hidden" name="action" value="reset">
-            <input class="aui-button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.reset')" />
-            <a href="#" rel="refreshIssue" class="aui-button aui-button-primary">$i18n.getText('multiplesubtasks.dialog.buttons.close')</a>
+            <input id="multipleSubtasksReset" class="aui-button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.reset')" />
+            <a id="multipleSubtasksCancel" href="#" rel="refreshIssue" class="aui-button aui-button-primary">$i18n.getText('multiplesubtasks.dialog.buttons.close')</a>
         </div>
     </footer>
-</form>
 
 #else
 
-<form id="subtaskForm" class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
-    <input type="hidden" name="issueKey" value="${issueKey}">
-    <input type="hidden" name="atl_token" value="$atl_token">
-    <div class="content-body">
+    <form id="multipleSubtasksForm" class="aui top-label" action="MultipleSubtasksDialog.jspa" method="post">
+        <input type="hidden" name="issueKey" value="${issueKey}">
+        <input type="hidden" name="atl_token" value="$atl_token">
+        <input id="subtaskAction" type="hidden" name="action" value="create">
         <div class="field-group">
-            <select id="subtaskTemplate" name="subtaskTemplate" class="select long-field">
+            <select id="subtaskTemplate" name="subtaskTemplate" class="select full-width-field">
                 <option>$i18n.getText("multiplesubtasks.dialog.templates.instruction")</option>
                 <optgroup label="$i18n.getText('multiplesubtasks.dialog.templates.user')">
                 #if(!$userTemplates.isEmpty())
@@ -91,18 +90,16 @@
             </select>
         </div>
         <div class="field-group">
-            <textarea id="subtaskInputString" name="inputString" class="textarea long-field" rows="12" required="required" placeholder="$i18n.getText('multiplesubtasks.dialog.input.placeholder')">${inputString}</textarea>
+            <textarea id="subtaskInputString" name="inputString" class="textarea full-width-field" rows="12" required="required" placeholder="$i18n.getText('multiplesubtasks.dialog.input.placeholder')" autofocus>${inputString}</textarea>
         </div>
-    </div>
+    </form>
     <footer class="aui-dialog2-footer">
         <div class="aui-dialog2-footer-actions">
-            <input id="subtaskAction" type="hidden" name="action" value="create">
-            <input class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.submit')" />
-            <a href="#" rel="refreshIssue" class="aui-button aui-button-link">$i18n.getText('multiplesubtasks.dialog.buttons.cancel')</a>
+            <input id="multipleSubtasksCreate" class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.submit')" />
+            <a id="multipleSubtasksCancel" href="#" rel="refreshIssue" class="aui-button aui-button-link">$i18n.getText('multiplesubtasks.dialog.buttons.cancel')</a>
         </div>
         <div class="aui-dialog2-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="_blank">$i18n.getText('multiplesubtasks.dialog.documentation')</a></div>
     </footer>
-</form>
 
 #end
 
@@ -113,14 +110,47 @@
             $('#subtaskInputString').val($('#subtaskTemplate option:selected').data('template'));
         });
 
-        // when clicking a button that closes the dialog send action close to refresh the page and display new subtasks
-        $('a[rel="refreshIssue"]').click(function(event) {
+        // cancel button submits the form correctly
+        $('#multipleSubtasksCancel').click(function(event) {
                event.preventDefault();
                $('#subtaskAction').val('close');
-               $('#subtaskForm').submit();
+               $('#multipleSubtasksForm').submit();
+
+               // workaround for growing footer
+               $('#multiple-subtasks-open-dialog-dialog .aui-dialog2-footer').remove();
         });
 
-        // initialize tooltips
+        // reset button submits the form correctly
+        $('#multipleSubtasksReset').click(function(event) {
+               event.preventDefault();
+               $('#subtaskAction').val('reset');
+               $('#multipleSubtasksForm').submit();
+
+               // workaround for growing footer
+               $('#multiple-subtasks-open-dialog-dialog .aui-dialog2-footer').remove();
+        });
+
+        // create button submits the form correctly
+        $('#multipleSubtasksCreate').click(function(event) {
+                event.preventDefault();
+                $('#subtaskAction').val('create');
+                $('#multipleSubtasksForm').submit();
+
+                // workaround for growing footer
+                $('#multiple-subtasks-open-dialog-dialog .aui-dialog2-footer').remove();
+        });
+
+        // initialize tooltips for warnings
         AJS.$(".subtask-warnings-tooltip").tooltip({html: true});
     });
 </script>
+
+<style>
+    /* text in dialog footer is always visible (CASUP-110) */
+    #multiple-subtasks-open-dialog-dialog #multipleSubtasksForm .aui-dialog2-footer-hint {
+        overflow: visible !important; }
+
+    /* remove margin above messages in our dialog */
+    #multiple-subtasks-open-dialog-dialog .aui-message {
+        margin: 0; }
+</style>

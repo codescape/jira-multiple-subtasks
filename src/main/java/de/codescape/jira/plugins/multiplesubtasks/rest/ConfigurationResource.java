@@ -8,8 +8,8 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig;
 import de.codescape.jira.plugins.multiplesubtasks.rest.entities.ConfigurationEntity;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -26,7 +26,7 @@ public class ConfigurationResource {
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final GlobalPermissionManager globalPermissionManager;
 
-    @Autowired
+    @Inject
     public ConfigurationResource(@ComponentImport JiraAuthenticationContext jiraAuthenticationContext,
                                  @ComponentImport GlobalPermissionManager globalPermissionManager,
                                  MultipleSubtasksConfigurationService multipleSubtasksConfigurationService) {

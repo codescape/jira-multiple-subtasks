@@ -8,8 +8,8 @@ import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class CreateSubtasksWorkflowFunction extends AbstractJiraFunctionProvider
 
     private final SubtasksCreationService subtasksCreationService;
 
-    @Autowired
+    @Inject
     public CreateSubtasksWorkflowFunction(SubtasksCreationService subtasksCreationService) {
         this.subtasksCreationService = subtasksCreationService;
     }
