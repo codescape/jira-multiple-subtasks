@@ -22,6 +22,7 @@ category: Administration
 * chore: add docker configuration
 * docs: update compatibility matrix
 * chore: change dialog behaviour to work with Jira 10
+* fix: improve css classes for jQuery selectors from board
 
 ### [24.08.0] - 2024-08-20
 

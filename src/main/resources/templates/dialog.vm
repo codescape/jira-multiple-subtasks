@@ -1,7 +1,7 @@
 <h2 class="aui-dialog2-header-main">$i18n.getText('multiplesubtasks.dialog.label')</h2>
 
 #if($action.hasAnyErrors())
-    <div class="aui-message aui-message-error">
+    <div class="aui-message aui-message-error multiple-subtasks-message">
         <p class="title">$i18n.getText("multiplesubtasks.error")</p>
         #foreach($error in $action.errorMessages)
             <p>$error</p>
@@ -18,7 +18,7 @@
         <input type="hidden" name="issueKey" value="${issueKey}">
         <input type="hidden" name="atl_token" value="$atl_token">
         <input id="subtaskAction" type="hidden" name="action" value="reset">
-        <div class="aui-message aui-message-confirmation multiple">
+        <div class="aui-message aui-message-confirmation multiple-subtasks-message">
             <p class="title">$i18n.getText("multiplesubtasks.dialog.success")</p>
         </div>
 
@@ -44,7 +44,7 @@
             </table>
         </div>
     </form>
-    <footer class="aui-dialog2-footer">
+    <footer class="aui-dialog2-footer multiple-subtasks-footer">
         <div class="aui-dialog2-footer-actions">
             <input id="multipleSubtasksReset" class="aui-button" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.reset')" />
             <a id="multipleSubtasksCancel" href="#" rel="refreshIssue" class="aui-button aui-button-primary">$i18n.getText('multiplesubtasks.dialog.buttons.close')</a>
@@ -93,12 +93,12 @@
             <textarea id="subtaskInputString" name="inputString" class="textarea full-width-field" rows="12" required="required" placeholder="$i18n.getText('multiplesubtasks.dialog.input.placeholder')" autofocus>${inputString}</textarea>
         </div>
     </form>
-    <footer class="aui-dialog2-footer">
+    <footer class="aui-dialog2-footer multiple-subtasks-footer">
         <div class="aui-dialog2-footer-actions">
             <input id="multipleSubtasksCreate" class="aui-button aui-button-primary" type="submit" value="$i18n.getText('multiplesubtasks.dialog.buttons.submit')" />
             <a id="multipleSubtasksCancel" href="#" rel="refreshIssue" class="aui-button aui-button-link">$i18n.getText('multiplesubtasks.dialog.buttons.cancel')</a>
         </div>
-        <div class="aui-dialog2-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="_blank">$i18n.getText('multiplesubtasks.dialog.documentation')</a></div>
+        <div class="aui-dialog2-footer-hint multiple-subtasks-footer-hint"><a href="https://jira-multiple-subtasks.codescape.de/syntax" target="_blank">$i18n.getText('multiplesubtasks.dialog.documentation')</a></div>
     </footer>
 
 #end
@@ -117,7 +117,7 @@
                $('#multipleSubtasksForm').submit();
 
                // workaround for growing footer
-               $('#multiple-subtasks-open-dialog-dialog .aui-dialog2-footer').remove();
+               $('.multiple-subtasks-footer').remove();
         });
 
         // reset button submits the form correctly
@@ -127,7 +127,7 @@
                $('#multipleSubtasksForm').submit();
 
                // workaround for growing footer
-               $('#multiple-subtasks-open-dialog-dialog .aui-dialog2-footer').remove();
+               $('.multiple-subtasks-footer').remove();
         });
 
         // create button submits the form correctly
@@ -137,7 +137,7 @@
                 $('#multipleSubtasksForm').submit();
 
                 // workaround for growing footer
-                $('#multiple-subtasks-open-dialog-dialog .aui-dialog2-footer').remove();
+                $('.multiple-subtasks-footer').remove();
         });
 
         // initialize tooltips for warnings
@@ -147,10 +147,10 @@
 
 <style>
     /* text in dialog footer is always visible (CASUP-110) */
-    #multiple-subtasks-open-dialog-dialog #multipleSubtasksForm .aui-dialog2-footer-hint {
+    .multiple-subtasks-footer-hint {
         overflow: visible !important; }
 
     /* remove margin above messages in our dialog */
-    #multiple-subtasks-open-dialog-dialog .aui-message {
+    .multiple-subtasks-message {
         margin: 0; }
 </style>
