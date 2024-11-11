@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [24.11.0] - 2024-11-11
+
+**Multiple Subtasks supports Jira 10**
+
 * feat: ensure compatibility with Jira 9.17.2, 9.12.12, 9.4.25
 * feat: Multiple Subtasks supports Jira 10
 * chore: switch to new Jackson library for REST
@@ -67,7 +73,8 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/24.08.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/24.11.0...HEAD
+[24.11.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.08.0...24.11.0
 [24.08.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.06.0...24.08.0
 [24.06.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.01.0...24.06.0
 [24.01.0]: https://github.com/codescape/jira-multiple-subtasks/compare/23.12.0...24.01.0
