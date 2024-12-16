@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* chore: simplify Docker configuration for testing 
 
 ### [24.11.0] - 2024-11-11
 
