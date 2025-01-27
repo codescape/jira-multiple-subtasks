@@ -31,6 +31,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
+import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
@@ -176,205 +177,41 @@ public class SubtasksCreationService {
             // project (always same as parent)
             newSubtask.setProjectObject(parent.getProjectObject());
 
-            // issue level security (same as parent if set)
-            if (parent.getSecurityLevelId() != null) {
-                newSubtask.setSecurityLevelId(parent.getSecurityLevelId());
-            }
+            // issue level security
+            applySecurityLevel(parent, newSubtask);
 
             // summary
-            newSubtask.setSummary(subTaskRequest.getSummary()
-                .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parent.getSummary())
-                .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
-            );
+            applySummary(subTaskRequest, newSubtask, parent);
 
             // description
-            // use the optionally provided description
-            if (subTaskRequest.getDescription() != null) {
-                String descriptionFromParent = parent.getDescription() != null ? parent.getDescription() : "";
-                String description = subTaskRequest.getDescription()
-                    .replaceAll("\\{n}", "\n")
-                    .replaceAll("(?<!\\\\)" + INHERIT_MARKER, descriptionFromParent)
-                    .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
-                    .trim();
-                if (!description.isEmpty()) {
-                    newSubtask.setDescription(description);
-                }
-            }
+            applyDescription(subTaskRequest, parent, newSubtask);
 
             // priority
-            // try to find provided priority otherwise fall back to priority of parent issue
-            if (subTaskRequest.getPriority() != null) {
-                if (INHERIT_MARKER.equals(subTaskRequest.getPriority())) {
-                    newSubtask.setPriority(parent.getPriority());
-                } else {
-                    // TODO a priority scheme can be configured per project
-                    Priority priority = priorityManager.getPriorities().stream()
-                        .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
-                        .findFirst()
-                        .orElse(null);
-                    if (priority == null) {
-                        warnings.add("Invalid priority: " + subTaskRequest.getPriority());
-                        newSubtask.setPriority(parent.getPriority());
-                    } else {
-                        newSubtask.setPriority(priority);
-                    }
-                }
-            } else {
-                newSubtask.setPriority(parent.getPriority());
-            }
+            applyPriority(subTaskRequest, newSubtask, parent, warnings);
 
             // issueType
-            // try to find provided issue type otherwise fall back and use first subtask type found
-            if (subTaskRequest.getIssueType() != null) {
-                IssueType issueType = subTaskTypes.stream()
-                    .filter(availableIssueType -> availableIssueType.getName().equals(subTaskRequest.getIssueType()))
-                    .findFirst().orElse(null);
-                if (issueType == null) {
-                    warnings.add("Invalid issue type: " + subTaskRequest.getIssueType());
-                }
-                newSubtask.setIssueType(issueType);
-            }
-            if (newSubtask.getIssueType() == null) {
-                newSubtask.setIssueType(subTaskTypes.get(0));
-            }
+            applyIssueType(subTaskRequest, subTaskTypes, warnings, newSubtask);
 
             // assignee
-            // try to find provided assignee as a user and check whether he is allowed to be assigned in the current project
-            if (subTaskRequest.getAssignee() != null) {
-                if (INHERIT_MARKER.equals(subTaskRequest.getAssignee())) {
-                    newSubtask.setAssignee(parent.getAssignee());
-                } else if (CURRENT_MARKER.equals(subTaskRequest.getAssignee())) {
-                    newSubtask.setAssignee(jiraAuthenticationContext.getLoggedInUser());
-                } else {
-                    ApplicationUser assignee = userManager.getUserByName(subTaskRequest.getAssignee());
-                    if (assignee != null) {
-                        if (assigneeService.isAssignable(projectObject, assignee)) {
-                            newSubtask.setAssignee(assignee);
-                        } else {
-                            warnings.add("User is no valid assignee: " + subTaskRequest.getAssignee());
-                        }
-                    } else {
-                        warnings.add("User not found: " + subTaskRequest.getAssignee());
-                    }
-                }
-            }
+            applyAssignee(subTaskRequest, newSubtask, parent, projectObject, warnings);
 
             // fixVersion(s)
-            // add provided fix versions if they exist in the project and ignore non-existing versions with a warning
-            if (!subTaskRequest.getFixVersions().isEmpty()) {
-                List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
-                List<Version> fixVersions = new ArrayList<>();
-                subTaskRequest.getFixVersions().forEach(requestedVersion -> {
-                    if (INHERIT_MARKER.equals(requestedVersion) && !parent.getFixVersions().isEmpty()) {
-                        fixVersions.addAll(parent.getFixVersions());
-                    } else {
-                        Version foundVersion = availableVersions.stream()
-                            .filter(version -> version.getName().equals(requestedVersion))
-                            .findFirst()
-                            .orElse(null);
-                        if (foundVersion == null) {
-                            warnings.add("Invalid fixVersion: " + requestedVersion);
-                        } else {
-                            fixVersions.add(foundVersion);
-                        }
-                    }
-                });
-                if (!fixVersions.isEmpty()) {
-                    newSubtask.setFixVersions(fixVersions);
-                }
-            }
+            applyFixVersions(subTaskRequest, parent, warnings, newSubtask);
 
             // affectedVersion(s)
-            // add provided affected versions if they exist in the project and ignore non-existing versions with a warning
-            if (!subTaskRequest.getAffectedVersions().isEmpty()) {
-                List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
-                List<Version> affectedVersions = new ArrayList<>();
-                subTaskRequest.getAffectedVersions().forEach(requestedVersion -> {
-                    if (INHERIT_MARKER.equals(requestedVersion) && !parent.getAffectedVersions().isEmpty()) {
-                        affectedVersions.addAll(parent.getAffectedVersions());
-                    } else {
-                        Version affectedVersion = availableVersions.stream()
-                            .filter(version -> version.getName().equals(requestedVersion))
-                            .findFirst()
-                            .orElse(null);
-                        if (affectedVersion == null) {
-                            warnings.add("Invalid affectedVersion: " + requestedVersion);
-                        } else {
-                            affectedVersions.add(affectedVersion);
-                        }
-                    }
-                });
-                if (!affectedVersions.isEmpty()) {
-                    newSubtask.setAffectedVersions(affectedVersions);
-                }
-            }
+            applyAffectedVersions(subTaskRequest, parent, warnings, newSubtask);
 
             // dueDate
-            // optional dueDate can be set if it exists
-            if (subTaskRequest.getDueDate() != null) {
-                Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(subTaskRequest.getDueDate(), parent.getDueDate());
-                if (timestamp != null) {
-                    newSubtask.setDueDate(timestamp);
-                } else {
-                    warnings.add("Invalid dueDate: " + subTaskRequest.getDueDate());
-                }
-            }
+            applyDueDate(subTaskRequest, parent, newSubtask, warnings);
 
             // reporter
-            // try to find provided reporter and otherwise use the current user
-            ApplicationUser reporter = null;
-            if (subTaskRequest.getReporter() != null) {
-                if (INHERIT_MARKER.equals(subTaskRequest.getReporter())) {
-                    reporter = parent.getReporter();
-                } else if (CURRENT_MARKER.equals(subTaskRequest.getReporter())) {
-                    reporter = jiraAuthenticationContext.getLoggedInUser();
-                } else {
-                    reporter = userManager.getUserByName(subTaskRequest.getReporter());
-                    if (reporter == null) {
-                        warnings.add("Invalid reporter: " + subTaskRequest.getReporter());
-                    }
-                }
-            }
-            newSubtask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());
+            applyReporter(subTaskRequest, parent, warnings, newSubtask);
 
             // component(s)
-            // add optional components to the subtask and ignore components that do not exist
-            if (!subTaskRequest.getComponents().isEmpty()) {
-                Set<ProjectComponent> components = new HashSet<>();
-                subTaskRequest.getComponents().forEach(component -> {
-                    if (!INHERIT_MARKER.equals(component)) {
-                        ProjectComponent foundComponent = projectComponentManager.findByComponentName(projectObject.getId(), component);
-                        if (foundComponent == null) {
-                            warnings.add("Invalid component: " + component);
-                        } else {
-                            components.add(foundComponent);
-                        }
-                    }
-                });
-                if (subTaskRequest.getComponents().contains(INHERIT_MARKER)) {
-                    components.addAll(parent.getComponents());
-                }
-                if (!components.isEmpty()) {
-                    newSubtask.setComponent(components);
-                }
-            }
+            applyComponents(subTaskRequest, projectObject, warnings, parent, newSubtask);
 
             // estimate
-            // parse the estimate and set the duration in seconds
-            if (subTaskRequest.getEstimate() != null) {
-                if (INHERIT_MARKER.equals(subTaskRequest.getEstimate())) {
-                    if (parent.getEstimate() != null) {
-                        newSubtask.setEstimate(parent.getEstimate());
-                    }
-                    if (parent.getOriginalEstimate() != null) {
-                        newSubtask.setOriginalEstimate(parent.getOriginalEstimate());
-                    }
-                } else {
-                    Long estimateToSet = estimateStringService.estimateStringToSeconds(subTaskRequest.getEstimate());
-                    newSubtask.setEstimate(estimateToSet);
-                    newSubtask.setOriginalEstimate(estimateToSet);
-                }
-            }
+            applyEstimate(subTaskRequest, parent, newSubtask);
 
             // custom field(s) by id
             // persist data to optional custom field(s) of the just created subtask and ignore invalid data
@@ -406,45 +243,299 @@ public class SubtasksCreationService {
             }
 
             // label(s)
-            // add optional multiple labels to the just created subtask (we need the ID of the subtask to add them)
-            if (!subTaskRequest.getLabels().isEmpty()) {
-                if (subTaskRequest.getLabels().contains(INHERIT_MARKER)) {
-                    parent.getLabels().forEach(label ->
-                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label.getLabel(), false)
-                    );
-                }
-                subTaskRequest.getLabels().stream()
-                    .filter(label -> !INHERIT_MARKER.equals(label))
-                    .forEach(label ->
-                        labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label, false)
-                    );
-            }
+            applyLabels(subTaskRequest, parent, newSubtask);
 
             // watcher(s)
-            // try to find each watcher as a user by the provided key and ignore users who do not exist
-            if (!subTaskRequest.getWatchers().isEmpty()) {
-                if (subTaskRequest.getWatchers().contains(CURRENT_MARKER)) {
-                    watcherManager.startWatching(jiraAuthenticationContext.getLoggedInUser(), newSubtask);
-                } else if (subTaskRequest.getWatchers().contains(INHERIT_MARKER)) {
-                    watcherManager.getWatchersUnsorted(parent).forEach(user ->
-                        watcherManager.startWatching(user, newSubtask)
-                    );
-                }
-                subTaskRequest.getWatchers().stream()
-                    .filter(watcher -> !INHERIT_MARKER.equals(watcher))
-                    .filter(watcher -> !CURRENT_MARKER.equals(watcher))
-                    .forEach(watcher -> {
-                        ApplicationUser userByName = userManager.getUserByName(watcher);
-                        if (userByName != null) {
-                            watcherManager.startWatching(userByName, newSubtask);
-                        } else {
-                            warnings.add("Invalid watcher: " + watcher);
-                        }
-                    });
-            }
+            applyWatchers(subTaskRequest, newSubtask, parent, warnings);
         });
 
         return subtasksCreated;
+    }
+
+    /**
+     * Any new subtask inherits the security level of the parent issue.
+     */
+    private static void applySecurityLevel(MutableIssue parent, MutableIssue newSubtask) {
+        if (parent.getSecurityLevelId() != null) {
+            newSubtask.setSecurityLevelId(parent.getSecurityLevelId());
+        }
+    }
+
+    /**
+     * We try to find each watcher as a user by the provided key and ignore users who do not exist.
+     */
+    private void applyWatchers(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent, List<String> warnings) {
+        if (!subTaskRequest.getWatchers().isEmpty()) {
+            if (subTaskRequest.getWatchers().contains(CURRENT_MARKER)) {
+                watcherManager.startWatching(jiraAuthenticationContext.getLoggedInUser(), newSubtask);
+            } else if (subTaskRequest.getWatchers().contains(INHERIT_MARKER)) {
+                watcherManager.getWatchersUnsorted(parent).forEach(user ->
+                    watcherManager.startWatching(user, newSubtask)
+                );
+            }
+            subTaskRequest.getWatchers().stream()
+                .filter(watcher -> !INHERIT_MARKER.equals(watcher))
+                .filter(watcher -> !CURRENT_MARKER.equals(watcher))
+                .forEach(watcher -> {
+                    ApplicationUser userByName = userManager.getUserByName(watcher);
+                    if (userByName != null) {
+                        watcherManager.startWatching(userByName, newSubtask);
+                    } else {
+                        warnings.add("Invalid watcher: " + watcher);
+                    }
+                });
+        }
+    }
+
+    /**
+     * We add optional multiple labels to the just created subtask (we need the ID of the subtask to add them so we do
+     * that after creation and before adding watchers)
+     */
+    private void applyLabels(Subtask subTaskRequest, MutableIssue parent, MutableIssue newSubtask) {
+        if (!subTaskRequest.getLabels().isEmpty()) {
+            if (subTaskRequest.getLabels().contains(INHERIT_MARKER)) {
+                parent.getLabels().forEach(label ->
+                    labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label.getLabel(), false)
+                );
+            }
+            subTaskRequest.getLabels().stream()
+                .filter(label -> !INHERIT_MARKER.equals(label))
+                .forEach(label ->
+                    labelManager.addLabel(jiraAuthenticationContext.getLoggedInUser(), newSubtask.getId(), label, false)
+                );
+        }
+    }
+
+    /**
+     * If an estimate is given we need to parse it and calculate the estimate value from it (duration in seconds).
+     */
+    private void applyEstimate(Subtask subTaskRequest, MutableIssue parent, MutableIssue newSubtask) {
+        if (subTaskRequest.getEstimate() != null) {
+            if (INHERIT_MARKER.equals(subTaskRequest.getEstimate())) {
+                if (parent.getEstimate() != null) {
+                    newSubtask.setEstimate(parent.getEstimate());
+                }
+                if (parent.getOriginalEstimate() != null) {
+                    newSubtask.setOriginalEstimate(parent.getOriginalEstimate());
+                }
+            } else {
+                Long estimateToSet = estimateStringService.estimateStringToSeconds(subTaskRequest.getEstimate());
+                newSubtask.setEstimate(estimateToSet);
+                newSubtask.setOriginalEstimate(estimateToSet);
+            }
+        }
+    }
+
+    /**
+     * Every subtasks needs to have a summary. We are trying to replace inherit markers if available and apply the
+     * summary to the new subtask.
+     */
+    private static void applySummary(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent) {
+        newSubtask.setSummary(subTaskRequest.getSummary()
+            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parent.getSummary())
+            .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
+        );
+    }
+
+    /**
+     * If a description has been provided in the subtask request we try to find and replace inherit markers and apply
+     * this description to the new subtask.
+     */
+    private static void applyDescription(Subtask subTaskRequest, MutableIssue parent, MutableIssue newSubtask) {
+        if (subTaskRequest.getDescription() != null) {
+            String descriptionFromParent = parent.getDescription() != null ? parent.getDescription() : "";
+            String description = subTaskRequest.getDescription()
+                .replaceAll("\\{n}", "\n")
+                .replaceAll("(?<!\\\\)" + INHERIT_MARKER, descriptionFromParent)
+                .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
+                .trim();
+            if (!description.isEmpty()) {
+                newSubtask.setDescription(description);
+            }
+        }
+    }
+
+    /**
+     * We add  components to the subtask if given in the request and ignore components that do not exist with a warning.
+     */
+    private void applyComponents(Subtask subTaskRequest, Project projectObject, List<String> warnings, MutableIssue parent, MutableIssue newSubtask) {
+        if (!subTaskRequest.getComponents().isEmpty()) {
+            Set<ProjectComponent> components = new HashSet<>();
+            subTaskRequest.getComponents().forEach(component -> {
+                if (!INHERIT_MARKER.equals(component)) {
+                    ProjectComponent foundComponent = projectComponentManager.findByComponentName(projectObject.getId(), component);
+                    if (foundComponent == null) {
+                        warnings.add("Invalid component: " + component);
+                    } else {
+                        components.add(foundComponent);
+                    }
+                }
+            });
+            if (subTaskRequest.getComponents().contains(INHERIT_MARKER)) {
+                components.addAll(parent.getComponents());
+            }
+            if (!components.isEmpty()) {
+                newSubtask.setComponent(components);
+            }
+        }
+    }
+
+    /**
+     * As any task needs to have a reporter we try to find the provided reporter and otherwise use the current user.
+     */
+    private void applyReporter(Subtask subTaskRequest, MutableIssue parent, List<String> warnings, MutableIssue newSubtask) {
+        ApplicationUser reporter = null;
+        if (subTaskRequest.getReporter() != null) {
+            if (INHERIT_MARKER.equals(subTaskRequest.getReporter())) {
+                reporter = parent.getReporter();
+            } else if (CURRENT_MARKER.equals(subTaskRequest.getReporter())) {
+                reporter = jiraAuthenticationContext.getLoggedInUser();
+            } else {
+                reporter = userManager.getUserByName(subTaskRequest.getReporter());
+                if (reporter == null) {
+                    warnings.add("Invalid reporter: " + subTaskRequest.getReporter());
+                }
+            }
+        }
+        newSubtask.setReporter(reporter != null ? reporter : jiraAuthenticationContext.getLoggedInUser());
+    }
+
+    /**
+     * If a due date is given we can set it.
+     */
+    private void applyDueDate(Subtask subTaskRequest, MutableIssue parent, MutableIssue newSubtask, List<String> warnings) {
+        if (subTaskRequest.getDueDate() != null) {
+            Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(subTaskRequest.getDueDate(), parent.getDueDate());
+            if (timestamp != null) {
+                newSubtask.setDueDate(timestamp);
+            } else {
+                warnings.add("Invalid dueDate: " + subTaskRequest.getDueDate());
+            }
+        }
+    }
+
+    /**
+     * We add provided affected versions if they exist in the project and ignore non-existing versions with a warning.
+     */
+    private void applyAffectedVersions(Subtask subTaskRequest, MutableIssue parent, List<String> warnings, MutableIssue newSubtask) {
+        if (!subTaskRequest.getAffectedVersions().isEmpty()) {
+            List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
+            List<Version> affectedVersions = new ArrayList<>();
+            subTaskRequest.getAffectedVersions().forEach(requestedVersion -> {
+                if (INHERIT_MARKER.equals(requestedVersion) && !parent.getAffectedVersions().isEmpty()) {
+                    affectedVersions.addAll(parent.getAffectedVersions());
+                } else {
+                    Version affectedVersion = availableVersions.stream()
+                        .filter(version -> version.getName().equals(requestedVersion))
+                        .findFirst()
+                        .orElse(null);
+                    if (affectedVersion == null) {
+                        warnings.add("Invalid affectedVersion: " + requestedVersion);
+                    } else {
+                        affectedVersions.add(affectedVersion);
+                    }
+                }
+            });
+            if (!affectedVersions.isEmpty()) {
+                newSubtask.setAffectedVersions(affectedVersions);
+            }
+        }
+    }
+
+    /**
+     * We try to find provided assignee as a user and check whether he is allowed to be assigned in the current project.
+     * In case of an error we ignore the assignee with a warning.
+     */
+    private void applyAssignee(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent, Project projectObject, List<String> warnings) {
+        if (subTaskRequest.getAssignee() != null) {
+            if (INHERIT_MARKER.equals(subTaskRequest.getAssignee())) {
+                newSubtask.setAssignee(parent.getAssignee());
+            } else if (CURRENT_MARKER.equals(subTaskRequest.getAssignee())) {
+                newSubtask.setAssignee(jiraAuthenticationContext.getLoggedInUser());
+            } else {
+                ApplicationUser assignee = userManager.getUserByName(subTaskRequest.getAssignee());
+                if (assignee != null) {
+                    if (assigneeService.isAssignable(projectObject, assignee)) {
+                        newSubtask.setAssignee(assignee);
+                    } else {
+                        warnings.add("User is no valid assignee: " + subTaskRequest.getAssignee());
+                    }
+                } else {
+                    warnings.add("User not found: " + subTaskRequest.getAssignee());
+                }
+            }
+        }
+    }
+
+    /**
+     * We try to find provided issue type otherwise fall back and use first subtask type found.
+     */
+    private static void applyIssueType(Subtask subTaskRequest, List<IssueType> subTaskTypes, List<String> warnings, MutableIssue newSubtask) {
+        if (subTaskRequest.getIssueType() != null) {
+            IssueType issueType = subTaskTypes.stream()
+                .filter(availableIssueType -> availableIssueType.getName().equals(subTaskRequest.getIssueType()))
+                .findFirst().orElse(null);
+            if (issueType == null) {
+                warnings.add("Invalid issue type: " + subTaskRequest.getIssueType());
+            }
+            newSubtask.setIssueType(issueType);
+        }
+        if (newSubtask.getIssueType() == null) {
+            newSubtask.setIssueType(subTaskTypes.get(0));
+        }
+    }
+
+    /**
+     * We try to find provided priority otherwise fall back to priority of parent issue.
+     */
+    private void applyPriority(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent, List<String> warnings) {
+        if (subTaskRequest.getPriority() != null) {
+            if (INHERIT_MARKER.equals(subTaskRequest.getPriority())) {
+                newSubtask.setPriority(parent.getPriority());
+            } else {
+                // TODO a priority scheme can be configured per project
+                Priority priority = priorityManager.getPriorities().stream()
+                    .filter(availablePriority -> availablePriority.getName().equals(subTaskRequest.getPriority()))
+                    .findFirst()
+                    .orElse(null);
+                if (priority == null) {
+                    warnings.add("Invalid priority: " + subTaskRequest.getPriority());
+                    newSubtask.setPriority(parent.getPriority());
+                } else {
+                    newSubtask.setPriority(priority);
+                }
+            }
+        } else {
+            newSubtask.setPriority(parent.getPriority());
+        }
+    }
+
+    /**
+     * We add provided fix versions if they exist in the project and ignore non-existing versions with a warning.
+     */
+    private void applyFixVersions(Subtask subTaskRequest, MutableIssue parent, List<String> warnings, MutableIssue newSubtask) {
+        if (!subTaskRequest.getFixVersions().isEmpty()) {
+            List<Version> availableVersions = versionManager.getVersions(parent.getProjectObject());
+            List<Version> fixVersions = new ArrayList<>();
+            subTaskRequest.getFixVersions().forEach(requestedVersion -> {
+                if (INHERIT_MARKER.equals(requestedVersion) && !parent.getFixVersions().isEmpty()) {
+                    fixVersions.addAll(parent.getFixVersions());
+                } else {
+                    Version foundVersion = availableVersions.stream()
+                        .filter(version -> version.getName().equals(requestedVersion))
+                        .findFirst()
+                        .orElse(null);
+                    if (foundVersion == null) {
+                        warnings.add("Invalid fixVersion: " + requestedVersion);
+                    } else {
+                        fixVersions.add(foundVersion);
+                    }
+                }
+            });
+            if (!fixVersions.isEmpty()) {
+                newSubtask.setFixVersions(fixVersions);
+            }
+        }
     }
 
     private void applyValuesToCustomFieldByCustomFieldName(MutableIssue parent, MutableIssue newSubtask, List<String> warnings, String customFieldName, List<String> values) {

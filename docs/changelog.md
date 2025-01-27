@@ -13,6 +13,7 @@ category: Administration
 
 * chore: simplify Docker configuration for testing 
 * feat: ensure compatibility with Jira 10.3.0
+* refactor: improve structure of subtask creation service
 
 ### [24.11.0] - 2024-11-11
 
