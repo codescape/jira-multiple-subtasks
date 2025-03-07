@@ -15,6 +15,7 @@ category: Administration
 * feat: ensure compatibility with Jira 10.3.0
 * refactor: improve structure of subtask creation service
 * feat: ensure compatibility with Jira 10.4.0
+* refactor: use Java 16 syntax for lists
 
 ### [24.11.0] - 2024-11-11
 

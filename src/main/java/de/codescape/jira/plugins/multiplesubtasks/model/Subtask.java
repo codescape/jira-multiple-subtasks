@@ -262,7 +262,7 @@ public class Subtask {
         // get all custom field keys
         List<String> customFieldKeys = attributes.keySet().stream()
             .filter(s -> CUSTOM_FIELD_ID_PATTERN.matcher(s).matches())
-            .collect(Collectors.toList());
+            .toList();
         // collect all keys and values into a map
         Map<String, List<String>> customFields = new HashMap<>();
         customFieldKeys.forEach(s -> customFields.put(s, new ArrayList<>(attributes.get(s))));
@@ -273,7 +273,7 @@ public class Subtask {
         // get all custom field keys
         List<String> customFieldKeys = attributes.keySet().stream()
             .filter(s -> CUSTOM_FIELD_NAME_PATTERN.matcher(s).matches())
-            .collect(Collectors.toList());
+            .toList();
         // collect all keys and values into a map
         Map<String, List<String>> customFields = new HashMap<>();
         customFieldKeys.forEach(key -> customFields.put(extractCustomFieldName(key), new ArrayList<>(attributes.get(key))));
