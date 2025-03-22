@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
 
 public class CustomFieldsTest {
 
@@ -30,6 +31,12 @@ public class CustomFieldsTest {
     public void extractCustomFieldNameForStringWithEscapedColonValue() {
         String result = CustomFields.extractCustomFieldName("customfield(This\\:is\\:a\\:field)");
         assertThat(result, is(equalTo("This:is:a:field")));
+    }
+
+    @Test(expected = SyntaxFormatException.class)
+    public void extractCustomFieldNameForInvalidInput() {
+        CustomFields.extractCustomFieldName("CUSTOMFIELD(ILLEGAL)");
+        fail();
     }
 
 }
