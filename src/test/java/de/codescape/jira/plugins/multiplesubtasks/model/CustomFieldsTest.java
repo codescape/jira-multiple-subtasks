@@ -22,8 +22,14 @@ public class CustomFieldsTest {
 
     @Test
     public void extractCustomFieldNameForStringWithEscapedBracketsValue() {
-        String result = CustomFields.extractCustomFieldName("customfield(Field(123\\))");
+        String result = CustomFields.extractCustomFieldName("customfield(Field\\(123\\))");
         assertThat(result, is(equalTo("Field(123)")));
+    }
+
+    @Test
+    public void extractCustomFieldNameForStringWithEscapedColonValue() {
+        String result = CustomFields.extractCustomFieldName("customfield(This\\:is\\:a\\:field)");
+        assertThat(result, is(equalTo("This:is:a:field")));
     }
 
 }
