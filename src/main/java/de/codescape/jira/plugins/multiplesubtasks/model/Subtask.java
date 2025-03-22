@@ -6,8 +6,6 @@ import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringS
 
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This class represents the request to create a new subtask with the given attributes.
@@ -39,12 +37,6 @@ public class Subtask {
         );
 
     }
-
-    // custom fields can be referenced by id: customfield_12345:
-    private static final Pattern CUSTOM_FIELD_ID_PATTERN = Pattern.compile("customfield_\\d{5}");
-
-    // custom fields can be reference by name: customfield(fieldname):
-    private static final Pattern CUSTOM_FIELD_NAME_PATTERN = Pattern.compile("customfield\\((?<name>(?:\\\\\\\\|\\\\\\)|[^)])++)\\)");
 
     private final String summary;
     private final String description;
@@ -226,8 +218,8 @@ public class Subtask {
 
     private void verifyOnlyKnownAttributes(ArrayListMultimap<String, String> attributes) {
         attributes.forEach((key, value) -> {
-            if (!Attributes.ALL.contains(key) && !CUSTOM_FIELD_ID_PATTERN.matcher(key).matches()
-                && !CUSTOM_FIELD_NAME_PATTERN.matcher(key).matches())
+            if (!Attributes.ALL.contains(key) && !CustomFields.CUSTOM_FIELD_ID_PATTERN.matcher(key).matches()
+                && !CustomFields.CUSTOM_FIELD_NAME_PATTERN.matcher(key).matches())
                 throw new SyntaxFormatException("Unknown attribute " + key + " found.");
         });
     }
@@ -261,7 +253,7 @@ public class Subtask {
     private Map<String, List<String>> extractCustomFieldsById(ArrayListMultimap<String, String> attributes) {
         // get all custom field keys
         List<String> customFieldKeys = attributes.keySet().stream()
-            .filter(s -> CUSTOM_FIELD_ID_PATTERN.matcher(s).matches())
+            .filter(s -> CustomFields.CUSTOM_FIELD_ID_PATTERN.matcher(s).matches())
             .toList();
         // collect all keys and values into a map
         Map<String, List<String>> customFields = new HashMap<>();
@@ -272,25 +264,12 @@ public class Subtask {
     private Map<String, List<String>> extractCustomFieldsByName(ArrayListMultimap<String, String> attributes) {
         // get all custom field keys
         List<String> customFieldKeys = attributes.keySet().stream()
-            .filter(s -> CUSTOM_FIELD_NAME_PATTERN.matcher(s).matches())
+            .filter(s -> CustomFields.CUSTOM_FIELD_NAME_PATTERN.matcher(s).matches())
             .toList();
         // collect all keys and values into a map
         Map<String, List<String>> customFields = new HashMap<>();
-        customFieldKeys.forEach(key -> customFields.put(extractCustomFieldName(key), new ArrayList<>(attributes.get(key))));
+        customFieldKeys.forEach(key -> customFields.put(CustomFields.extractCustomFieldName(key), new ArrayList<>(attributes.get(key))));
         return customFields;
-    }
-
-    private String extractCustomFieldName(String customFieldString) {
-        Matcher matcher = CUSTOM_FIELD_NAME_PATTERN.matcher(customFieldString);
-        if (matcher.matches()) {
-            return matcher.group("name")
-                .replaceAll("\\\\\\)", ")")
-                .replaceAll("\\\\\\(", "(")
-                .replaceAll("\\\\:", ":")
-                .trim();
-        } else {
-            throw new SyntaxFormatException("Illegal custom field name: " + customFieldString);
-        }
     }
 
 }
