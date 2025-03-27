@@ -31,7 +31,13 @@ h6 {
     font-size: 1.0rem; }
 
 code {
+    font-size: 13px;
+    background: #e9eef6;
+    border: 1px solid #e9eef6;
     white-space: pre-wrap; }
+
+pre > code {
+    padding: 1rem; }
 
 .logo {
     max-height: 8rem;
