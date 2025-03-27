@@ -39,6 +39,9 @@ code {
 pre > code {
     padding: 1rem; }
 
+pre, blockquote, dl, figure, table, p, ul, ol, form {
+    margin-bottom: 1.5rem; }
+
 .logo {
     max-height: 8rem;
     margin: 1rem; }
