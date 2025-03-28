@@ -19,6 +19,7 @@ category: Administration
 * refactor: extract logic for custom field name syntax
 * test: improve tests for custom field name logic
 * docs: improve formatting of code examples
+* feat: ensure compatibility with Jira 10.5.0
 
 ### [24.11.0] - 2024-11-11
 
