@@ -29,8 +29,7 @@
     <properties>
         <!-- Java version -->
         <java.version>17</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
 
         <!-- Jira versions -->
         <jira.version>10.6.0</jira.version>
