@@ -30,9 +30,8 @@ import com.atlassian.jira.security.groups.GroupManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
-import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
-import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
+import com.google.common.collect.Lists;
+import de.codescape.jira.plugins.multiplesubtasks.model.*;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
@@ -44,6 +43,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
@@ -73,6 +73,12 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_LABELS = "com.atlassian.jira.plugin.system.customfieldtypes:labels";
     static final String CUSTOM_FIELD_TYPE_GROUP = "com.atlassian.jira.plugin.system.customfieldtypes:grouppicker";
     static final String CUSTOM_FIELD_TYPE_GROUPS = "com.atlassian.jira.plugin.system.customfieldtypes:multigrouppicker";
+
+    /* warnings */
+
+    static final String WARNING_CUSTOM_FIELD_NAME_NOT_UNIQUE = "Custom field name is not unique: ";
+    static final String WARNING_CUSTOM_FIELD_IN_VARIABLE_INVALID = "Custom field in variable is invalid: ";
+    static final String WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED = "Custom field type is not supported: ";
 
     /* dependencies */
 
@@ -331,6 +337,7 @@ public class SubtasksCreationService {
      * summary to the new subtask.
      */
     private static void applySummary(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent) {
+        // TODO inherit from other CUSTOM_FIELD_TYPE_TEXT and CUSTOM_FIELD_TYPE_TEXTAREA custom fields
         newSubtask.setSummary(subTaskRequest.getSummary()
             .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parent.getSummary())
             .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
@@ -342,6 +349,8 @@ public class SubtasksCreationService {
      * this description to the new subtask.
      */
     private static void applyDescription(Subtask subTaskRequest, MutableIssue parent, MutableIssue newSubtask) {
+        // TODO inherit from other CUSTOM_FIELD_TYPE_TEXT and CUSTOM_FIELD_TYPE_TEXTAREA custom fields
+        // TODO inherit from SUMMARY field
         if (subTaskRequest.getDescription() != null) {
             String descriptionFromParent = parent.getDescription() != null ? parent.getDescription() : "";
             String description = subTaskRequest.getDescription()
@@ -356,7 +365,7 @@ public class SubtasksCreationService {
     }
 
     /**
-     * We add  components to the subtask if given in the request and ignore components that do not exist with a warning.
+     * We add components to the subtask if given in the request and ignore components that do not exist with a warning.
      */
     private void applyComponents(Subtask subTaskRequest, Project projectObject, List<String> warnings, MutableIssue parent, MutableIssue newSubtask) {
         if (!subTaskRequest.getComponents().isEmpty()) {
@@ -384,6 +393,8 @@ public class SubtasksCreationService {
      * As any task needs to have a reporter we try to find the provided reporter and otherwise use the current user.
      */
     private void applyReporter(Subtask subTaskRequest, MutableIssue parent, List<String> warnings, MutableIssue newSubtask) {
+        // TODO inherit from CUSTOM_FIELD_TYPE_USER and CUSTOM_FIELD_TYPE_USERS custom fields
+        // TODO inherit from assignee, reporter = @inherit, watcher (?)
         ApplicationUser reporter = null;
         if (subTaskRequest.getReporter() != null) {
             if (INHERIT_MARKER.equals(subTaskRequest.getReporter())) {
@@ -404,6 +415,7 @@ public class SubtasksCreationService {
      * If a due date is given we can set it.
      */
     private void applyDueDate(Subtask subTaskRequest, MutableIssue parent, MutableIssue newSubtask, List<String> warnings) {
+        // TODO inherit from other CUSTOM_FIELD_TYPE_DATE and CUSTOM_FIELD_TYPE_DATETIME custom fields
         if (subTaskRequest.getDueDate() != null) {
             Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(subTaskRequest.getDueDate(), parent.getDueDate());
             if (timestamp != null) {
@@ -447,6 +459,8 @@ public class SubtasksCreationService {
      * In case of an error we ignore the assignee with a warning.
      */
     private void applyAssignee(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent, Project projectObject, List<String> warnings) {
+        // TODO inherit from CUSTOM_FIELD_TYPE_USER and CUSTOM_FIELD_TYPE_USERS custom fields
+        // TODO inherit from assignee, reporter = @inherit, watcher (?)
         if (subTaskRequest.getAssignee() != null) {
             if (INHERIT_MARKER.equals(subTaskRequest.getAssignee())) {
                 newSubtask.setAssignee(parent.getAssignee());
@@ -545,7 +559,7 @@ public class SubtasksCreationService {
         } else if (customFields.size() == 1) {
             applyValuesToCustomField(parent, newSubtask, warnings, customFields.iterator().next(), values);
         } else {
-            warnings.add("Custom field name is not unique: " + customFieldName);
+            warnings.add(WARNING_CUSTOM_FIELD_NAME_NOT_UNIQUE + customFieldName);
         }
     }
 
@@ -571,6 +585,11 @@ public class SubtasksCreationService {
                             if (INHERIT_MARKER.equals(value)) {
                                 if (parent.getCustomFieldValue(customField) != null) {
                                     newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
+                                }
+                            } else if (containsVariable(value)) {
+                                Double numberFromParent = numberFromParent(value, parent, warnings);
+                                if (numberFromParent != null) {
+                                    newSubtask.setCustomFieldValue(customField, numberFromParent);
                                 }
                             } else {
                                 newSubtask.setCustomFieldValue(customField, Double.valueOf(value));
@@ -605,6 +624,11 @@ public class SubtasksCreationService {
                         if (INHERIT_MARKER.equals(value)) {
                             if (parent.getCustomFieldValue(customField) != null) {
                                 newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
+                            }
+                        } else if (containsVariable(value)) {
+                            String urlFromParent = urlFromParent(value, parent, warnings);
+                            if (urlFromParent != null) {
+                                newSubtask.setCustomFieldValue(customField, urlFromParent);
                             }
                         } else {
                             if (isValidURL(value)) {
@@ -644,6 +668,11 @@ public class SubtasksCreationService {
                             if (optionFromParent instanceof Option) {
                                 newSubtask.setCustomFieldValue(customField, optionFromParent);
                             }
+                        } else if (containsVariable(value)) {
+                            Option optionFromParent = optionFromParent(value, parent, warnings);
+                            if (optionFromParent != null) {
+                                newSubtask.setCustomFieldValue(customField, optionFromParent);
+                            }
                         } else {
                             Option selectedOption = options.getOptionForValue(value, null);
                             if (selectedOption == null) {
@@ -664,6 +693,11 @@ public class SubtasksCreationService {
                             Object optionFromParent = parent.getCustomFieldValue(customField);
                             if (optionFromParent instanceof Map) {
                                 newSubtask.setCustomFieldValue(customField, optionFromParent);
+                            }
+                        } else if (containsVariable(value)) {
+                            Map<String, Option> cascadingSelectFromParent = cascadingSelectFromParent(value, parent, warnings);
+                            if (cascadingSelectFromParent != null) {
+                                newSubtask.setCustomFieldValue(customField, cascadingSelectFromParent);
                             }
                         } else {
                             Map<String, Option> newOptions = new HashMap<>();
@@ -709,6 +743,11 @@ public class SubtasksCreationService {
                             //noinspection unchecked
                             selectedOptions.addAll((List<Option>) optionsFromParent);
                         }
+                    } else if (containsVariable(value)) {
+                        List<Option> optionsFromParent = optionsFromParent(value, parent, warnings);
+                        if (optionsFromParent != null) {
+                            selectedOptions.addAll(optionsFromParent);
+                        }
                     } else {
                         Option selectedOption = optionsM.getOptionForValue(value, null);
                         if (selectedOption == null) {
@@ -731,6 +770,11 @@ public class SubtasksCreationService {
                             if (parent.getCustomFieldValue(customField) != null) {
                                 newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
                             }
+                        } else if (containsVariable(value)) {
+                            Timestamp timestampFromParent = timestampFromParent(value, parent, warnings);
+                            if (timestampFromParent != null) {
+                                newSubtask.setCustomFieldValue(customField, timestampFromParent);
+                            }
                         } else {
                             Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
                             Timestamp timestamp = dateTimeStringService.dateStringToTimestamp(value, parentValue);
@@ -751,6 +795,11 @@ public class SubtasksCreationService {
                         if (INHERIT_MARKER.equals(value)) {
                             if (parent.getCustomFieldValue(customField) != null) {
                                 newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
+                            }
+                        } else if (containsVariable(value)) {
+                            Timestamp timestampFromParent = timestampFromParent(value, parent, warnings);
+                            if (timestampFromParent != null) {
+                                newSubtask.setCustomFieldValue(customField, timestampFromParent);
                             }
                         } else {
                             Timestamp parentValue = (Timestamp) parent.getCustomFieldValue(customField);
@@ -773,6 +822,11 @@ public class SubtasksCreationService {
                             if (parent.getCustomFieldValue(customField) != null) {
                                 newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
                             }
+                        } else if (containsVariable(value)) {
+                            ApplicationUser userFromParent = userFromParent(value, parent, warnings);
+                            if (userFromParent != null) {
+                                newSubtask.setCustomFieldValue(customField, userFromParent);
+                            }
                         } else {
                             ApplicationUser userByName = userManager.getUserByName(value);
                             if (userByName == null) {
@@ -792,6 +846,11 @@ public class SubtasksCreationService {
                         if (usersFromParent instanceof List) {
                             //noinspection unchecked
                             users.addAll((List<ApplicationUser>) usersFromParent);
+                        }
+                    } else if (containsVariable(value)) {
+                        List<ApplicationUser> usersFromParent = usersFromParent(value, parent, warnings);
+                        if (usersFromParent != null) {
+                            users.addAll(usersFromParent);
                         }
                     } else {
                         ApplicationUser userByName = userManager.getUserByName(value);
@@ -816,6 +875,11 @@ public class SubtasksCreationService {
                             //noinspection unchecked
                             labels.addAll((Set<Label>) labelsFromParent);
                         }
+                    } else if (containsVariable(label)) {
+                        Set<Label> labelsFromParent = labelsFromParent(label, parent, warnings);
+                        if (labelsFromParent != null) {
+                            labels.addAll(labelsFromParent);
+                        }
                     } else {
                         if (cleanLabel.contains(" ")) {
                             warnings.add("Invalid label (" + cleanLabel + ") contains whitespace for custom field: " + customFieldName);
@@ -839,6 +903,11 @@ public class SubtasksCreationService {
                             if (parent.getCustomFieldValue(customField) != null) {
                                 newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
                             }
+                        } else if (containsVariable(value)) {
+                            Group group = groupFromParent(value, parent, warnings);
+                            if (group != null) {
+                                newSubtask.setCustomFieldValue(customField, Collections.singletonList(group));
+                            }
                         } else {
                             Group group = groupManager.getGroup(value);
                             if (group != null) {
@@ -859,6 +928,11 @@ public class SubtasksCreationService {
                             //noinspection unchecked
                             groups.addAll((List<Group>) groupsFromParent);
                         }
+                    } else if (containsVariable(groupName)) {
+                        List<Group> groupsFromParent = groupsFromParent(groupName, parent, warnings);
+                        if (groupsFromParent != null) {
+                            groups.addAll(groupsFromParent);
+                        }
                     } else {
                         Group group = groupManager.getGroup(groupName);
                         if (group != null) {
@@ -875,6 +949,236 @@ public class SubtasksCreationService {
             default:
                 warnings.add("Unsupported custom field type (" + customFieldType + ") for custom field: " + customFieldName);
         }
+    }
+
+    private String urlFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_URL:
+                    return (String) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    private Double numberFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_NUMBER:
+                    return (Double) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    // FIXME: What do we do with values not accepted by the consuming field?
+    private Map<String, Option> cascadingSelectFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_CASCADING_SELECT:
+                    //noinspection unchecked
+                    return (Map<String, Option>) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    // FIXME: What do we do with values not accepted by the consuming field?
+    private Option optionFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_CHECKBOXES, CUSTOM_FIELD_TYPE_MULTISELECT:
+                    //noinspection unchecked
+                    List<Option> optionsFromParent = (List<Option>) parent.getCustomFieldValue(customField);
+                    if (optionsFromParent.size() == 1) {
+                        return optionsFromParent.get(0);
+                    } else if (optionsFromParent.size() > 1) {
+                        warnings.add("Cannot assign multiple groups to field.");
+                        break;
+                    }
+                case CUSTOM_FIELD_TYPE_SELECT, CUSTOM_FIELD_TYPE_RADIO:
+                    return (Option) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    // FIXME: What do we do with values not accepted by the consuming field?
+    private List<Option> optionsFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_CHECKBOXES, CUSTOM_FIELD_TYPE_MULTISELECT:
+                    //noinspection unchecked
+                    return (List<Option>) parent.getCustomFieldValue(customField);
+                case CUSTOM_FIELD_TYPE_SELECT, CUSTOM_FIELD_TYPE_RADIO:
+                    return Lists.newArrayList((Option) parent.getCustomFieldValue(customField));
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    private Timestamp timestampFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        // TODO add support for @{dueDate} to inherit the standard field
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_DATE, CUSTOM_FIELD_TYPE_DATETIME:
+                    return (Timestamp) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    // FIXME: What do we do with values not accepted by the consuming field?
+    private ApplicationUser userFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        // TODO add support for @{assignee} to inherit the standard field
+        // TODO add support for @{reporter} to inherit the standard field
+        // TODO add support for @{watchers} to inherit the standard field (?)
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_USERS:
+                    //noinspection unchecked
+                    List<ApplicationUser> usersFromParent = (List<ApplicationUser>) parent.getCustomFieldValue(customField);
+                    if (usersFromParent.size() == 1) {
+                        return usersFromParent.get(0);
+                    } else if (usersFromParent.size() > 1) {
+                        warnings.add("Cannot assign multiple groups to field.");
+                        break;
+                    }
+                case CUSTOM_FIELD_TYPE_USER:
+                    return (ApplicationUser) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    // FIXME: What do we do with values not accepted by the consuming field?
+    private List<ApplicationUser> usersFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        // TODO add support for @{assignee} to inherit the standard field
+        // TODO add support for @{reporter} to inherit the standard field
+        // TODO add support for @{watchers} to inherit the standard field (?)
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_USERS:
+                    //noinspection unchecked
+                    return (List<ApplicationUser>) parent.getCustomFieldValue(customField);
+                case CUSTOM_FIELD_TYPE_USER:
+                    return Lists.newArrayList((ApplicationUser) parent.getCustomFieldValue(customField));
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    private Set<Label> labelsFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        // TODO add support for @{label} to inherit the standard field
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_LABELS:
+                    //noinspection unchecked
+                    return (Set<Label>) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Group can only come from custom fields.
+     */
+    private Group groupFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_GROUPS:
+                    //noinspection unchecked
+                    List<Group> groupList = (List<Group>) parent.getCustomFieldValue(customField);
+                    if (groupList.size() == 1) {
+                        return groupList.get(0);
+                    } else {
+                        warnings.add("Cannot assign multiple groups to field.");
+                        break;
+                    }
+                case CUSTOM_FIELD_TYPE_GROUP:
+                    return (Group) parent.getCustomFieldValue(customField);
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Groups can only come from custom fields.
+     */
+    private List<Group> groupsFromParent(String expression, MutableIssue parent, List<String> warnings) {
+        CustomField customField = getCustomFieldFromExpression(expression, warnings);
+        if (customField != null) {
+            switch (customField.getCustomFieldType().getKey()) {
+                case CUSTOM_FIELD_TYPE_GROUPS:
+                    //noinspection unchecked
+                    return (List<Group>) parent.getCustomFieldValue(customField);
+                case CUSTOM_FIELD_TYPE_GROUP:
+                    return Lists.newArrayList((Group) parent.getCustomFieldValue(customField));
+                default:
+                    warnings.add(WARNING_CUSTOM_FIELD_TYPE_NOT_SUPPORTED + customField.getCustomFieldType().getName());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extract the custom field safely from the expression and create warnings for all problems.
+     */
+    private CustomField getCustomFieldFromExpression(String expression, List<String> warnings) {
+        Matcher matcher = Variables.FIND_VARIABLES.matcher(expression);
+        String customFieldName = matcher.find() ? CustomFields.extractCustomFieldName(matcher.group(1)) : null;
+        System.out.println("customFieldName" + customFieldName); // FIXME REMOVE
+
+        if (customFieldName == null) {
+            warnings.add("Could not extract custom field name from expression:" + expression);
+        } else {
+            Collection<CustomField> customFields = customFieldManager.getCustomFieldObjectsByName(customFieldName);
+            if (customFields.isEmpty()) {
+                warnings.add(WARNING_CUSTOM_FIELD_IN_VARIABLE_INVALID + customFieldName);
+            } else if (customFields.size() == 1) {
+                return customFields.iterator().next();
+            } else {
+                warnings.add(WARNING_CUSTOM_FIELD_NAME_NOT_UNIQUE + customFieldName);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check whether we have a variable in the provided value.
+     */
+    private boolean containsVariable(String value) {
+        return value != null && Variables.FIND_VARIABLES.matcher(value).matches();
     }
 
     /**
