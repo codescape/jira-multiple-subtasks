@@ -13,6 +13,7 @@ category: Administration
 
 * refactor: use maven compiler setting for Java 17
 * feat: ensure compatibility with Jira 10.7.1
+* feat: ensure compatibility with Jira 10.7.4
 
 ### [25.05.0] -  2025-05-17
 
