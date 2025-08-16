@@ -1157,8 +1157,6 @@ public class SubtasksCreationService {
     private CustomField getCustomFieldFromExpression(String expression, List<String> warnings) {
         Matcher matcher = Variables.FIND_VARIABLES.matcher(expression);
         String customFieldName = matcher.find() ? CustomFields.extractCustomFieldName(matcher.group(1)) : null;
-        System.out.println("customFieldName" + customFieldName); // FIXME REMOVE
-
         if (customFieldName == null) {
             warnings.add("Could not extract custom field name from expression:" + expression);
         } else {
