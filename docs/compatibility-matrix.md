@@ -38,8 +38,9 @@ Multiple Subtasks for Jira has a very broad range of supported versions of Jira 
 
 | Jira Server & Data Center | Multiple Subtasks for Jira |
 |---------------------------|----------------------------|
-| 10.0.x and newer          | use latest version         |
-| 9.4.x - 9.17.x            | 24.08.0                    |
-| 8.20.x - 9.3.x            | 23.12.0                    |
-| 8.13.x - 8.19.x           | 22.11.0                    |
+| 11.0.x and newer          | use latest version         |
+| 10.0.x - 10.7.x           | use version 25.05.0        |
+| 9.4.x - 9.17.x            | use version 24.08.0        |
+| 8.20.x - 9.3.x            | use version 23.12.0        |
+| 8.13.x - 8.19.x           | use version 22.11.0        |
 | 8.12.x and older          | not supported              |

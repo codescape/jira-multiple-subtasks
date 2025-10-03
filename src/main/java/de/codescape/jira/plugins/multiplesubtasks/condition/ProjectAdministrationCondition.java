@@ -9,8 +9,7 @@ import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * This condition ensures that the current user has either global administration or system administration rights or

@@ -147,6 +147,8 @@
 
     <!-- velocity allow-list (alphabetically sorted) -->
     <velocity-allowlist key="multiple-subtasks-velocity-allowlist">
+        <method>de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask#getIssue()</method>
+        <method>de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask#getWarningsMessage()</method>
         <method>de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate#getId()</method>
         <method>de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate#getName()</method>
         <method>de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate#getTemplate()</method>

@@ -2,10 +2,10 @@ package de.codescape.jira.plugins.multiplesubtasks.upgrade;
 
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
+import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 
 import static de.codescape.jira.plugins.multiplesubtasks.MultipleSubtasksConstants.MULTIPLE_SUBTASKS_PLUGIN_KEY;

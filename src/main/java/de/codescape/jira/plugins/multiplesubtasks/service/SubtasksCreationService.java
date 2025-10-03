@@ -36,9 +36,9 @@ import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
+import jakarta.inject.Inject;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;

@@ -8,11 +8,11 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig;
 import de.codescape.jira.plugins.multiplesubtasks.rest.entities.ConfigurationEntity;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.stream.Collectors;
 

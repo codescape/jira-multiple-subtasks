@@ -15,6 +15,7 @@ category: Administration
 * feat: ensure compatibility with Jira 10.7.1
 * feat: ensure compatibility with Jira 10.7.4
 * chore: data center review 2025
+* feat: ensure compatibility with Jira 11.1.0
 
 ### [25.05.0] -  2025-05-17
 

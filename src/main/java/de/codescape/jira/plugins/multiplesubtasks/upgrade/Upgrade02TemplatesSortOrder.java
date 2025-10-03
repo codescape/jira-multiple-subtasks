@@ -4,10 +4,9 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 import de.codescape.jira.plugins.multiplesubtasks.model.TemplateSortOrder;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService;
+import jakarta.annotation.Nonnull;
+import jakarta.inject.Inject;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
 
 /**
  * Initialize configuration with default settings for templates sort order.

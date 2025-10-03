@@ -7,11 +7,11 @@ import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskConfig;
 import de.codescape.jira.plugins.multiplesubtasks.ao.SubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.model.SubtaskTemplateType;
 import de.codescape.jira.plugins.multiplesubtasks.model.TemplateSortOrder;
+import jakarta.inject.Inject;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.List;
 

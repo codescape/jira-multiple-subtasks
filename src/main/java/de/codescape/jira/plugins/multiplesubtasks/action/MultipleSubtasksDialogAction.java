@@ -13,8 +13,8 @@ import de.codescape.jira.plugins.multiplesubtasks.model.ShowSubtaskTemplate;
 import de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksLicenseService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtaskTemplateService;
 import de.codescape.jira.plugins.multiplesubtasks.service.SubtasksCreationService;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
