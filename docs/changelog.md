@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [25.10.0] -  2025-10-03
+
+**Multiple Subtasks supports Jira 11**
+
 * refactor: use maven compiler setting for Java 17
 * feat: ensure compatibility with Jira 10.7.1
 * feat: ensure compatibility with Jira 10.7.4
@@ -40,5 +46,6 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/25.05.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/25.10.0...HEAD
+[25.10.0]: https://github.com/codescape/jira-multiple-subtasks/compare/25.05.0...25.10.0
 [25.05.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.11.0...25.05.0
