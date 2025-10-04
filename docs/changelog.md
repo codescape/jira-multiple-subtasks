@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* chore: include jenkins repository for external libraries
 
 ### [25.10.0] -  2025-10-03
 
