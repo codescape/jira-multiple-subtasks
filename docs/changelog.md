@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * chore: include jenkins repository for external libraries
+* chore: improve Github action for continuous integration
 
 ### [25.10.0] -  2025-10-03
 
