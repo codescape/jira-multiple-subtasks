@@ -13,6 +13,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.google.common.collect.ArrayListMultimap;
+import de.codescape.jira.plugins.multiplesubtasks.model.CreatedSubtask;
 import de.codescape.jira.plugins.multiplesubtasks.model.Markers;
 import de.codescape.jira.plugins.multiplesubtasks.model.Subtask;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
@@ -31,6 +32,9 @@ import java.util.List;
 
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.INHERIT_MARKER;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -229,7 +233,7 @@ public class SubtasksCreationServiceTest {
         when(subtaskRequest.getSummary()).thenReturn("Inherit priority please");
         when(subtaskRequest.getPriority()).thenReturn(INHERIT_MARKER);
         subtasksRequest.add(subtaskRequest);
-        expectSubtasks(subtasksRequest);
+        expectSubtasksFromInputString(subtasksRequest);
 
         MutableIssue subtask = expectNewSubtaskIssue();
 
@@ -250,7 +254,7 @@ public class SubtasksCreationServiceTest {
         when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
         when(subtaskRequest.getReporter()).thenReturn(INHERIT_MARKER);
         subtasksRequest.add(subtaskRequest);
-        expectSubtasks(subtasksRequest);
+        expectSubtasksFromInputString(subtasksRequest);
 
         ApplicationUser reporter = mock(ApplicationUser.class);
         when(parent.getReporter()).thenReturn(reporter);
@@ -269,7 +273,7 @@ public class SubtasksCreationServiceTest {
         when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
         when(subtaskRequest.getReporter()).thenReturn(CURRENT_MARKER);
         subtasksRequest.add(subtaskRequest);
-        expectSubtasks(subtasksRequest);
+        expectSubtasksFromInputString(subtasksRequest);
 
         MutableIssue subtask = expectNewSubtaskIssue();
 
@@ -285,7 +289,7 @@ public class SubtasksCreationServiceTest {
         when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
         when(subtaskRequest.getReporter()).thenReturn("codescape");
         subtasksRequest.add(subtaskRequest);
-        expectSubtasks(subtasksRequest);
+        expectSubtasksFromInputString(subtasksRequest);
 
         ApplicationUser explicitUser = mock(ApplicationUser.class);
         when(userManager.getUserByName("codescape")).thenReturn(explicitUser);
@@ -304,7 +308,7 @@ public class SubtasksCreationServiceTest {
         when(subtaskRequest.getSummary()).thenReturn("Inherit reporter please");
         when(subtaskRequest.getReporter()).thenReturn("unknown");
         subtasksRequest.add(subtaskRequest);
-        expectSubtasks(subtasksRequest);
+        expectSubtasksFromInputString(subtasksRequest);
 
         MutableIssue subtask = expectNewSubtaskIssue();
 
@@ -323,7 +327,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.WATCHER, "known.user");
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
@@ -349,7 +353,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.WATCHER, "unknown.user");
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
@@ -372,7 +376,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.WATCHER, Markers.CURRENT_MARKER);
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
 
         // expect subtask to be created
         MutableIssue subtask = expectNewSubtaskIssue();
@@ -396,7 +400,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.ESTIMATE, "4d");
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
 
         // expect estimate service to resolve the long value
         when(estimateStringService.estimateStringToSeconds(eq("4d"))).thenReturn(999L);
@@ -418,7 +422,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.ESTIMATE, INHERIT_MARKER);
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
 
         Long parentEstimate = 42L;
         when(parent.getEstimate()).thenReturn(parentEstimate);
@@ -442,7 +446,7 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.ESTIMATE, INHERIT_MARKER);
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
 
         when(parent.getEstimate()).thenReturn(null);
 
@@ -453,7 +457,29 @@ public class SubtasksCreationServiceTest {
         verify(subtask, times(0)).setEstimate(anyLong());
     }
 
+    /* multiple tasks */
+
+    @Test
+    public void shouldCreateMultipleTasks() {
+        expectSubtasksFromInputString(randomSubtasks(100));
+        expectNewSubtaskIssue();
+
+        List<CreatedSubtask> createdSubtasks = subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        assertThat(createdSubtasks.size(), is(equalTo((100))));
+    }
+
     /* helpers */
+
+    private List<Subtask> randomSubtasks(int numberOfSubtasks) {
+        ArrayList<Subtask> subtasks = new ArrayList<>();
+        for (int j = 0; j <numberOfSubtasks; j++) {
+            ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
+            attributes.put(Subtask.Attributes.SUMMARY, "random " + j +" of " + numberOfSubtasks);
+            subtasks.add(new Subtask(attributes));
+        }
+        return subtasks;
+    }
 
     private void expectParentWithSummary(String summary) {
         when(parent.getSummary()).thenReturn(summary);
@@ -464,7 +490,7 @@ public class SubtasksCreationServiceTest {
         ArrayListMultimap<String, String> attributes = ArrayListMultimap.create();
         attributes.put(Subtask.Attributes.SUMMARY, summary);
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
     }
 
     private void expectSubtaskWithDescription(String description) {
@@ -473,10 +499,10 @@ public class SubtasksCreationServiceTest {
         attributes.put(Subtask.Attributes.SUMMARY, "a task");
         attributes.put(Subtask.Attributes.DESCRIPTION, description);
         subtasks.add(new Subtask(attributes));
-        expectSubtasks(subtasks);
+        expectSubtasksFromInputString(subtasks);
     }
 
-    private void expectSubtasks(List<Subtask> subtasks) {
+    private void expectSubtasksFromInputString(List<Subtask> subtasks) {
         when(subtasksSyntaxService.parseString(eq(INPUT_STRING))).thenReturn(subtasks);
     }
 
