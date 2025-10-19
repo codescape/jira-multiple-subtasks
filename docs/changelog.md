@@ -15,6 +15,7 @@ category: Administration
 * chore: improve Github action for continuous integration
 * test: add test creating high number of subtasks
 * chore: add code of conduct to repository
+* refactor: use parameterized log messages
 
 ### [25.10.0] -  2025-10-03
 

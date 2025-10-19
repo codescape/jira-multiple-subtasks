@@ -38,12 +38,12 @@ public class CreateSubtasksWorkflowFunction extends AbstractJiraFunctionProvider
         String subtasksTemplate = (String) args.get(SUBTASKS_TEMPLATE);
 
         // create subtasks
-        log.info("Creating subtasks in workflow transition for issue " + issue.getKey());
+        log.info("Creating subtasks in workflow transition for issue {}", issue.getKey());
         try {
             List<CreatedSubtask> createdSubtasks = subtasksCreationService.subtasksFromString(issue.getKey(), subtasksTemplate);
-            log.info("Created " + createdSubtasks.size() + " subtasks for issue " + issue.getKey());
+            log.info("Created {} subtasks for issue {}", createdSubtasks.size(), issue.getKey());
         } catch (RuntimeException e) {
-            log.error("Error while creating subtasks for issue " + issue.getKey(), e);
+            log.error("Error while creating subtasks for issue {}", issue.getKey(), e);
         }
     }
 
