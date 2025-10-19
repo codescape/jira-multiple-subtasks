@@ -12,7 +12,6 @@ import org.mockito.junit.MockitoRule;
 import static de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService.TEMPLATES_SORT_ORDER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class Upgrade02TemplatesSortOrderTest {

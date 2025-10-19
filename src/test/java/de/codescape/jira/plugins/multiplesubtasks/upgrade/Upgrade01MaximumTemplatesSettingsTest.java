@@ -12,7 +12,6 @@ import static de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtask
 import static de.codescape.jira.plugins.multiplesubtasks.service.MultipleSubtasksConfigurationService.TEMPLATES_PER_USER;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class Upgrade01MaximumTemplatesSettingsTest {

@@ -16,6 +16,7 @@ category: Administration
 * test: add test creating high number of subtasks
 * chore: add code of conduct to repository
 * refactor: use parameterized log messages
+* refactor: remove unused or obsolete imports
 
 ### [25.10.0] -  2025-10-03
 
