@@ -14,6 +14,7 @@ category: Administration
 * chore: include jenkins repository for external libraries
 * chore: improve Github action for continuous integration
 * test: add test creating high number of subtasks
+* chore: add code of conduct to repository
 
 ### [25.10.0] -  2025-10-03
 
