@@ -17,6 +17,7 @@ category: Administration
 * chore: add code of conduct to repository
 * refactor: use parameterized log messages
 * refactor: remove unused or obsolete imports
+* feat: ensure compatibility with Jira 11.2.0
 
 ### [25.10.0] -  2025-10-03
 
