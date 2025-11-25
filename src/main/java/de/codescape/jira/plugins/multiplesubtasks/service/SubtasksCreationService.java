@@ -36,12 +36,10 @@ import de.codescape.jira.plugins.multiplesubtasks.model.SyntaxFormatException;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.DateTimeStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.EstimateStringService;
 import de.codescape.jira.plugins.multiplesubtasks.service.syntax.SubtasksSyntaxService;
+import de.codescape.jira.plugins.multiplesubtasks.util.URLUtil;
 import jakarta.inject.Inject;
 import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -607,7 +605,7 @@ public class SubtasksCreationService {
                                 newSubtask.setCustomFieldValue(customField, parent.getCustomFieldValue(customField));
                             }
                         } else {
-                            if (isValidURL(value)) {
+                            if (URLUtil.isValidURL(value)) {
                                 newSubtask.setCustomFieldValue(customField, value);
                             } else {
                                 warnings.add("Invalid url value for custom field: " + customFieldName);
@@ -874,18 +872,6 @@ public class SubtasksCreationService {
                 break;
             default:
                 warnings.add("Unsupported custom field type (" + customFieldType + ") for custom field: " + customFieldName);
-        }
-    }
-
-    /**
-     * Verify the provided URL string is a valid URL to be persisted to a custom field of type URL.
-     */
-    private boolean isValidURL(String url) {
-        try {
-            new URL(url).toURI();
-            return true;
-        } catch (MalformedURLException | URISyntaxException e) {
-            return false;
         }
     }
 

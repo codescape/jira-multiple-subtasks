@@ -18,6 +18,7 @@ category: Administration
 * refactor: use parameterized log messages
 * refactor: remove unused or obsolete imports
 * feat: ensure compatibility with Jira 11.2.0
+* refactor: extract URL validation into util class
 
 ### [25.10.0] -  2025-10-03
 
