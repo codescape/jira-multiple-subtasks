@@ -19,6 +19,7 @@ category: Administration
 * refactor: remove unused or obsolete imports
 * feat: ensure compatibility with Jira 11.2.0
 * refactor: extract URL validation into util class
+* feat: ensure compatibility with Jira 11.3.0
 
 ### [25.10.0] -  2025-10-03
 
