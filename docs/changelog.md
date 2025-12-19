@@ -20,6 +20,7 @@ category: Administration
 * feat: ensure compatibility with Jira 11.2.0
 * refactor: extract URL validation into util class
 * feat: ensure compatibility with Jira 11.3.0
+* docs: improve documentation for assignee in syntax
 
 ### [25.10.0] -  2025-10-03
 
