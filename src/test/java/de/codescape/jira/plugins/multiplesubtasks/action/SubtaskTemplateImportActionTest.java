@@ -275,6 +275,13 @@ public class SubtaskTemplateImportActionTest {
         assertThat(templates.get(0).getTemplate(), containsString("Serve a drink in the Café"));
     }
 
+    /* fix: do not fail on empty attribute values  */
+    @Test
+    public void shouldIgnoreAttributesWithoutValue() {
+        String input = "- a subtask with / component:\"backend\" issueType:\"test\" assignee:\"\" estimate:\"\"";
+        assertTransformation(input,"- a subtask with\n  component: backend\n  issueType: test\n");
+    }
+
     /* helper methods */
 
     private void assertTransformation(String input, String output) {
