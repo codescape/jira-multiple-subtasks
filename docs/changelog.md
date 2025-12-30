@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [25.12.0] - 2025-12-30
+
+**Improve importer and minor refactorings**
+
 * chore: include jenkins repository for external libraries
 * chore: improve Github action for continuous integration
 * test: add test creating high number of subtasks
@@ -57,6 +63,7 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/25.10.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/25.12.0...HEAD
+[25.12.0]: https://github.com/codescape/jira-multiple-subtasks/compare/25.10.0...25.12.0
 [25.10.0]: https://github.com/codescape/jira-multiple-subtasks/compare/25.05.0...25.10.0
 [25.05.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.11.0...25.05.0
