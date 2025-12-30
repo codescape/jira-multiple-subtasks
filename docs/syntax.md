@@ -115,7 +115,8 @@ In this example you will create a subtask assigned to user `bob`:
     - Bob should do that subtask
       assignee: bob
 
-Please note: If the provided assignee cannot be found no assignee will be used.
+Please note: If the provided assignee cannot be found a warning will be shown and no assignee will be used.
+If the provided username exists but the project does not allow this user to be assigned a warning will be shown as well and no assignee will be used.
 
 You can also assign the subtask to the current user or inherit the assignee from the parent issue:
 
