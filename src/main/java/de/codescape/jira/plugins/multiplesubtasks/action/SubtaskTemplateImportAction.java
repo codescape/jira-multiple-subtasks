@@ -347,6 +347,8 @@ public class SubtaskTemplateImportAction extends JiraWebActionSupport {
                                         default:
                                             log.error("Ignoring unknown attribute '" + key + "' with value: '" + value + "'");
                                     }
+                                } else {
+                                    log.error("Ignoring attribute without value '" + key + "'");
                                 }
                             }
                         } else {

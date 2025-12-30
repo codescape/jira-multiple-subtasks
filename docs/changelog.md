@@ -22,6 +22,7 @@ category: Administration
 * feat: ensure compatibility with Jira 11.3.0
 * docs: improve documentation for assignee in syntax
 * fix: importer ignores attributes without values
+* fix: improve logging for empty attributes in importer
 
 ### [25.10.0] -  2025-10-03
 
