@@ -15,8 +15,8 @@ jobs:
               with:
                 distribution: 'temurin'
                 java-version: '21'
-                cache: 'maven'
+                cache: maven
             - name: Install Atlassian SDK
               uses: rodrigo-nogues/github-action-install-atlassian-sdk@v1
             - name: Build Project
-              run:  atlas-mvn package
+              run: atlas-mvn --batch-mode package
