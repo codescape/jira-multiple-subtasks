@@ -11,7 +11,7 @@ Your question is not answered here? Please [get in contact](/support) with us.
 
 * Table of Contents
 {:toc}
-‚
+
 ### Will there be a Jira Cloud version of Multiple Subtasks for Jira?
 
 At the moment only Jira Server and Jira Data Center compatible versions of Multiple Subtasks for Jira are available.
