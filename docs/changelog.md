@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* docs: add FAQ to online documentation
 
 ### [25.12.0] - 2025-12-30
 
