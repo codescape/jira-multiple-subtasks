@@ -12,58 +12,15 @@ category: Administration
 ### [Unreleased]
 
 * docs: add FAQ to online documentation
-
-### [25.12.0] - 2025-12-30
-
-**Improve importer and minor refactorings**
-
-* chore: include jenkins repository for external libraries
-* chore: improve Github action for continuous integration
-* test: add test creating high number of subtasks
-* chore: add code of conduct to repository
-* refactor: use parameterized log messages
-* refactor: remove unused or obsolete imports
-* feat: ensure compatibility with Jira 11.2.0
-* refactor: extract URL validation into util class
-* feat: ensure compatibility with Jira 11.3.0
-* docs: improve documentation for assignee in syntax
-* fix: importer ignores attributes without values
-* fix: improve logging for empty attributes in importer
-
-### [25.10.0] -  2025-10-03
-
-**Multiple Subtasks supports Jira 11**
-
-* refactor: use maven compiler setting for Java 17
-* feat: ensure compatibility with Jira 10.7.1
-* feat: ensure compatibility with Jira 10.7.4
-* chore: data center review 2025
-* feat: ensure compatibility with Jira 11.1.0
-
-### [25.05.0] -  2025-05-17
-
-**Compatibility updates for Jira 10.3 - 10.6**
-
-* chore: simplify Docker configuration for testing
-* feat: ensure compatibility with Jira 10.3.0
-* refactor: improve structure of subtask creation service
-* feat: ensure compatibility with Jira 10.4.0
-* refactor: use Java 16 syntax for lists
-* refactor: extract logic for custom field name syntax
-* test: improve tests for custom field name logic
-* docs: improve formatting of code examples
-* feat: ensure compatibility with Jira 10.5.0
-* feat: ensure compatibility with Jira 10.6.0
+* docs: prepare changelog for 2026 development
 
 ### Older versions
 
 Older versions have been moved into separate changelog documents grouped by their major version:
 
+* [Multiple Subtasks for Jira 25.x](/changelog-25x)
 * [Multiple Subtasks for Jira 24.x](/changelog-24x)
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
 [Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/25.12.0...HEAD
-[25.12.0]: https://github.com/codescape/jira-multiple-subtasks/compare/25.10.0...25.12.0
-[25.10.0]: https://github.com/codescape/jira-multiple-subtasks/compare/25.05.0...25.10.0
-[25.05.0]: https://github.com/codescape/jira-multiple-subtasks/compare/24.11.0...25.05.0
