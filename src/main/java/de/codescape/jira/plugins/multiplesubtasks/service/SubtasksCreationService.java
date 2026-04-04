@@ -72,6 +72,10 @@ public class SubtasksCreationService {
     static final String CUSTOM_FIELD_TYPE_GROUP = "com.atlassian.jira.plugin.system.customfieldtypes:grouppicker";
     static final String CUSTOM_FIELD_TYPE_GROUPS = "com.atlassian.jira.plugin.system.customfieldtypes:multigrouppicker";
 
+    /* supported third party fields */
+
+    static final String CUSTOM_FIELD_TYPE_CATWORX_ISSUEPICKER = "de.catworkx.jira.plugins.cwx-issue-picker:cwx-issue-picker-cf";
+
     /* dependencies */
 
     private final IssueService issueService;
@@ -869,6 +873,23 @@ public class SubtasksCreationService {
                         newSubtask.setCustomFieldValue(customField, groups);
                     }
                 });
+                break;
+            case CUSTOM_FIELD_TYPE_CATWORX_ISSUEPICKER:
+                if (values.size() > 1) {
+                    warnings.add("Custom field only allows single values: " + customFieldName);
+                } else {
+                    values.forEach(value -> {
+                        if (INHERIT_MARKER.equals(value)) {
+                            Object fieldValue = parent.getCustomFieldValue(customField);
+                            newSubtask.setCustomFieldValue(customField, fieldValue);
+                        } else {
+                            // Storage format in the database for single value fields: "<key>" -> example: SP-1
+                            // Storage format in the database for multi value fields: "<key>,<key>" -> example: SP-2,SP-3
+                            // Checking for existence of the issues is not possible because per configuration they can come from remote jira instances.
+                            newSubtask.setCustomFieldValue(customField, value);
+                        }
+                    });
+                }
                 break;
             default:
                 warnings.add("Unsupported custom field type (" + customFieldType + ") for custom field: " + customFieldName);

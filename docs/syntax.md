@@ -336,6 +336,7 @@ The following custom field types can be assigned with values during subtask crea
 | URL Field                      | `https://www.codescape.de` (leading protocol information is required)                                                                                       | no                      |
 | User Picker (single user)      | `username`                                                                                                                                                  | no                      |
 | User Picker (multiple users)   | `username`                                                                                                                                                  | yes                     |
+| [Teamworkx Issue Picker]       | `TSK-1` (single issue)<br/>`TSK-2,TSK-3` (multiple issues)                                                                                                  | no                      |
 
 Please note: If a custom field type `accepts multiple values` remember to provide one value per attribute. The following example applies two values `important` and `knowledge` as labels to a labels custom field:
 
@@ -361,3 +362,5 @@ Here is an example for a custom field with name `foo:bar` and another custom fie
       customfield(pet\(s\)): cat
 
 If you are missing support for any other custom field type please [let us know](/support) about it and raise a feature request.
+
+[Teamworkx Issue Picker]: https://marketplace.atlassian.com/apps/1218048/teamworkx-issue-picker-for-jira

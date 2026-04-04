@@ -13,6 +13,7 @@ category: Administration
 
 * docs: add FAQ to online documentation
 * docs: prepare changelog for 2026 development
+* feat: add support for custom fields from Teamworkx Issue Picker
 
 ### Older versions
 
