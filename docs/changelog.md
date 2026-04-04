@@ -14,6 +14,7 @@ category: Administration
 * docs: add FAQ to online documentation
 * docs: prepare changelog for 2026 development
 * feat: add support for custom fields from Teamworkx Issue Picker
+* feat: ensure compatibility with Jira 11.3.3
 
 ### Older versions
 
