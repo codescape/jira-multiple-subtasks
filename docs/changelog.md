@@ -12,6 +12,7 @@ category: Administration
 ### [Unreleased]
 
 * chore: data center review 2026
+* fix: display the icon of created subtasks correctly
 
 ### [26.04.0] - 2026-04-04 
 

@@ -33,6 +33,13 @@ public class CreatedSubtask {
     }
 
     /**
+     * Return the icon of the created subtask.
+     */
+    public String getIcon() {
+        return issue != null && issue.getIssueType() != null ? issue.getIssueType().getCompleteIconUrl() : null;
+    }
+
+    /**
      * Return all warnings that occurred during creation.
      */
     public List<String> getWarnings() {
