@@ -11,6 +11,12 @@ category: Administration
 
 ### [Unreleased]
 
+* ...
+
+### [26.10.0] - 2026-10-02
+
+**Fix for missing images in Jira 11.3**
+
 * chore: data center review 2026
 * fix: display the icon of created subtasks correctly
 
@@ -32,5 +38,6 @@ Older versions have been moved into separate changelog documents grouped by thei
 * [Multiple Subtasks for Jira 23.x](/changelog-23x)
 * [Multiple Subtasks for Jira 22.x](/changelog-22x)
 
-[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/26.04.0...HEAD
+[Unreleased]: https://github.com/codescape/jira-multiple-subtasks/compare/26.10.0...HEAD
+[26.10.0]: https://github.com/codescape/jira-multiple-subtasks/compare/26.04.0...26.10.0
 [26.04.0]: https://github.com/codescape/jira-multiple-subtasks/compare/25.12.0...26.04.0
