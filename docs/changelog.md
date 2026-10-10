@@ -15,7 +15,7 @@ category: Administration
 
 ### [26.10.0] - 2026-10-02
 
-**Fix for missing images in Jira 11.3**
+**Fix for missing subtask icons in Jira 11.3**
 
 * chore: data center review 2026
 * fix: display the icon of created subtasks correctly
