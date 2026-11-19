@@ -199,6 +199,30 @@ public class SubtasksCreationServiceTest {
         verify(subtask, new Times(1)).setDescription("Let's say hello world!");
     }
 
+    @Test
+    public void shouldInheritDollarSignInDescriptionFromParent() {
+        expectSubtaskWithDescription("The terminal says: " + INHERIT_MARKER);
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        when(parent.getDescription()).thenReturn("$ cat audit.json");
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setDescription("The terminal says: $ cat audit.json");
+    }
+
+    @Test
+    public void shouldNotInheritForNullDescriptionOnParent() {
+        expectSubtaskWithDescription("My parent has no description: " + INHERIT_MARKER);
+        MutableIssue subtask = expectNewSubtaskIssue();
+
+        when(parent.getDescription()).thenReturn(null);
+
+        subtasksCreationService.subtasksFromString(ISSUE_KEY, INPUT_STRING);
+
+        verify(subtask, new Times(1)).setDescription("My parent has no description:");
+    }
+
     /* security level */
 
     @Test

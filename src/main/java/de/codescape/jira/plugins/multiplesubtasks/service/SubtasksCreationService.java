@@ -42,6 +42,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import static de.codescape.jira.plugins.multiplesubtasks.model.Markers.CURRENT_MARKER;
@@ -334,7 +335,7 @@ public class SubtasksCreationService {
      */
     private static void applySummary(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent) {
         newSubtask.setSummary(subTaskRequest.getSummary()
-            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parent.getSummary())
+            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, Matcher.quoteReplacement(Objects.toString(parent.getSummary())))
             .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
         );
     }
@@ -348,7 +349,7 @@ public class SubtasksCreationService {
             String descriptionFromParent = parent.getDescription() != null ? parent.getDescription() : "";
             String description = subTaskRequest.getDescription()
                 .replaceAll("\\{n}", "\n")
-                .replaceAll("(?<!\\\\)" + INHERIT_MARKER, descriptionFromParent)
+                .replaceAll("(?<!\\\\)" + INHERIT_MARKER, Matcher.quoteReplacement(Objects.toString(descriptionFromParent, "")))
                 .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
                 .trim();
             if (!description.isEmpty()) {
@@ -479,11 +480,12 @@ public class SubtasksCreationService {
                 .findFirst().orElse(null);
             if (issueType == null) {
                 warnings.add("Invalid issue type: " + subTaskRequest.getIssueType());
+            } else {
+                newSubtask.setIssueType(issueType);
             }
-            newSubtask.setIssueType(issueType);
         }
         if (newSubtask.getIssueType() == null) {
-            newSubtask.setIssueType(subTaskTypes.get(0));
+            newSubtask.setIssueType(subTaskTypes.getFirst());
         }
     }
 
@@ -590,7 +592,7 @@ public class SubtasksCreationService {
                     String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
                     values.forEach(value -> {
                         String cleanedUpString = value
-                            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parentValue)
+                            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, Matcher.quoteReplacement(Objects.toString(parentValue, "")))
                             .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
                             .trim();
                         if (!cleanedUpString.isEmpty()) {
@@ -625,7 +627,7 @@ public class SubtasksCreationService {
                     String parentValue = parent.getCustomFieldValue(customField) != null ? (String) parent.getCustomFieldValue(customField) : "";
                     values.forEach(value -> {
                         String cleanedUpString = value.replaceAll("\\{n}", "\n")
-                            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, parentValue)
+                            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, Matcher.quoteReplacement(Objects.toString(parentValue, "")))
                             .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
                             .trim();
                         if (!cleanedUpString.isEmpty()) {
@@ -824,7 +826,7 @@ public class SubtasksCreationService {
                         } else if (cleanLabel.length() > 255) {
                             warnings.add("Invalid label (" + cleanLabel + ") too long for custom field: " + customFieldName);
                         } else {
-                            labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), label));
+                            labels.add(new Label(null, newSubtask.getId(), customField.getIdAsLong(), cleanLabel));
                         }
                     }
                 });

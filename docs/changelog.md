@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* fix: accept $ sign in inherited strings
 
 ### [26.10.0] - 2026-10-02
 
