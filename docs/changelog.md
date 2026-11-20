@@ -11,7 +11,7 @@ category: Administration
 
 ### [Unreleased]
 
-* ...
+* refactor: introduce null-safety for summary
 
 ### [26.11.0] - 2026-11-20
 

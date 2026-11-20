@@ -335,7 +335,7 @@ public class SubtasksCreationService {
      */
     private static void applySummary(Subtask subTaskRequest, MutableIssue newSubtask, MutableIssue parent) {
         newSubtask.setSummary(subTaskRequest.getSummary()
-            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, Matcher.quoteReplacement(Objects.toString(parent.getSummary())))
+            .replaceAll("(?<!\\\\)" + INHERIT_MARKER, Matcher.quoteReplacement(Objects.toString(parent.getSummary(), "")))
             .replaceAll("\\\\" + INHERIT_MARKER, INHERIT_MARKER)
         );
     }
